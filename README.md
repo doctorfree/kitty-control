@@ -87,7 +87,7 @@ and exits. To display a full usage message use `kitty-control -u`. To see
 several examples, `kitty-control -e`. To display the full usage message and
 examples run `kitty-control -h`.
 
-```text
+```
 Usage: kitty-control [-a] [-b /path/to/image] [-e] [-f] [-m <match>] [-t <match>]
            [-s /path/to/socket] [-u | -h] [back <color>] [dark] [fore <color>]
            [font [num]] [list] [load [subdir]] [title <title>] [tran [opacity]]
@@ -148,51 +148,51 @@ To display the `kitty` documentation URL for window/tab matching syntax run
 
 ## Examples
 
-Example invocations of `kitty-control`
+### Example invocations of kitty-control
 
-### To set a transparent Kitty background with 0.9 opacity
+#### To set a transparent Kitty background with 0.9 opacity
 
 ```bash
 kitty-control tran 0.9
 ```
 
-### To set the Kitty background to fully opaque (no transparency)
+#### To set the Kitty background to fully opaque (no transparency)
 
 ```bash
 kitty-control dark
 ```
 
-### To set the Kitty background color to black and foreground color to white
+#### To set the Kitty background color to black and foreground color to white
 
 ```bash
 kitty-control back black fore white
 ```
 
-### To load the Kitty config in ~/.config/kitty/laptop/kitty.conf
+#### To load the Kitty config in ~/.config/kitty/laptop/kitty.conf
 
 ```bash
 kitty-control load laptop
 ```
 
-### To increase the font size by 2 points
+#### To increase the font size by 2 points
 
 ```bash
 kitty-control font +2
 ```
 
-### To set the background image to ~/Pictures/groovy.png
+#### To set the background image to ~/Pictures/groovy.png
 
 ```bash
 kitty-control -b ~/Pictures/groovy.png
 ```
 
-### Actions can be combined on the same command line
+#### Actions can be combined on the same command line
 
 ```bash
 kitty-control -b ~/Pictures/groovy.png fore cyan font 24
 ```
 
-### Order is sometimes important, especially when switching configs
+#### Order is sometimes important, especially when switching configs
 
 Most arguments are not order sensitive. For example, to change configs
 and set a background image while toggling fullscreen mode:
@@ -214,13 +214,13 @@ Instead, load the specified config first then apply the fontsize change:
 kitty-control load laptop font -4
 ```
 
-### To set the tab title of the tab currently titled '~/src/borg' to 'Borg Backup'
+#### To set the tab title of the tab currently titled '~/src/borg' to 'Borg Backup'
 
 ```bash
 `kitty-control -m "title:borg" title "Borg Backup"
 ```
 
-### To restore the original Kitty configuration
+#### To restore the original Kitty configuration
 
 ```bash
 `kitty-control load default
