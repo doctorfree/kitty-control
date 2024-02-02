@@ -1,0 +1,20 @@
+# Kitty tabbed startup session
+#
+# Kitty tab with zsh
+new_tab
+launch zsh
+enabled_layouts tall:bias=50;full_size=1
+layout tall
+
+# Kitty tab in Documents
+new_tab Documents
+cd ~/Documents
+launch zsh
+enabled_layouts tall:bias=50;full_size=1
+layout tall
+
+# Kitty tab for Btop++
+#new_tab Btop
+#launch zsh -c btop
+#enabled_layouts tall:bias=50;full_size=1
+#layout tall

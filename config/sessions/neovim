@@ -1,0 +1,6 @@
+# Kitty tab for Neovim
+#
+new_tab Neovim
+launch zsh -c nvim
+enabled_layouts tall:bias=50;full_size=1
+layout tall

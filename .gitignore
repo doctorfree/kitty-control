@@ -1,0 +1,19 @@
+# Working dirs and test files
+tmp/*
+
+# Neovide leaves a backtrace when it crashes
+neovide_backtraces*
+
+# Neovim plugins can leave behind some cruft
+.null-ls*
+
+#do not ignore .github directory
+!.github
+
+# vim files
+.*.sw[a-z]
+*.un~
+Session.vim
+.netrwhist
+tmux*log
+.DS_Store
