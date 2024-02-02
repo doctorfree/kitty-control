@@ -1,0 +1,47 @@
+Usage: kitty-control [-a] [-b /path/to/image] [-e] [-f] [-m <match>] [-t <match>]
+           [-s /path/to/socket] [-u | -h] [back <color>] [dark] [fore <color>]
+           [font [num]] [list] [load [subdir]] [title <title>] [tran [opacity]]
+Where:
+    'back color' Sets the background color to 'color'
+           If 'color' is 'reset' restores foreground and background to startup value
+    'dark' Sets the Kitty background opacity to 1.0 (fully opaque)
+           Can use 'dark' or 'opaque'
+    'font num' Sets the font pointsize to 'num'
+           Can use 'font', 'fontsize', 'fontminus', or 'fontplus'
+           The second argument specifies the font size, either absolute, +, or -
+           e.g. 'kitty-control fontsize 24' would set the font size to 24 points
+                'kitty-control font +2' would increase the font size by 2 points
+                'kitty-control font' without argument resets the font size to default
+    'fore color' Sets the foreground color to 'color'
+           If 'color' is 'reset' restores foreground and background to startup value
+    'list' Displays information on Kitty windows
+    'load [subdir]' Reloads the Kitty configuration in ~/.config/kitty/kitty.conf
+           Can use 'load' or 'reload'
+           Specify a second argument to load ~/.config/kitty/<subdir>/kitty.conf
+           e.g. 'kitty-control load tv' would load ~/.config/kitty/tv/kitty.conf
+           'kitty-control load default' restores the kitty.conf used to start this instance
+           'kitty-control load --help' displays a help message for the load command
+    'title <tab title>' Sets the Kitty tab title to "tab title"
+          Quote tab titles which contain spaces, e.g. "This Is My Tab Title"
+          Use '-m <match>' to specify the tab to match
+    'tran [opacity]' Sets the Kitty background opacity to 0.8
+           Can use 'tran', 'opacity', 'trans' or 'transparent'
+           Specify a second argument to set a custom background opacity:
+           e.g. 'kitty-control transparent 0.9'
+    '-a' Indicates modify all windows rather than just the currently active OS window
+    '-b /path/to/image' sets the background image for the specified Kitty windows
+        If /path/to/image is 'none' then any existing image will be removed
+    '-e' Displays several example invocations and exits
+    '-f' Indicates toggle fullscreen
+    '-m <match>' Specifies the window to match
+    '-t <match>' Specifies the tab to match
+        Window/Tab matching can be used in conjunction with most kitty-control commands
+        If <match> is '--help' the Kitty documentation URL for matching will be displayed
+    '-s /path/to/socket' Specifies the socket Kitty is listening on if enabled
+        If /path/to/socket is '--help' some help on configuring a Kitty socket is provided
+    '-u' Displays the usage message and exits
+    '-h' Displays the usage message with examples and exits
+Adjusting the background opacity or font size requires the original kitty.conf
+that was used for this instance of Kitty to have enabled the following:
+    'dynamic_background_opacity yes' and 'allow_remote_control yes'
+See https://sw.kovidgoyal.net/kitty/remote-control/#control-kitty-from-scripts
