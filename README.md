@@ -14,25 +14,28 @@ Control some aspects of the `Kitty` terminal emulator from the command line
 ## Overview
 
 The [Kitty terminal emulator](https://sw.kovidgoyal.net/kitty) has a very
-powerful system that allows you to control it from the shell prompt, even
+powerful system that allows remote control from the shell prompt, even
 over SSH. You can change colors, fonts, open new windows, tabs, set their
-titles, change window layout, get text from one window and send text to another,
-and much more.
+titles, change window layout, get text from one window and send text to
+another, and much more.
 
 In addition, `kitty` is [highly configurable](https://sw.kovidgoyal.net/kitty/conf)
 and can be [controlled from scripts](https://sw.kovidgoyal.net/kitty/remote-control).
 
 Kitty users frequently adjust many of these customizable settings to better
-suit the environment in which `kitty` runs - the font size, opacity, alternate
-configations, fullscreen display, tab titles, foreground and background color,
-background transparency or image. Many `kitty` configuration settings can be
-modified with defined keymaps and set on the fly with a couple of keystrokes.
-Others require a little more effort, knowledge, and memory (human memory).
+suit the environment in which `kitty` runs. For example, it is often necessary
+to adjust the font size or opacity, use alternate configations, toggle
+fullscreen display, set tab titles, change foreground and background color,
+adjust background transparency or set a background image. Many `kitty`
+configuration settings can be modified with defined keymaps and set on the fly
+with a couple of keystrokes. Others require a little more effort, knowledge,
+and memory (human memory).
 
-I wanted to be able to script some `kitty` customization for automation and
-convenience. In particular I wanted to be able to quickly and easily switch
-between preconfigured `kitty` configuration files without losing state or
-having to quit `kitty` and restart with another configuration.
+Scripting some `kitty` customization enables support for automation and
+provides an additional layer of convenience. In particular, scripted
+`kitty` actions enables quick and easy switching between preconfigured
+`kitty` configuration files without losing state or having to quit `kitty`
+and restart with another configuration.
 
 Thus we have `kitty-control`, a `bash` script that intends to
 simplify and ease those `kitty` customizations used fairly frequently.
@@ -70,8 +73,8 @@ Usage: kitty-control [-a] [-b /path/to/image] [-e] [-f] [-m <match>] [-t <match>
            [-s /path/to/socket] [-u | -h] [back <color>] [dark] [fore <color>]
            [font [num]] [list] [load [subdir]] [title <title>] [tran [opacity]]
 Where:
-    'back color' Sets the background color to 'color'
-           If 'color' is 'reset' restores foreground and background to startup value
+    `back color` Sets the background color to `color`
+           If `color` is `reset` restores foreground and background to startup value
     'dark' Sets the Kitty background opacity to 1.0 (fully opaque)
            Can use 'dark' or 'opaque'
     'font num' Sets the font pointsize to 'num'
@@ -127,27 +130,71 @@ To display the `kitty` documentation URL for window/tab matching syntax run
 
 Example invocations of `kitty-control`
 
-* To set a transparent Kitty background with 0.9 opacity:
-	`kitty-control tran 0.9`
-* To set the Kitty background to fully opaque (no transparency):
-	`kitty-control dark`
-* To set the Kitty background color to black and foreground color to white:
-	`kitty-control back black fore white`
-* To load the Kitty config in ~/.config/kitty/laptop/kitty.conf
-	`kitty-control load laptop`
-* To increase the font size by 2 points:
-	`kitty-control font +2`
-* To set the background image to ~/Pictures/groovy.png
-	`kitty-control -b ~/Pictures/groovy.png`
-* Actions can be combined on the same command line:
-	`kitty-control -b ~/Pictures/groovy.png fore cyan font 24`
-* Order is sometimes important, especially when switching configs:
-	`kitty-control font -4 load laptop # The 'font -4' is overridden by the new config`
-	* Instead use: `kitty-control load laptop font -4`
-* To set the tab title of the tab currently titled '~/src/borg' to 'Borg Backup':
-	`kitty-control -m "title:borg" title "Borg Backup"`
-* To restore the original Kitty configuration:
-	`kitty-control load default`
+### To set a transparent Kitty background with 0.9 opacity
+
+```bash
+kitty-control tran 0.9
+```
+
+### To set the Kitty background to fully opaque (no transparency)
+
+```bash
+kitty-control dark
+```
+
+### To set the Kitty background color to black and foreground color to white
+
+```bash
+kitty-control back black fore white
+```
+
+### To load the Kitty config in ~/.config/kitty/laptop/kitty.conf
+
+```bash
+kitty-control load laptop
+```
+
+### To increase the font size by 2 points
+
+```bash
+kitty-control font +2
+```
+
+### To set the background image to ~/Pictures/groovy.png
+
+```bash
+kitty-control -b ~/Pictures/groovy.png
+```
+
+### Actions can be combined on the same command line
+
+```bash
+kitty-control -b ~/Pictures/groovy.png fore cyan font 24
+```
+
+### Order is sometimes important, especially when switching configs
+
+```bash
+kitty-control font -4 load laptop # The 'font -4' is overridden by the new config
+```
+
+Instead, load the specified config first then apply the fontsize change:
+
+```bash
+kitty-control load laptop font -4
+```
+
+### To set the tab title of the tab currently titled '~/src/borg' to 'Borg Backup'
+
+```bash
+`kitty-control -m "title:borg" title "Borg Backup"
+```
+
+### To restore the original Kitty configuration
+
+```bash
+`kitty-control load default
+```
 
 ### Example Kitty Configuration
 
