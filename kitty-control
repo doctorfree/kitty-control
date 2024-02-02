@@ -188,25 +188,20 @@ set-title() {
 }
 
 [ "$1" ] || brief_usage
+
+# Some actions need to be delayed until after any configuration load
+bg_image=
+fullscrn=
 while getopts ":ab:efm:s:t:hu" flag; do
   case $flag in
     a)
       OPTS="$OPTS -a"
       ;;
     b)
-      if [ "${OPTARG}" == "none" ]; then
-        kitty-background "${OPTARG}"
-      else
-        if [ -f "${OPTARG}" ]; then
-          kitty-background "${OPTARG}"
-        else
-          printf "\nSpecified Kitty background image ${OPTARG} not found\n"
-          exit 1
-        fi
-      fi
+      bg_image="${OPTARG}"
       ;;
     f)
-      toggle-fullscreen
+      fullscrn=1
       ;;
     m)
       if [ "${OPTARG}" == "--help" ]; then
@@ -379,3 +374,16 @@ do
       ;;
   esac
 done
+
+[ "${fullscrn}" ] && toggle-fullscreen
+[ "${bg_image}" ] && {
+  if [ "${bg_image}" == "none" ]; then
+    kitty-background "${bg_image}"
+  else
+    if [ -f "${bg_image}" ]; then
+      kitty-background "${bg_image}"
+    else
+      printf "\nSpecified Kitty background image ${bg_image} not found\n"
+    fi
+  fi
+}

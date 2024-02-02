@@ -61,6 +61,19 @@ transparent background with opacity 0.8.
 
 See the [Examples](#examples) section below for more example invocations.
 
+Additional aliases can be used to provide further convenience. For example,
+`alias big='kitty-control font 32'` and `alias normal='kitty-control font 22'`
+enables quick and easy switching between font pointsizes 32 and 22 with
+the commands `big` and `normal`. You can go nuts with this:
+
+```bash
+alias kitv='kitty-control -b ~/Pictures/Space.png load tv title "SONY Bravia"'
+```
+
+Sit back in your recliner with your [Framework laptop](https://frame.work/about),
+wireless mouse and keyboard, connected 4K Ultra HD TV, a refreshing beverage,
+and `kitty-control` at your fingertips.
+
 ## Usage
 
 Invoking `kitty-control` without arguments displays a brief usage message
@@ -173,6 +186,16 @@ kitty-control -b ~/Pictures/groovy.png fore cyan font 24
 ```
 
 ### Order is sometimes important, especially when switching configs
+
+Most arguments are not order sensitive. For example, to change configs
+and set a background image while toggling fullscreen mode:
+
+```bash
+kitty-control -b ~/Pictures/Earth.png -f load tv  # Any order here will be ok
+```
+
+However, when using multiple commands with the `load` command, order becomes
+important. For example:
 
 ```bash
 kitty-control font -4 load laptop # The 'font -4' is overridden by the new config
