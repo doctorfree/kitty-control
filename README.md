@@ -70,6 +70,12 @@ the commands `big` and `normal`. You can go nuts with this:
 alias kitv='kitty-control -b ~/Pictures/Space.png load tv title "SONY Bravia"'
 ```
 
+You may wish to set an alias to restore the default Kitty configuration:
+
+```bash
+alias kdef='kitty-control load default'
+```
+
 Sit back in your recliner with your [Framework laptop](https://frame.work/about),
 wireless mouse and keyboard, connected 4K Ultra HD TV, a refreshing beverage,
 and `kitty-control` at your fingertips.
@@ -81,13 +87,13 @@ and exits. To display a full usage message use `kitty-control -u`. To see
 several examples, `kitty-control -e`. To display the full usage message and
 examples run `kitty-control -h`.
 
-```
+```text
 Usage: kitty-control [-a] [-b /path/to/image] [-e] [-f] [-m <match>] [-t <match>]
            [-s /path/to/socket] [-u | -h] [back <color>] [dark] [fore <color>]
            [font [num]] [list] [load [subdir]] [title <title>] [tran [opacity]]
 Where:
-    `back color` Sets the background color to `color`
-           If `color` is `reset` restores foreground and background to startup value
+    'back color' Sets the background color to 'color'
+           If 'color' is 'reset' restores foreground and background to startup value
     'dark' Sets the Kitty background opacity to 1.0 (fully opaque)
            Can use 'dark' or 'opaque'
     'font num' Sets the font pointsize to 'num'
@@ -130,6 +136,7 @@ that was used for this instance of Kitty to have enabled the following:
     'dynamic_background_opacity yes' and 'allow_remote_control yes'
 See https://sw.kovidgoyal.net/kitty/remote-control/#control-kitty-from-scripts
 ```
+
 Several of the `kitty-control` commands have a help option, `--help`. To view
 a brief help message for the `load` command run `kitty-control load --help`.
 
