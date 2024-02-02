@@ -1,5 +1,5 @@
 Usage: kitty-control [-a] [-b /path/to/image] [-e] [-f] [-m <match>] [-t <match>]
-           [-s /path/to/socket] [-u | -h] [back <color>] [dark] [fore <color>]
+           [-s /path/to/socket] [-u|h|v] [back <color>] [dark] [fore <color>]
            [font [num]] [list] [load [subdir]] [title <title>] [tran [opacity]]
 Where:
     'back color' Sets the background color to 'color'
@@ -33,6 +33,7 @@ Where:
         If /path/to/image is 'none' then any existing image will be removed
     '-e' Displays several example invocations and exits
     '-f' Indicates toggle fullscreen
+    '-h' Displays the usage message with examples and exits
     '-m <match>' Specifies the window to match
     '-t <match>' Specifies the tab to match
         Window/Tab matching can be used in conjunction with most kitty-control commands
@@ -40,7 +41,7 @@ Where:
     '-s /path/to/socket' Specifies the socket Kitty is listening on if enabled
         If /path/to/socket is '--help' some help on configuring a Kitty socket is provided
     '-u' Displays the usage message and exits
-    '-h' Displays the usage message with examples and exits
+    '-v' Displays the kitty-control version and exits
 Adjusting the background opacity or font size requires the original kitty.conf
 that was used for this instance of Kitty to have enabled the following:
     'dynamic_background_opacity yes' and 'allow_remote_control yes'

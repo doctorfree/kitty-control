@@ -8,6 +8,8 @@
 #
 # Written Feb 1, 2024 by Ronald Joe Record <ronaldrecord@gmail.com>
 #
+VERSION=1.0.0
+RELEASE=1
 # The Kitty configuration directory
 CONFDIR="${HOME}/.config/kitty"
 # The default background opacity for transparency
@@ -23,7 +25,7 @@ OPTS=
 
 brief_usage() {
   printf "\nUsage: kitty-control [-a] [-b /path/to/image] [-e] [-f] [-m <match>] [-t <match>]"
-  printf "\n           [-s /path/to/socket] [-u | -h] [back <color>] [dark] [fore <color>]"
+  printf "\n           [-s /path/to/socket] [-u|h|v] [back <color>] [dark] [fore <color>]"
   printf "\n           [font [num]] [list] [load [subdir]] [title <title>] [tran [opacity]]"
   [ "$1" == "noexit" ] || {
     printf "\n\nTo display several examples run 'kitty-control -e'"
@@ -94,6 +96,7 @@ usage() {
   printf "\n        If /path/to/image is 'none' then any existing image will be removed"
   printf "\n    '-e' Displays several example invocations and exits"
   printf "\n    '-f' Indicates toggle fullscreen"
+  printf "\n    '-h' Displays the usage message with examples and exits"
   printf "\n    '-m <match>' Specifies the window to match"
   printf "\n    '-t <match>' Specifies the tab to match"
   printf "\n        Window/Tab matching can be used in conjunction with most kitty-control commands"
@@ -101,7 +104,7 @@ usage() {
   printf "\n    '-s /path/to/socket' Specifies the socket Kitty is listening on if enabled"
   printf "\n        If /path/to/socket is '--help' some help on configuring a Kitty socket is provided"
   printf "\n    '-u' Displays the usage message and exits"
-  printf "\n    '-h' Displays the usage message with examples and exits"
+  printf "\n    '-v' Displays the kitty-control version and exits"
   printf "\nAdjusting the background opacity or font size requires the original kitty.conf"
   printf "\nthat was used for this instance of Kitty to have enabled the following:"
   printf "\n    'dynamic_background_opacity yes' and 'allow_remote_control yes'"
@@ -192,7 +195,7 @@ set-title() {
 # Some actions need to be delayed until after any configuration load
 bg_image=
 fullscrn=
-while getopts ":ab:efm:s:t:hu" flag; do
+while getopts ":ab:efm:s:t:huv" flag; do
   case $flag in
     a)
       OPTS="$OPTS -a"
@@ -247,6 +250,10 @@ while getopts ":ab:efm:s:t:hu" flag; do
       ;;
     u)
       usage
+      ;;
+    v)
+      printf "\nkitty-control version ${VERSION} release ${RELEASE}\n\n"
+      exit 0
       ;;
     \?)
       echo "Invalid option: $flag"
