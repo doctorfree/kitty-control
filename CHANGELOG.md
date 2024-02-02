@@ -11,6 +11,7 @@
 ### ⚡️ Added
 
 - Add support for setting the tab title
+- Add `-v` to display version
 - Add `--help` argument for `load` command
 - Add examples to usage with `-e` and `-h`
 - Add `foreground/background` color setting
