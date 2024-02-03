@@ -11,6 +11,8 @@
 ### ⚡️ Added
 
 - Add `read_config.py` and `CHANGELOG.md` to release assets
+- Add `install` to release assets
+- Support for installing using the `install` release asset
 
 ### 🐞 Fixed
 
