@@ -2,6 +2,7 @@
 
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_PATH="$(realpath $SCRIPT_PATH)"
+REPO_URL="https://github.com/doctorfree/kitty-control"
 
 [ -f ${SCRIPT_PATH}/kitty-control ] || {
   have_git=$(type -p git)
@@ -10,7 +11,7 @@ SCRIPT_PATH="$(realpath $SCRIPT_PATH)"
     printf "\nInstall git and re-run this install script\n\n"
     exit 1
   }
-  git clone https://github.com/doctorfree/kitty-control /tmp/kc$$
+  git clone ${REPO_URL} /tmp/kc$$ >/dev/null 2>&1
   [ -x /tmp/kc$$/install ] || {
     [ -f /tmp/kc$$/install ] || {
       printf "\nERROR: installation failure, missing files.\n\n"
@@ -41,4 +42,4 @@ chmod 644 ${HOME}/.config/kitty/read_config.py
 }
 
 printf "Installation of kitty-control complete ✨ 🌟 ✨\n"
-printf "\nSee https://github.com/doctorfree/kitty-control#readme\n\n"
+printf "\nSee ${REPO_URL}#readme\n\n"

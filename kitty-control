@@ -9,7 +9,7 @@
 # Written Feb 1, 2024 by Ronald Joe Record <ronaldrecord@gmail.com>
 #
 VERSION=1.0.1
-RELEASE=2
+RELEASE=3
 # The Kitty configuration directory
 CONFDIR="${HOME}/.config/kitty"
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
@@ -33,9 +33,9 @@ fi
 OPTS=
 
 brief_usage() {
-  printf "\nUsage: kitty-control [-a] [-e] [-f] [-i /path/to/image] [-m <match>] [-t <match>]"
-  printf "\n           [-s /path/to/socket] [-u|h|v] [back <color>] [dark] [fore <color>]"
-  printf "\n           [font [num]] [list] [load [subdir]] [title <title>] [tran [opacity]]"
+  printf "\nUsage: kitty-control [-a] [-c command] [-e] [-f] [-i /path/to/image] [-m <match>]"
+  printf "\n    [-t <match>] [-s /path/to/socket] [-u|h|v] [back <color>] [dark] [fore <color>]"
+  printf "\n    [font [num]] [list] [load [subdir]] [title <title>] [tran [opacity]]"
   [ "$1" == "noexit" ] || {
     printf "\n\nTo display several examples run 'kitty-control -e'"
     printf "\nFor a full usage message run 'kitty-control -u'"
@@ -101,6 +101,8 @@ usage() {
   printf "\n           Specify a second argument to set a custom background opacity:"
   printf "\n           e.g. 'kitty-control transparent 0.9'"
   printf "\n    '-a' Indicates modify all windows rather than just the currently active OS window"
+  printf "\n    '-c command' specifies a Kitty command to run (enclose command and arguments in quotes)"
+  printf "\n        Can be used to run arbitrary commands, e.g. 'kitty-control -c get-colors'"
   printf "\n    '-e' Displays several example invocations and exits"
   printf "\n    '-f' Indicates toggle fullscreen"
   printf "\n    '-h' Displays the usage message with examples and exits"
@@ -153,6 +155,10 @@ kitty-fontsize() {
   fi
 }
 
+kitty-command() {
+  kitty @ ${SOCKET} $1 ${OPTS}
+}
+
 toggle-fullscreen() {
   kitty @ ${SOCKET} resize-os-window --action toggle-fullscreen ${OPTS}
 }
@@ -197,12 +203,23 @@ set-title() {
 
 # Some actions need to be delayed until after any configuration load
 bg_image=
+backgrnd=
+foregrnd=
+fontplus=
+fontdown=
+fontsize=
 fullscrn=
+kittycmd=
+setopcty=
 while [[ $1 ]]; do
   case "$1" in
     -a | --all)
       OPTS="$OPTS -a"
       shift
+      ;;
+    -c | --command)
+      kittycmd="$2"
+      shift 2
       ;;
     -i | --image)
       bg_image="$2"
@@ -270,7 +287,7 @@ while [[ $1 ]]; do
       ;;
     back*)
       if [ "$2" ]; then
-        set-background "$2"
+        backgrnd="$2"
         shift 2
       else
         printf "\nERROR: background keyword requires an argument"
@@ -279,7 +296,7 @@ while [[ $1 ]]; do
       ;;
     fore*)
       if [ "$2" ]; then
-        set-foreground "$2"
+        foregrnd="$2"
         shift 2
       else
         printf "\nERROR: foreground keyword requires an argument"
@@ -329,33 +346,33 @@ while [[ $1 ]]; do
       fi
       ;;
     dark|opaque)
-      kitty-opacity "1.0"
+      setopcty="1.0"
       shift
       ;;
     fontmin*|fontdec*)
       if [ "$2" ]; then
-        kitty-fontminus "$2"
+        fontdown="$2"
         shift 2
       else
-        kitty-fontminus 1
+        fontdown=1
         shift
       fi
       ;;
     fontplus|fontinc*)
       if [ "$2" ]; then
-        kitty-fontplus "$2"
+        fontplus="$2"
         shift 2
       else
-        kitty-fontplus 1
+        fontplus=1
         shift
       fi
       ;;
     font*)
       if [ "$2" ]; then
-        kitty-fontsize "$2"
+        fontsize="$2"
         shift 2
       else
-        kitty-fontsize 0
+        fontsize="0"
         shift
       fi
       ;;
@@ -375,7 +392,7 @@ while [[ $1 ]]; do
       else
         shift
       fi
-      kitty-opacity "${OPACITY}"
+      setopcty="${OPACITY}"
       ;;
     *)
       printf "\nUnsupported Kitty control command: $1"
@@ -384,7 +401,14 @@ while [[ $1 ]]; do
   esac
 done
 
+# These needed to be delayed until after any configuration loading
+[ "${fontplus}" ] && kitty-fontplus "${fontplus}"
+[ "${fontdown}" ] && kitty-fontminus "${fontdown}"
+[ "${fontsize}" ] && kitty-fontsize "${fontsize}"
+[ "${backgrnd}" ] && set-background "${backgrnd}"
+[ "${foregrnd}" ] && set-foreground "${foregrnd}"
 [ "${fullscrn}" ] && toggle-fullscreen
+[ "${setopcty}" ] && kitty-opacity "${ssetopcty}"
 [ "${bg_image}" ] && {
   if [ "${bg_image}" == "none" ]; then
     kitty-background "${bg_image}"
@@ -396,3 +420,4 @@ done
     fi
   fi
 }
+[ "${kittycmd}" ] && kitty-command "${kittycmd}"
