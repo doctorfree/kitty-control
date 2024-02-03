@@ -33,10 +33,10 @@ fi
 OPTS=
 
 brief_usage() {
-  printf "\nUsage: kitty-control [-a] [-c command] [-e] [-f] [-i /path/to/image]"
-  printf "\n    [-m <match>] [-t <match>] [-s /path/to/socket] [-u|h|v] [back <color>]"
-  printf "\n    [dark] [diff [opts] <file1|dir1> <file2|dir2>] [fore <color>] [font [num]]"
-  printf "\n    [icat [opts] <image>] [list] [load [subdir]] [title <title>] [tran [opacity]]"
+  printf "Usage: kitty-control [-a] [-c command] [-e] [-f] [-i /path/to/image]"
+  printf "\n    [-m|t <match>] [-s /path/to/socket] [-u|h|v] [back <color>] [dark]"
+  printf "\n    [diff [opts] <path1> <path2>] [fore <color>] [font [num]] [load [subdir]]"
+  printf "\n    [icat [opts] <image>] [list] [title <title>] [tran [opacity]] [unicode]"
   [ "$1" == "noexit" ] || {
     printf "\n\nTo display several examples run 'kitty-control -e'"
     printf "\nFor a full usage message run 'kitty-control -u'"
@@ -111,6 +111,7 @@ usage() {
   printf "\n           Can use 'tran', 'opacity', 'trans' or 'transparent'"
   printf "\n           Specify a second argument to set a custom background opacity:"
   printf "\n           e.g. 'kitty-control transparent 0.9'"
+  printf "\n    'unicode' Displays the Unicode input kitten"
   printf "\n    '-a' Indicates modify all windows rather than just the currently active OS window"
   printf "\n    '-c command' specifies a Kitty command to run (enclose command and arguments in quotes)"
   printf "\n        Can be used to run arbitrary commands, e.g. 'kitty-control -c get-colors'"
@@ -430,6 +431,9 @@ while [[ $1 ]]; do
         shift
       fi
       setopcty="${OPACITY}"
+      ;;
+    unicode)
+      kitty +kitten unicode_input
       ;;
     *)
       printf "\nUnsupported Kitty control command: $1"
