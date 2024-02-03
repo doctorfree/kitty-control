@@ -6,6 +6,14 @@
 
 ### 🐞 Fixed
 
+## v1.0.1r3
+
+### ⚡️ Added
+
+### 🐞 Fixed
+
+- Delay font/background/foreground/opacity actions until after configuration load
+
 ## v1.0.1r2
 
 ### ⚡️ Added
