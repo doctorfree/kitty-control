@@ -6,6 +6,15 @@
 
 ### 🐞 Fixed
 
+## v1.0.1r4
+
+### ⚡️ Added
+
+- Add support for the `diff` kitten with `kitty-control diff <file1|dir1> <file2|dir2>`
+- Add support for the `icat` kitten with `kitty-control icat /path/to/image`
+
+### 🐞 Fixed
+
 ## v1.0.1r3
 
 ### ⚡️ Added

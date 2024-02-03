@@ -1,12 +1,15 @@
 Usage: kitty-control [-a] [-c command] [-e] [-f] [-i /path/to/image]
     [-m <match>] [-t <match>] [-s /path/to/socket] [-u|h|v] [back <color>]
-    [dark] [fore <color>] [font [num]] [icat [opts] <image>] [list]
-    [load [subdir]] [title <title>] [tran [opacity]]
+    [dark] [diff [opts] <file1|dir1> <file2|dir2>] [fore <color>] [font [num]]
+    [icat [opts] <image>] [list] [load [subdir]] [title <title>] [tran [opacity]]
 Where:
     'back color' Sets the background color to 'color'
            If 'color' is 'reset' restores foreground and background to startup value
     'dark' Sets the Kitty background opacity to 1.0 (fully opaque)
            Can use 'dark' or 'opaque'
+    'diff [opts] <file1|dir1> <file2|dir2>' Displays differences using the 'diff' kitten
+           Enclose [opts] and <file1/dir1> in quotes if [opts] are provided
+           See https://sw.kovidgoyal.net/kitty/kittens/diff/#options
     'font num' Sets the font pointsize to 'num'
            Can use 'font', 'fontsize', 'fontminus', or 'fontplus'
            The second argument specifies the font size, either absolute, +, or -

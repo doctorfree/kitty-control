@@ -93,13 +93,16 @@ examples run `kitty-control -h`.
 ```
 Usage: kitty-control [-a] [-c command] [-e] [-f] [-i /path/to/image]
     [-m <match>] [-t <match>] [-s /path/to/socket] [-u|h|v] [back <color>]
-    [dark] [fore <color>] [font [num]] [icat [opts] <image>] [list]
-    [load [subdir]] [title <title>] [tran [opacity]]
+    [dark] [diff [opts] <file1|dir1> <file2|dir2>] [fore <color>] [font [num]]
+    [icat [opts] <image>] [list] [load [subdir]] [title <title>] [tran [opacity]]
 Where:
     'back color' Sets the background color to 'color'
            If 'color' is 'reset' restores foreground and background to startup value
     'dark' Sets the Kitty background opacity to 1.0 (fully opaque)
            Can use 'dark' or 'opaque'
+    'diff [opts] <file1|dir1> <file2|dir2>' Displays differences using the 'diff' kitten
+           Enclose [opts] and <file1/dir1> in quotes if [opts] are provided
+           See https://sw.kovidgoyal.net/kitty/kittens/diff/#options
     'font num' Sets the font pointsize to 'num'
            Can use 'font', 'fontsize', 'fontminus', or 'fontplus'
            The second argument specifies the font size, either absolute, +, or -
@@ -234,26 +237,16 @@ kitty-control -i ~/Pictures/groovy.png
 kitty-control -i ~/Pictures/groovy.png fore cyan font 24
 ```
 
-#### Order is sometimes important, especially when switching configs
-
-Most arguments are not order sensitive. For example, to change configs
-and set a background image while toggling fullscreen mode:
+#### To view the image ~/Pictures/cats.png
 
 ```bash
-kitty-control -i ~/Pictures/Earth.png -f load tv  # Any order here will be ok
+kitty-control icat ~/Pictures/cats.png
 ```
 
-However, when using multiple commands with the `load` command, order becomes
-important. For example:
+#### To view differences between /path/to/file1 and /path/to/file2
 
 ```bash
-kitty-control font -4 load laptop # The 'font -4' is overridden by the new config
-```
-
-Instead, load the specified config first then apply the fontsize change:
-
-```bash
-kitty-control load laptop font -4
+kitty-control diff /path/to/file1 /path/to/file2
 ```
 
 #### To set the tab title of the tab currently titled '~/src/borg' to 'Borg Backup'
@@ -265,7 +258,7 @@ kitty-control load laptop font -4
 #### To restore the original Kitty configuration
 
 ```bash
-`kitty-control load default
+`kitty-control load default  # Or just 'kitty-control load'
 ```
 
 ### Example Kitty Configuration

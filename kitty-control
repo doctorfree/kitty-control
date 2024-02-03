@@ -35,8 +35,8 @@ OPTS=
 brief_usage() {
   printf "\nUsage: kitty-control [-a] [-c command] [-e] [-f] [-i /path/to/image]"
   printf "\n    [-m <match>] [-t <match>] [-s /path/to/socket] [-u|h|v] [back <color>]"
-  printf "\n    [dark] [fore <color>] [font [num]] [icat [opts] <image>] [list]"
-  printf "\n    [load [subdir]] [title <title>] [tran [opacity]]"
+  printf "\n    [dark] [diff [opts] <file1|dir1> <file2|dir2>] [fore <color>] [font [num]]"
+  printf "\n    [icat [opts] <image>] [list] [load [subdir]] [title <title>] [tran [opacity]]"
   [ "$1" == "noexit" ] || {
     printf "\n\nTo display several examples run 'kitty-control -e'"
     printf "\nFor a full usage message run 'kitty-control -u'"
@@ -64,6 +64,9 @@ show_examples() {
   printf "\n\tkitty-control -i ~/Pictures/groovy.png fore cyan font 24"
   printf "\nTo view the image ~/Pictures/cats.png"
   printf "\n\tkitty-control icat ~/Pictures/cats.png"
+  printf "\nTo view differences between /path/to/file1 and /path/to/file2"
+  printf "\n\tkitty-control diff /path/to/file1 /path/to/file2"
+  printf "\nTo set the tab title of the tab currently titled '~/src/borg' to 'Borg Backup':"
   printf "\nTo set the tab title of the tab currently titled '~/src/borg' to 'Borg Backup':"
   printf "\n\tkitty-control -m \"title:borg\" title \"Borg Backup\""
   printf "\nTo restore the original Kitty configuration:"
@@ -78,6 +81,9 @@ usage() {
   printf "\n           If 'color' is 'reset' restores foreground and background to startup value"
   printf "\n    'dark' Sets the Kitty background opacity to 1.0 (fully opaque)"
   printf "\n           Can use 'dark' or 'opaque'"
+  printf "\n    'diff [opts] <file1|dir1> <file2|dir2>' Displays differences using the 'diff' kitten"
+  printf "\n           Enclose [opts] and <file1/dir1> in quotes if [opts] are provided"
+  printf "\n           See https://sw.kovidgoyal.net/kitty/kittens/diff/#options"
   printf "\n    'font num' Sets the font pointsize to 'num'"
   printf "\n           Can use 'font', 'fontsize', 'fontminus', or 'fontplus'"
   printf "\n           The second argument specifies the font size, either absolute, +, or -"
@@ -174,6 +180,10 @@ kitty-list() {
 
 kitty-reload() {
   kitty @ ${SOCKET} kitten read_config.py "$1"
+}
+
+kitty-diff() {
+  kitty +kitten diff $1 $2
 }
 
 kitty-icat() {
@@ -309,6 +319,15 @@ while [[ $1 ]]; do
         shift 2
       else
         printf "\nERROR: foreground keyword requires an argument"
+        brief_usage
+      fi
+      ;;
+    diff)
+      if [ "$2" ] && [ "$3" ]; then
+        kitty-diff "$2" "$3"
+        shift 3
+      else
+        printf "\nERROR: diff keyword requires two file or directory arguments"
         brief_usage
       fi
       ;;
