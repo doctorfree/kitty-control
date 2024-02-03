@@ -7,6 +7,7 @@ Control some aspects of the `Kitty` terminal emulator from the command line
 - [Overview](#overview)
 - [Install](#install)
 - [Usage](#usage)
+- [Environment](#environment)
 - [Examples](#examples)
     - [Example Kitty Configuration](#example-kitty-configuration)
 - [Update](#update)
@@ -67,7 +68,7 @@ enables quick and easy switching between font pointsizes 32 and 22 with
 the commands `big` and `normal`. You can go nuts with this:
 
 ```bash
-alias kitv='kitty-control -b ~/Pictures/Space.png load tv title "SONY Bravia"'
+alias kitv='kitty-control -i ~/Pictures/Space.png load tv title "SONY Bravia"'
 ```
 
 You may wish to set an alias to restore the default Kitty configuration:
@@ -149,6 +150,33 @@ To view a brief help message for the socket configuration run
 To display the `kitty` documentation URL for window/tab matching syntax run
 `kitty-control -m --help` or `kitty-control -t --help`.
 
+## Environment
+
+In addition to the environment variables that influence `kitty` behavior
+(see https://sw.kovidgoyal.net/kitty/glossary/#environment-variables),
+`kitty-control` supports a `KITTY_SOCKET` environment variable that can
+can be used to specify the path to the socket `kitty` is listening on
+if one is configured. The `KITTY_SOCKET` environment variable can be
+used to avoid needing to specify the socket path with `-s /path/to/socket`.
+
+For example, if `kitty` was started with the command:
+
+```bash
+kitty --override allow_remote_control=yes --listen-on unix:/tmp/mykitty
+```
+
+then set and export `KITTY_SOCKET` in your shell environment:
+
+```bash
+export KITTY_SOCKET="/tmp/mykitty"
+```
+
+The other environment variable that can be used to effect the behavior
+of `kitty-control` is `KITTY_CONFIG_DIRECTORY`. If this is set then
+`kitty` and `kitty-control` search that directory instead of `~/.config/kitty`
+for configuration files and kittens. Setting `KITTY_CONFIG_DIRECTORY`
+instructs `kitty` and `kitty-control` to ignore files in `~/.config/kitty`.
+
 ## Examples
 
 ### Example invocations of kitty-control
@@ -186,13 +214,13 @@ kitty-control font +2
 #### To set the background image to ~/Pictures/groovy.png
 
 ```bash
-kitty-control -b ~/Pictures/groovy.png
+kitty-control -i ~/Pictures/groovy.png
 ```
 
 #### Actions can be combined on the same command line
 
 ```bash
-kitty-control -b ~/Pictures/groovy.png fore cyan font 24
+kitty-control -i ~/Pictures/groovy.png fore cyan font 24
 ```
 
 #### Order is sometimes important, especially when switching configs
@@ -201,7 +229,7 @@ Most arguments are not order sensitive. For example, to change configs
 and set a background image while toggling fullscreen mode:
 
 ```bash
-kitty-control -b ~/Pictures/Earth.png -f load tv  # Any order here will be ok
+kitty-control -i ~/Pictures/Earth.png -f load tv  # Any order here will be ok
 ```
 
 However, when using multiple commands with the `load` command, order becomes

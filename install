@@ -8,8 +8,17 @@ cp ${SCRIPT_PATH}/kitty-control ${HOME}/.local/bin/kitty-control
 chmod 755 ${HOME}/.local/bin/kitty-control
 
 [ -d ${HOME}/.config/kitty ] || mkdir -p ${HOME}/.config/kitty
-cp kitten/read_config.py ${HOME}/.config/kitty
+cp ${SCRIPT_PATH}/kitten/read_config.py ${HOME}/.config/kitty
 chmod 644 ${HOME}/.config/kitty/read_config.py
+
+[ "${KITTY_CONFIG_DIRECTORY}" ] && {
+  [ "${KITTY_CONFIG_DIRECTORY}" == "${HOME}/.config/kitty" ] || {
+    [ -d "${KITTY_CONFIG_DIRECTORY}" ] && {
+      cp ${SCRIPT_PATH}/kitten/read_config.py ${KITTY_CONFIG_DIRECTORY}
+      chmod 644 ${KITTY_CONFIG_DIRECTORY}/read_config.py
+    }
+  }
+}
 
 printf "Installation of kitty-control complete ✨ 🌟 ✨\n"
 printf "\nSee https://github.com/doctorfree/kitty-control#readme\n\n"
