@@ -152,7 +152,7 @@ kitty-list() {
 }
 
 kitty-reload() {
-  kitten @ kitten read-config.py "$1"
+  kitty @ ${SOCKET} kitten read_config.py "$1"
 }
 
 kitty-background() {
