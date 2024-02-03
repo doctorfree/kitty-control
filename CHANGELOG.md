@@ -10,6 +10,8 @@
 
 ### ⚡️ Added
 
+- Added support for arbitrary Kitty command with `-c command`
+
 ### 🐞 Fixed
 
 - Delay font/background/foreground/opacity actions until after configuration load
