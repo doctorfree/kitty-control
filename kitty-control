@@ -82,7 +82,7 @@ usage() {
   printf "\n           Can use 'load' or 'reload'"
   printf "\n           Specify a second argument to load ~/.config/kitty/<subdir>/kitty.conf"
   printf "\n           e.g. 'kitty-control load tv' would load ~/.config/kitty/tv/kitty.conf"
-  printf "\n           'kitty-control load default' restores the kitty.conf used to start this instance"
+  printf "\n           'kitty-control load default' loads the ~/.config/kitty/kitty.conf config"
   printf "\n           'kitty-control load --help' displays a help message for the load command"
   printf "\n    'title <tab title>' Sets the Kitty tab title to \"tab title\""
   printf "\n          Quote tab titles which contain spaces, e.g. \"This Is My Tab Title\""
@@ -152,14 +152,7 @@ kitty-list() {
 }
 
 kitty-reload() {
-  [ "$1" ] && {
-    [ -f "${CONFDIR}/default/kitty.conf" ] || {
-      [ -d "${CONFDIR}/default" ] || mkdir -p "${CONFDIR}/default"
-      cp "${CONFDIR}/kitty.conf" "${CONFDIR}/default/kitty.conf"
-    }
-    cp "${CONFDIR}/$1/kitty.conf" "${CONFDIR}/kitty.conf"
-  }
-  kill -SIGUSR1 $(pidof kitty)
+  kitty @ ${SOCKET} kitten read_config.py "$1"
 }
 
 kitty-background() {
@@ -304,16 +297,16 @@ do
           printf "\ntwo Kitty configurations with kitty-control as follows:"
           printf "\n\tkitty-control load tv # When your display is the TV as monitor"
           printf "\n\tkitty-control load laptop # When you're using the laptop built-in display"
-          printf "\n\nTo restore the Kitty configuration to its original setting:"
+          printf "\n\nTo restore the Kitty configuration in ~/.config/kitty/kitty.conf:"
           printf "\n\tkitty-control load default\n\n"
           exit 0
         else
           if [ -f "${CONFDIR}/$2/kitty.conf" ]; then
-            kitty-reload "$2"
+            kitty-reload "${CONFDIR}/$2/kitty.conf"
             shift 2
           else
             if [ "$2" == "default" ]; then
-              kitty-reload
+              kitty-reload "${CONFDIR}/kitty.conf"
               shift 2
             else
               printf "\n ${CONFDIR}/$2/kitty.conf does not exist\n"
@@ -322,7 +315,7 @@ do
           fi
         fi
       else
-        kitty-reload
+        kitty-reload "${CONFDIR}/kitty.conf"
         shift
       fi
       ;;
