@@ -91,9 +91,10 @@ several examples, `kitty-control -e`. To display the full usage message and
 examples run `kitty-control -h`.
 
 ```
-Usage: kitty-control [-a] [-c command] [-e] [-f] [-i /path/to/image] [-m <match>]
-    [-t <match>] [-s /path/to/socket] [-u|h|v] [back <color>] [dark] [fore <color>]
-    [font [num]] [list] [load [subdir]] [title <title>] [tran [opacity]]
+Usage: kitty-control [-a] [-c command] [-e] [-f] [-i /path/to/image]
+    [-m <match>] [-t <match>] [-s /path/to/socket] [-u|h|v] [back <color>]
+    [dark] [fore <color>] [font [num]] [icat [opts] <image>] [list]
+    [load [subdir]] [title <title>] [tran [opacity]]
 Where:
     'back color' Sets the background color to 'color'
            If 'color' is 'reset' restores foreground and background to startup value
@@ -107,6 +108,11 @@ Where:
                 'kitty-control font' without argument resets the font size to default
     'fore color' Sets the foreground color to 'color'
            If 'color' is 'reset' restores foreground and background to startup value
+    'icat [opts] <image>' Displays <image> using the Kitty 'icat' kitten
+           Enclose [opts] and <image> in quotes if [opts] are provided
+           To remove all images currently displayed on the screen:
+               kitty-control icat --clear
+           See https://sw.kovidgoyal.net/kitty/kittens/icat/#options
     'list' Displays information on Kitty windows
     'load [subdir]' Reloads the Kitty configuration in ~/.config/kitty/kitty.conf
            Can use 'load' or 'reload'
