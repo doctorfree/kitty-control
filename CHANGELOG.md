@@ -6,6 +6,21 @@
 
 ### 🐞 Fixed
 
+## v1.0.1r1
+
+### ⚡️ Added
+
+- Add support for `KITTY_CONFIG_DIRECTORY` environment variable
+- Add support for `KITTY_SOCKET` environment variable
+- Add `read_config.py` kitten to load `kitty` configurations
+- Add `install` and `uninstall` scripts
+
+### 🐞 Fixed
+
+- Replace `getopts` with while loop through all arguments
+- Change image option from `-b /path/to/image` to `-i /path/to/image`
+- Fix `read_config.py` kitten invocation
+
 ## v1.0.0r1
 
 ### ⚡️ Added
