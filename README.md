@@ -131,8 +131,7 @@ Where:
         If <match> is '--help' the Kitty documentation URL for matching will be displayed
     '-s /path/to/socket' Specifies the socket Kitty is listening on if enabled
         If /path/to/socket is '--help' some help on configuring a Kitty socket is provided
-        If KITTY_SOCKET is set in the environment then no need for -s /path/...
-        or '-s /path/...' can be used to override the value of KITTY_SOCKET
+        '-s /path/...' can be used to send commands to Kitty from another terminal
     '-u' Displays the usage message and exits
     '-v' Displays the kitty-control version and exits
 Adjusting the background opacity or font size requires the original kitty.conf
@@ -152,12 +151,19 @@ To display the `kitty` documentation URL for window/tab matching syntax run
 
 ## Environment
 
-In addition to the environment variables that influence `kitty` behavior
-(see https://sw.kovidgoyal.net/kitty/glossary/#environment-variables),
-`kitty-control` supports a `KITTY_SOCKET` environment variable that can
-can be used to specify the path to the socket `kitty` is listening on
-if one is configured. The `KITTY_SOCKET` environment variable can be
-used to avoid needing to specify the socket path with `-s /path/to/socket`.
+Environment variables can be used to influence `kitty` behavior. See
+https://sw.kovidgoyal.net/kitty/glossary/#environment-variables for
+details on environment variables `kitty` uses. The `kitty-control`
+command behavior depends on the `KITTY_LISTEN_ON` and
+`KITTY_CONFIG_DIRECTORY` environment variables.
+
+`KITTY_LISTEN_ON` is set automatically by `kitty` and specifies the
+path to the socket `kitty` is listening on if one is configured.
+
+`KITTY_CONFIG_DIRECTORY` can be set by the user to specify the directory
+`kitty` and `kitty-control` search for configuration files and kittens.
+Setting `KITTY_CONFIG_DIRECTORY` instructs `kitty` and `kitty-control`
+to ignore files in `~/.config/kitty`.
 
 For example, if `kitty` was started with the command:
 
@@ -165,17 +171,12 @@ For example, if `kitty` was started with the command:
 kitty --override allow_remote_control=yes --listen-on unix:/tmp/mykitty
 ```
 
-then set and export `KITTY_SOCKET` in your shell environment:
-
-```bash
-export KITTY_SOCKET="/tmp/mykitty"
-```
-
-The other environment variable that can be used to effect the behavior
-of `kitty-control` is `KITTY_CONFIG_DIRECTORY`. If this is set then
-`kitty` and `kitty-control` search that directory instead of `~/.config/kitty`
-for configuration files and kittens. Setting `KITTY_CONFIG_DIRECTORY`
-instructs `kitty` and `kitty-control` to ignore files in `~/.config/kitty`.
+then `KITTY_LISTEN_ON` would be set to `unix:/tmp/mykitty` and `kitty-control`
+would use that socket to communicate with `kitty`. The socket that
+`kitty-control` uses can be overridden with the `-s /path/to/socket` command
+line arguments. This can be used to tell `kitty-control` to communicate with
+another instance of `kitty` or used when running `kitty-control` from a
+non-kitty terminal or console.
 
 ## Examples
 

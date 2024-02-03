@@ -40,8 +40,7 @@ Where:
         If <match> is '--help' the Kitty documentation URL for matching will be displayed
     '-s /path/to/socket' Specifies the socket Kitty is listening on if enabled
         If /path/to/socket is '--help' some help on configuring a Kitty socket is provided
-        If KITTY_SOCKET is set in the environment then no need for -s /path/...
-        or '-s /path/...' can be used to override the value of KITTY_SOCKET
+        '-s /path/...' can be used to send commands to Kitty from another terminal
     '-u' Displays the usage message and exits
     '-v' Displays the kitty-control version and exits
 Adjusting the background opacity or font size requires the original kitty.conf
