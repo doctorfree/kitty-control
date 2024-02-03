@@ -19,7 +19,17 @@ OPACITY="0.8"
 # The format of this setting is:
 # SOCKET="--to unix:/path/to/socket"
 # Leave blank if no listen socket configured or to specify with -s /path/to/socket
-SOCKET=
+# Alternately, if KITTY_SOCKET is set in the environment that will be used
+# e.g.  export KITTY_SOCKET="/tmp/mykitty"
+if [ "${KITTY_SOCKET}" ]; then
+  if [ -S "${KITTY_SOCKET}" ]; then
+    SOCKET="--to unix:${KITTY_SOCKET}"
+  else
+    SOCKET=
+  fi
+else
+  SOCKET=
+fi
 # Kitty remote control options are used to specify which windows/tabs to modify
 OPTS=
 
@@ -103,6 +113,8 @@ usage() {
   printf "\n        If <match> is '--help' the Kitty documentation URL for matching will be displayed"
   printf "\n    '-s /path/to/socket' Specifies the socket Kitty is listening on if enabled"
   printf "\n        If /path/to/socket is '--help' some help on configuring a Kitty socket is provided"
+  printf "\n        If KITTY_SOCKET is set in the environment then no need for -s /path/..."
+  printf "\n        or '-s /path/...' can be used to override the value of KITTY_SOCKET"
   printf "\n    '-u' Displays the usage message and exits"
   printf "\n    '-v' Displays the kitty-control version and exits"
   printf "\nAdjusting the background opacity or font size requires the original kitty.conf"
@@ -225,10 +237,12 @@ while [[ $1 ]]; do
         printf "\n\tlisten_on unix:/tmp/mykitty\n"
         printf "\nTo use this with kitty-control set SOCKET=\"--to unix:/tmp/mykitty\""
         printf "\nin kitty-control or invoke kitty-control with '-s /tmp/mykitty'."
-        printf "\nFor example: kitty-control -s /tmp/mykitty fontsize 24\n\n"
+        printf "\nFor example: kitty-control -s /tmp/mykitty fontsize 24\n"
+        printf "\nAlternately, set KITTY_SOCKET in the environment and that will be used"
+        printf "\n    export KITTY_SOCKET=\"/tmp/mykitty\"\n\n"
         exit 0
       else
-        SOCKET="--to unix:$2"
+        [ -S "$2" ] && SOCKET="--to unix:$2"
       fi
       shift 2
       ;;
