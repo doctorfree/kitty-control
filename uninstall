@@ -1,0 +1,9 @@
+#!/bin/bash
+
+SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
+SCRIPT_PATH="$(realpath $SCRIPT_PATH)"
+
+rm -f ${HOME}/.local/bin/kitty-control
+rm -f ${HOME}/.config/kitty/read_config.py
+
+printf "\nRemoval of kitty-control complete\n"

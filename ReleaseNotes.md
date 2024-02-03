@@ -10,9 +10,8 @@ The `kitty-control` command can be installed on `Linux` or `macOS`. It is a comm
 
 ```bash
 git clone https://github.com/doctorfree/kitty-control
-mkdir -p ~/.local/bin
-cp kitty-control/kitty-control ~/.local/bin/kitty-control
-chmod 755 ~/.local/bin/kitty-control
+cd kitty-control
+./install
 # Add ~/.local/bin to the execution PATH environment variable
 # echo "export PATH="$HOME/.local/bin:$PATH" >> $HOME/.bashrc
 # source $HOME/.bashrc

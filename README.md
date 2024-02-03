@@ -10,6 +10,7 @@ Control some aspects of the `Kitty` terminal emulator from the command line
 - [Examples](#examples)
     - [Example Kitty Configuration](#example-kitty-configuration)
 - [Update](#update)
+- [Uninstall](#uninstall)
 
 ## Overview
 
@@ -44,9 +45,8 @@ simplify and ease those `kitty` customizations used fairly frequently.
 
 ```bash
 git clone https://github.com/doctorfree/kitty-control
-mkdir -p ~/.local/bin
-cp kitty-control/kitty-control ~/.local/bin/kitty-control
-chmod 755 ~/.local/bin/kitty-control
+cd kitty-control
+./install
 # Add ~/.local/bin to the execution PATH environment variable
 # echo "export PATH="$HOME/.local/bin:$PATH" >> $HOME/.bashrc
 # source $HOME/.bashrc
@@ -109,7 +109,7 @@ Where:
            Can use 'load' or 'reload'
            Specify a second argument to load ~/.config/kitty/<subdir>/kitty.conf
            e.g. 'kitty-control load tv' would load ~/.config/kitty/tv/kitty.conf
-           'kitty-control load default' restores the kitty.conf used to start this instance
+           'kitty-control load default' loads the ~/.config/kitty/kitty.conf config
            'kitty-control load --help' displays a help message for the load command
     'title <tab title>' Sets the Kitty tab title to "tab title"
           Quote tab titles which contain spaces, e.g. "This Is My Tab Title"
@@ -262,5 +262,12 @@ directory:
 ```bash
 cd /path/to/cloned/repository
 git pull
-cp kitty-control ~/.local/bin/kitty-control
+./install
+```
+
+## Uninstall
+
+```bash
+cd /path/to/cloned/repository
+./uninstall
 ```
