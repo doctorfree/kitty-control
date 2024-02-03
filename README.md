@@ -88,7 +88,7 @@ several examples, `kitty-control -e`. To display the full usage message and
 examples run `kitty-control -h`.
 
 ```
-Usage: kitty-control [-a] [-b /path/to/image] [-e] [-f] [-m <match>] [-t <match>]
+Usage: kitty-control [-a] [-e] [-f] [-i /path/to/image] [-m <match>] [-t <match>]
            [-s /path/to/socket] [-u|h|v] [back <color>] [dark] [fore <color>]
            [font [num]] [list] [load [subdir]] [title <title>] [tran [opacity]]
 Where:
@@ -119,11 +119,11 @@ Where:
            Specify a second argument to set a custom background opacity:
            e.g. 'kitty-control transparent 0.9'
     '-a' Indicates modify all windows rather than just the currently active OS window
-    '-b /path/to/image' sets the background image for the specified Kitty windows
-        If /path/to/image is 'none' then any existing image will be removed
     '-e' Displays several example invocations and exits
     '-f' Indicates toggle fullscreen
     '-h' Displays the usage message with examples and exits
+    '-i /path/to/image' sets the background image for the specified Kitty windows
+        If /path/to/image is 'none' then any existing image will be removed
     '-m <match>' Specifies the window to match
     '-t <match>' Specifies the tab to match
         Window/Tab matching can be used in conjunction with most kitty-control commands

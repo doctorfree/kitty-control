@@ -24,7 +24,7 @@ SOCKET=
 OPTS=
 
 brief_usage() {
-  printf "\nUsage: kitty-control [-a] [-b /path/to/image] [-e] [-f] [-m <match>] [-t <match>]"
+  printf "\nUsage: kitty-control [-a] [-e] [-f] [-i /path/to/image] [-m <match>] [-t <match>]"
   printf "\n           [-s /path/to/socket] [-u|h|v] [back <color>] [dark] [fore <color>]"
   printf "\n           [font [num]] [list] [load [subdir]] [title <title>] [tran [opacity]]"
   [ "$1" == "noexit" ] || {
@@ -49,9 +49,9 @@ show_examples() {
   printf "\nTo increase the font size by 2 points:"
   printf "\n\tkitty-control font +2"
   printf "\nTo set the background image to ~/Pictures/groovy.png"
-  printf "\n\tkitty-control -b ~/Pictures/groovy.png"
+  printf "\n\tkitty-control -i ~/Pictures/groovy.png"
   printf "\nActions can be combined on the same command line:"
-  printf "\n\tkitty-control -b ~/Pictures/groovy.png fore cyan font 24"
+  printf "\n\tkitty-control -i ~/Pictures/groovy.png fore cyan font 24"
   printf "\nOrder is sometimes important, especially when switching configs:"
   printf "\n\tkitty-control font -4 load laptop # The 'font -4' is overridden by the new config"
   printf "\n\tInstead use 'kitty-control load laptop font -4'"
@@ -92,11 +92,11 @@ usage() {
   printf "\n           Specify a second argument to set a custom background opacity:"
   printf "\n           e.g. 'kitty-control transparent 0.9'"
   printf "\n    '-a' Indicates modify all windows rather than just the currently active OS window"
-  printf "\n    '-b /path/to/image' sets the background image for the specified Kitty windows"
-  printf "\n        If /path/to/image is 'none' then any existing image will be removed"
   printf "\n    '-e' Displays several example invocations and exits"
   printf "\n    '-f' Indicates toggle fullscreen"
   printf "\n    '-h' Displays the usage message with examples and exits"
+  printf "\n    '-i /path/to/image' sets the background image for the specified Kitty windows"
+  printf "\n        If /path/to/image is 'none' then any existing image will be removed"
   printf "\n    '-m <match>' Specifies the window to match"
   printf "\n    '-t <match>' Specifies the tab to match"
   printf "\n        Window/Tab matching can be used in conjunction with most kitty-control commands"
@@ -188,27 +188,31 @@ set-title() {
 # Some actions need to be delayed until after any configuration load
 bg_image=
 fullscrn=
-while getopts ":ab:efm:s:t:huv" flag; do
-  case $flag in
-    a)
+while [[ $1 ]]; do
+  case "$1" in
+    -a | --all)
       OPTS="$OPTS -a"
+      shift
       ;;
-    b)
-      bg_image="${OPTARG}"
+    -i | --image)
+      bg_image="$2"
+      shift 2
       ;;
-    f)
+    -f | --fullscreen)
       fullscrn=1
+      shift
       ;;
-    m)
-      if [ "${OPTARG}" == "--help" ]; then
+    -m | --match)
+      if [ "$2" == "--help" ]; then
         printf "\nSee https://sw.kovidgoyal.net/kitty/remote-control/#matching-windows-and-tabs\n\n"
         exit 0
       else
-        OPTS="$OPTS -m ${OPTARG}"
+        OPTS="$OPTS -m $2"
       fi
+      shift 2
       ;;
-    s)
-      if [ "${OPTARG}" == "--help" ]; then
+    -s | --socket)
+      if [ "$2" == "--help" ]; then
         printf "\nStart kitty as:"
         printf "\n\tkitty -o allow_remote_control=yes --listen-on unix:/tmp/mykitty"
         printf "\nThe kitty '--listen-on' option tells kitty to listen for control messages"
@@ -224,41 +228,35 @@ while getopts ":ab:efm:s:t:huv" flag; do
         printf "\nFor example: kitty-control -s /tmp/mykitty fontsize 24\n\n"
         exit 0
       else
-        SOCKET="--to unix:$OPTARG"
+        SOCKET="--to unix:$2"
       fi
+      shift 2
       ;;
-    t)
-      if [ "${OPTARG}" == "--help" ]; then
+    -t | --tab)
+      if [ "$2" == "--help" ]; then
         printf "\nSee https://sw.kovidgoyal.net/kitty/remote-control/#matching-windows-and-tabs\n\n"
         exit 0
       else
-        OPTS="$OPTS -t ${OPTARG}"
+        OPTS="$OPTS -t $2"
       fi
+      shift 2
       ;;
-    e)
+    -e | --examples)
       show_examples
+      shift
       ;;
-    h)
+    -h | --help)
       usage examples
+      shift
       ;;
-    u)
+    -u | --usage)
       usage
+      shift
       ;;
-    v)
+    -v | --version)
       printf "\nkitty-control version ${VERSION} release ${RELEASE}\n\n"
       exit 0
       ;;
-    \?)
-      echo "Invalid option: $flag"
-      brief_usage
-      ;;
-  esac
-done
-shift $(( OPTIND - 1 ))
-
-while [ "$1" ]
-do
-  case $1 in
     back*)
       if [ "$2" ]; then
         set-background "$2"
