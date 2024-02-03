@@ -152,14 +152,7 @@ kitty-list() {
 }
 
 kitty-reload() {
-  [ "$1" ] && {
-    [ -f "${CONFDIR}/default/kitty.conf" ] || {
-      [ -d "${CONFDIR}/default" ] || mkdir -p "${CONFDIR}/default"
-      cp "${CONFDIR}/kitty.conf" "${CONFDIR}/default/kitty.conf"
-    }
-    cp "${CONFDIR}/$1/kitty.conf" "${CONFDIR}/kitty.conf"
-  }
-  kill -SIGUSR1 $(pidof kitty)
+  kitten @ kitten read-config.py "$1"
 }
 
 kitty-background() {
@@ -309,11 +302,11 @@ do
           exit 0
         else
           if [ -f "${CONFDIR}/$2/kitty.conf" ]; then
-            kitty-reload "$2"
+            kitty-reload "${CONFDIR}/$2/kitty.conf"
             shift 2
           else
             if [ "$2" == "default" ]; then
-              kitty-reload
+              kitty-reload "${CONFDIR}/kitty.conf"
               shift 2
             else
               printf "\n ${CONFDIR}/$2/kitty.conf does not exist\n"
@@ -322,7 +315,7 @@ do
           fi
         fi
       else
-        kitty-reload
+        kitty-reload "${CONFDIR}/kitty.conf"
         shift
       fi
       ;;
