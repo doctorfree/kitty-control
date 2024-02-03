@@ -35,6 +35,7 @@ echo "Creating release for version ${VERSION} release ${RELEASE}"
 gh release create v${VERSION}r${RELEASE} ${DRAFT} \
                   --title "${ANNO}" \
                   --notes-file ReleaseNotes.md \
+                  install \
                   kitty-control \
                   kitten/read_config.py \
                   CHANGELOG.md

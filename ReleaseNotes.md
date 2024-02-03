@@ -17,6 +17,14 @@ cd kitty-control
 # source $HOME/.bashrc
 ```
 
+Alternately, download the `install` release asset from
+https://github.com/doctorfree/kitty-control/releases/latest
+and execute it with `bash /path/to/install`. For example,
+if the `install` release asset was downloaded to the `~/Downloads`
+folder, run `bash ~/Downloads/install`.
+
+## Information
+
 See the [kitty-control project README](https://github.com/doctorfree/kitty-control#readme) for an overview, usage, and examples.
 
 See the [kitty-control CHANGELOG](https://github.com/doctorfree/kitty-control/blob/main/CHANGELOG.md) for a complete history of changes.

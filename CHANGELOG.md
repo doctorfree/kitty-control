@@ -6,6 +6,16 @@
 
 ### 🐞 Fixed
 
+## v1.0.1r2
+
+### ⚡️ Added
+
+- Add `read_config.py` and `CHANGELOG.md` to release assets
+
+### 🐞 Fixed
+
+- Use the `kitty` environment variable `KITTY_LISTEN_ON` rather than `KITTY_SOCKET`
+
 ## v1.0.1r1
 
 ### ⚡️ Added

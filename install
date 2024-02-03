@@ -3,6 +3,26 @@
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_PATH="$(realpath $SCRIPT_PATH)"
 
+[ -f ${SCRIPT_PATH}/kitty-control ] || {
+  have_git=$(type -p git)
+  [ "${have_git}" ] || {
+    printf "\nERROR: cannot locate required git command"
+    printf "\nInstall git and re-run this install script\n\n"
+    exit 1
+  }
+  git clone https://github.com/doctorfree/kitty-control /tmp/kc$$
+  [ -x /tmp/kc$$/install ] || {
+    [ -f /tmp/kc$$/install ] || {
+      printf "\nERROR: installation failure, missing files.\n\n"
+      exit 1
+    }
+    chmod 755 /tmp/kc$$/install
+  }
+  /tmp/kc$$/install
+  rm -rf /tmp/kc$$
+  exit 0
+}
+
 [ -d ${HOME}/.local/bin ] || mkdir -p ${HOME}/.local/bin
 cp ${SCRIPT_PATH}/kitty-control ${HOME}/.local/bin/kitty-control
 chmod 755 ${HOME}/.local/bin/kitty-control
