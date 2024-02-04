@@ -36,20 +36,25 @@ FONTDIR="${HOME}/.local/share/figlet-fonts"
 LOLCAT="lolcat"
 # Array with font names
 fonts=("Fire Font-k" "Graceful" "Script" "Shadow" "Slant" "Small" "Standard")
+# Transparency opacity choices for menu
+translevels=("default" "0.0" "0.1" "0.2" "0.3" "0.4" "0.5" "0.6" "0.7" "0.8" "0.9" "1.0")
 # Use tput to get the bold and normal text sequence
 BOLD=$(tput bold 2>/dev/null)
 NORM=$(tput sgr0 2>/dev/null)
 
 brief_usage() {
-  printf "${BOLD}Usage: kitty-control [-a] [-c command] [dark] [-e] [-f] [-i /path/to/image]"
-  printf "\n    [-m|t <match>] [-s /path/to/socket] [-u|h|v] [back <color>] [term] [theme]"
-  printf "\n    [diff [opts] <path1> <path2>] [fore <color>] [font [num]] [load [subdir]]"
-  printf "\n    [icat [opts] <image>] [list] [menu] [title <title>] [tran [opacity]]"
-  printf "\n    [unicode] [upgrade]${NORM}"
+  printf "${BOLD}Usage: kitty-control [-a] [back <color>] [-c command] [dark]"
+  printf "\n    [diff [opts] <path1> <path2>] [-e|E] [-f] [font [num]] [fore <color>]"
+  printf "\n    [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]"
+  printf "\n    [-u|h|v] [term] [theme] [icat [opts] <image>] [list] [menu] [title <title>]"
+  printf "\n    [transparent [opacity]] [unicode] [upgrade]${NORM}"
+  printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
+    printf " displays an interactive menu system"
   [ "$1" == "noexit" ] || {
-    printf "\n\nTo display several examples run 'kitty-control -e'"
-    printf "\nFor a full usage message run 'kitty-control -u'"
-    printf "\nFor a full usage message with examples run 'kitty-control -h'\n\n"
+    printf "\nFor a brief usage message run '${BOLD}kitty-control -u${NORM}'"
+    printf "\nFor a full usage message run '${BOLD}kitty-control -h${NORM}'"
+    printf "\nTo display several examples run '${BOLD}kitty-control -e${NORM}'"
+    printf "\nTo display the full usage message and examples run '${BOLD}kitty-control -E${NORM}'\n\n"
     exit 1
   }
 }
@@ -58,7 +63,7 @@ show_examples() {
   brief_usage noexit
   printf "\nExample invocations of kitty-control\n"
   printf "\nTo set a transparent Kitty background with 0.9 opacity:"
-  printf "\n\t${BOLD}kitty-control tran 0.9${NORM}"
+  printf "\n\t${BOLD}kitty-control transparent 0.9${NORM}"
   printf "\nTo set the Kitty background to fully opaque (no transparency):"
   printf "\n\t${BOLD}kitty-control dark${NORM}"
   printf "\nTo set the Kitty background color to black and foreground color to white:"
@@ -78,7 +83,9 @@ show_examples() {
   printf "\nTo set the tab title of the tab currently titled '~/src/borg' to 'Borg Backup':"
   printf "\n\t${BOLD}kitty-control -m \"title:borg\" title \"Borg Backup\"${NORM}"
   printf "\nTo restore the original Kitty configuration:"
-  printf "\n\t${BOLD}kitty-control load default${NORM}\n"
+  printf "\n\t${BOLD}kitty-control load default${NORM}"
+  printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
+    printf " displays an interactive menu system\n"
   exit 1
 }
 
@@ -133,8 +140,9 @@ usage() {
     printf " specifies a Kitty command to run (enclose command and arguments in quotes)"
   printf "\n        Can be used to run arbitrary commands, e.g. 'kitty-control -c get-colors'"
   printf "\n    '${BOLD}-e${NORM}' Displays several example invocations and exits"
+  printf "\n    '${BOLD}-E${NORM}' Displays full usage message with examples and exits"
   printf "\n    '${BOLD}-f${NORM}' Indicates toggle fullscreen"
-  printf "\n    '${BOLD}-h${NORM}' Displays the usage message with examples and exits"
+  printf "\n    '${BOLD}-h${NORM}' Displays a full usage message and exits"
   printf "\n    '${BOLD}-i /path/to/image${NORM}'"
     printf " sets the background image for the specified Kitty windows"
   printf "\n        If /path/to/image is 'none' then any existing image will be removed"
@@ -146,7 +154,7 @@ usage() {
     printf " Specifies the socket Kitty is listening on if enabled"
   printf "\n        If /path/to/socket is '--help' some help on configuring a Kitty socket is provided"
   printf "\n        '-s /path/...' can be used to send commands to Kitty from another terminal"
-  printf "\n    '${BOLD}-u${NORM}' Displays the usage message and exits"
+  printf "\n    '${BOLD}-u${NORM}' Displays a brief usage message and exits"
   printf "\n    '${BOLD}-v${NORM}' Displays the kitty-control version and exits"
   printf "\nAdjusting the background opacity or font size requires the original kitty.conf"
   printf "\nthat was used for this instance of Kitty to have enabled the following:"
@@ -184,6 +192,37 @@ kitty-fontsize() {
     kitty @ ${SOCKET} set-font-size ${OPTS} -- $size
   else
     kitty @ ${SOCKET} set-font-size ${OPTS} $size
+  fi
+}
+
+load-config() {
+  if [ "$1" == "--help" ]; then
+    printf "\nThe 'kitty-control load <subdir>' command loads the Kitty configuration"
+    printf "\nfile in '~/.config/kitty/<subdir>/kitty.conf'. The current instance of"
+    printf "\nkitty continues to run and the specified configuration file is loaded."
+    printf "\nAll tabs and state are preserved while the new configuration is loaded."
+    printf "\n\nThe new Kitty configuration file must be prepared beforehand and located"
+    printf "\nin the specified subdirectory in the Kitty configuration folder."
+    printf "\n\nFor example, if you have one Kitty configuration used for a large screen"
+    printf "\nTV and another used for a laptop then placing the TV Kitty configuration"
+    printf "\nin ~/.config/kitty/tv/kitty.conf and the laptop Kitty configuration in"
+    printf "\n~/.config/kitty/laptop/kitty.conf would allow you to switch between these"
+    printf "\ntwo Kitty configurations with kitty-control as follows:"
+    printf "\n\tkitty-control load tv # When your display is the TV as monitor"
+    printf "\n\tkitty-control load laptop # When you're using the laptop built-in display"
+    printf "\n\nTo restore the Kitty configuration in ~/.config/kitty/kitty.conf:"
+    printf "\n\tkitty-control load default\n\n"
+    exit 0
+  else
+    if [ -f "${CONFDIR}/$1/kitty.conf" ]; then
+      kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/$1/kitty.conf"
+    else
+      if [ "$1" == "default" ]; then
+        kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/kitty.conf"
+      else
+        printf "\n ${CONFDIR}/$1/kitty.conf does not exist\n"
+      fi
+    fi
   fi
 }
 
@@ -378,83 +417,119 @@ show_usage() {
 }
 
 show_menu() {
-  help=
   set_haves
   while true; do
     clear
     if [ "${have_figlet}" ]; then
       show_figlet
     else
-      [ "${have_rich}" ] && rich "[cyan]Kitty Control Menu[/cyan]" -p -a rounded -c -C
+      [ "${have_rich}" ] && rich "[cyan]Kitty Control[/cyan]" -p -a rounded -c -C
     fi
     options=()
     PS3="${BOLD}Enter a choice (number, shortcut, or text, 'h' help): ${NORM}"
 # Usage: kitty-control [-a] [-c command] [-e] [-i /path/to/image]
 # [-m|t <match>] [-s /path/to/socket] [-u|h|v] [back <color>]
-# [diff [opts] <path1> <path2>] [fore <color>] [font [num]] [load [subdir]]
-# [icat [opts] <image>] [title <title>] [tran [opacity]] [unicode]
+# [diff [opts] <path1> <path2>] [fore <color>] [font [num]]
+# [icat [opts] <image>] [title <title>]
 # 
 #  display several examples run 'kitty-control -e'
 #  a full usage message run 'kitty-control -u'
 #  a full usage message with examples run 'kitty-control -h'
+    numconfs=1
+    configs=("default")
+    for kconf in ${CONFDIR}/*/kitty.conf
+    do
+      [ "${kconf}" == "${CONFDIR}/*/kitty.conf" ] && continue
+      ((numconfs++))
+      configs+=("${kconf}")
+    done
+    [ ${numconfs} -gt 1 ] && {
+      options+=("Load Kitty Configuration")
+    }
     options+=("Dark/Opaque" "List Current Info" "Transparent" "Toggle Fullscreen")
-    options+=("Select Theme" "Terminal Info" "Unicode Input" "Show Usage Message")
-    options+=("Quit (q)")
+    options+=("Theme Selection" "Terminal Info" "Unicode Input" "Show Usage Message")
+    options+=("Upgrade Kitty" "Quit (q)")
     select opt in "${options[@]}"; do
       case "$opt,$REPLY" in
       "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
         printf "\n"
         show_help
-        help=1
         break
         ;;
-      "Dark/Opaque",* | *,"Dark/Opaque")
+      "Dark"*,* | *,"Dark"* | "dark"*,* | *,"dark"* | "Opaq"*,* | *,"Opaq"* | "opaq"*,* | *,"opaq"*)
         set-opacity "1.0"
         break
         ;;
-      "List Current Info",* | *,"List Current Info")
+      "List"*,* | *,"List"* | "list"*,* | *,"list"*)
         kitty @ ${SOCKET} ls ${OPTS} | less
         break
         ;;
-      "Select Theme",* | *,"Select Theme")
+      "Load"*,* | *,"Load"* | "load"*,* | *,"load"*)
+        if [ "${have_fzf}" ]; then
+          choice=$(printf "%s\n" "${configs[@]}" | fzf --prompt="😺 Select Kitty Configuration  " --layout=reverse --border --exit-0)
+          [ "${choice}" ] && {
+            if [ "${choice}" == "default" ]; then
+              load-config "${choice}"
+            else
+              subdir=$(echo "${choice}" | awk -F '/' '{ printf $(NF - 1) }')
+              load-config "${subdir}"
+            fi
+          }
+        else
+          printf "\nERROR: Cannot locate required fzf fuzzy finder"
+          printf "\nTo load Kitty configurations using the Kitty Control"
+          printf "\nmenu system install fzf and re-run kitty-control\n"
+          prompt_continue
+        fi
+        break
+        ;;
+      "Theme"*,* | *,"Theme"* | "theme"*,* | *,"theme"*)
         kitty +kitten themes
         break
         ;;
-      "Terminal Info",* | *,"Terminal Info")
+      "Term"*,* | *,"Term"* | "term"*,* | *,"term"*)
         kitty +kitten query_terminal
+        prompt_continue
         break
         ;;
-      "Transparent",* | *,"Transparent")
-        set-opacity "${OPACITY}"
+      "Tran"*,* | *,"Tran"* | "tran"*,* | *,"tran"*)
+        if [ "${have_fzf}" ]; then
+          choice=$(printf "%s\n" "${translevels[@]}" | fzf --prompt="😺 Select Transparency Opacity  " --layout=reverse --border --exit-0)
+          [ "${choice}" ] && {
+            if [ "${choice}" == "default" ]; then
+              set-opacity "${OPACITY}"
+            else
+              set-opacity "${choice}"
+            fi
+          }
+        else
+          printf "\nERROR: Cannot locate required fzf fuzzy finder"
+          printf "\nTo set Kitty transparency using the Kitty Control"
+          printf "\nmenu system install fzf and re-run kitty-control\n"
+          prompt_continue
+        fi
         break
         ;;
-      "Toggle Fullscreen",* | *,"Toggle Fullscreen")
+      "Toggle"*,* | *,"Toggle"* | "toggle"*,* | *,"toggle"*)
         toggle-fullscreen
-        sleep 2
+        sleep 1
         break
         ;;
-      "Unicode Input",* | *,"Unicode Input")
+      "Unicode"*,* | *,"Unicode"* | "unicode"*,* | *,"unicode"*)
         kitty +kitten unicode_input
         break
         ;;
-      "Show Usage Message",* | *,"Show Usage Message")
+      "Show"*,* | *,"Show"* | "show"*,* | *,"show"*)
         show_usage
         break
         ;;
-      "Kitty Control Manual"*,* | *,"Kitty Control Manual"*)
+      "Manual"*,* | *,"Manual"* | "manual"*,* | *,"manual"*)
         printf "\n"
         man kitty-control
         break
         ;;
-      "Check for Updates",* | *,"Check for Updates")
-        printf "\nChecking for available updates to Lazyman installed configs\n\n"
-        if [ "${have_rich}" ]; then
-          check_updates rich
-        else
-          check_updates
-          printf "\n"
-        fi
-        prompt_continue
+      "Upgrade"*,* | *,"Upgrade"* | "upgrade"*,* | *,"upgrade"*)
+        install_kitty
         break
         ;;
       "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
@@ -470,10 +545,9 @@ show_menu() {
       REPLY=
     done
   done
-  [ "${help}" ] && show_main_menu
 }
 
-[ "$1" ] || brief_usage
+[ "$1" ] || show_menu
 
 # Some actions need to be delayed until after any configuration load
 bg_image=
@@ -547,12 +621,16 @@ while [[ $1 ]]; do
       show_examples
       shift
       ;;
-    -h | --help)
+    -E | --Examples)
       usage examples
       shift
       ;;
-    -u | --usage)
+    -h | --help)
       usage
+      shift
+      ;;
+    -u | --usage)
+      brief_usage
       shift
       ;;
     -v | --version)
@@ -601,37 +679,8 @@ while [[ $1 ]]; do
       ;;
     load|reload|--load|--reload)
       if [ "$2" ]; then
-        if [ "$2" == "--help" ]; then
-          printf "\nThe 'kitty-control load <subdir>' command loads the Kitty configuration"
-          printf "\nfile in '~/.config/kitty/<subdir>/kitty.conf'. The current instance of"
-          printf "\nkitty continues to run and the specified configuration file is loaded."
-          printf "\nAll tabs and state are preserved while the new configuration is loaded."
-          printf "\n\nThe new Kitty configuration file must be prepared beforehand and located"
-          printf "\nin the specified subdirectory in the Kitty configuration folder."
-          printf "\n\nFor example, if you have one Kitty configuration used for a large screen"
-          printf "\nTV and another used for a laptop then placing the TV Kitty configuration"
-          printf "\nin ~/.config/kitty/tv/kitty.conf and the laptop Kitty configuration in"
-          printf "\n~/.config/kitty/laptop/kitty.conf would allow you to switch between these"
-          printf "\ntwo Kitty configurations with kitty-control as follows:"
-          printf "\n\tkitty-control load tv # When your display is the TV as monitor"
-          printf "\n\tkitty-control load laptop # When you're using the laptop built-in display"
-          printf "\n\nTo restore the Kitty configuration in ~/.config/kitty/kitty.conf:"
-          printf "\n\tkitty-control load default\n\n"
-          exit 0
-        else
-          if [ -f "${CONFDIR}/$2/kitty.conf" ]; then
-            kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/$2/kitty.conf"
-            shift 2
-          else
-            if [ "$2" == "default" ]; then
-              kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/kitty.conf"
-              shift 2
-            else
-              printf "\n ${CONFDIR}/$2/kitty.conf does not exist\n"
-              shift 2
-            fi
-          fi
-        fi
+        load-config "$2"
+        shift 2
       else
         kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/kitty.conf"
         shift
