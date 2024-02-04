@@ -169,44 +169,27 @@ Each of the '**single dash**' options described above has a
 '**double dash**' equivalent. For example, `kitty-control -f`
 is equivalent to `kitty-control --fullscreen`.
 
-Either form can be used:
-
-| **Single Dash** | **Double Dash** |
-| --------------- | --------------- |
-|  `-a`           |  `--all`        |
-|  `-c`           |  `--command`    |
-|  `-i`           |  `--image`      |
-|  `-f`           |  `--fullscreen` |
-|  `-m`           |  `--match`      |
-|  `-s`           |  `--socket`     |
-|  `-t`           |  `--tab`        |
-|  `-e`           |  `--examples`   |
-|  `-h`           |  `--help`       |
-|  `-u`           |  `--usage`      |
-|  `-v`           |  `--version`    |
-
 Similarly, each of the positional arguments without a prefacing dash
 has a '**double dash**' equivalent. Simply prepend `--` before any
-of these arguments:
+of these arguments.
 
-| **No Dash** | **Double Dash** |
-| ----------- | --------------- |
-|   back      |   --back        |
-|   dark      |   --dark        |
-|   diff      |   --diff        |
-|   font      |   --font        |
-|   fore      |   --fore        |
-|   icat      |   --icat        |
-|   list      |   --list        |
-|   load      |   --load        |
-|   term      |   --term        |
-|   title     |   --title       |
-|   theme     |   --theme       |
-|   tran      |   --tran        |
-|   unicode   |   --unicode     |
+Either form can be used:
 
-Users in the habit of using `--option ...` can do so for all `kitty-control` options.
-Those comfortable with the `-o ...` format may also do so. Or mix 'em up.
+| **Single Dash** | **Double Dash** |    | **No Dash** | **Double Dash** |
+| --------------- | --------------- | -- | ----------- | --------------- |
+|  `-a`           |  `--all`        |    |  `back`     |  `--back`       |
+|  `-c`           |  `--command`    |    |  `dark`     |  `--dark`       |
+|  `-i`           |  `--image`      |    |  `diff`     |  `--diff`       |
+|  `-f`           |  `--fullscreen` |    |  `font`     |  `--font`       |
+|  `-m`           |  `--match`      |    |  `fore`     |  `--fore`       |
+|  `-s`           |  `--socket`     |    |  `icat`     |  `--icat`       |
+|  `-t`           |  `--tab`        |    |  `list`     |  `--list`       |
+|  `-e`           |  `--examples`   |    |  `load`     |  `--load`       |
+|  `-h`           |  `--help`       |    |  `term`     |  `--term`       |
+|  `-u`           |  `--usage`      |    |  `title`    |  `--title`      |
+|  `-v`           |  `--version`    |    |  `theme`    |  `--theme`      |
+|                 |                 |    |  `tran`     |  `--tran`       |
+|                 |                 |    |  `unicode`  |  `--unicode`    |
 
 ## Environment
 
