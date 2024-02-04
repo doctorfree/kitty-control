@@ -86,7 +86,7 @@ show_examples() {
   printf "\n\t${BOLD}kitty-control load default${NORM}"
   printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
     printf " displays an interactive menu system\n"
-  exit 1
+  [ "$1" == "noexit" ] || exit 1
 }
 
 usage() {
@@ -162,7 +162,7 @@ usage() {
     printf " and '${BOLD}allow_remote_control yes${NORM}'"
   printf "\nSee https://sw.kovidgoyal.net/kitty/remote-control/#control-kitty-from-scripts\n"
   [ "$1" == "examples" ] && show_examples
-  exit 1
+  [ "$1" == "noexit" ] || exit 1
 }
 
 kitty-fontminus() {
@@ -411,9 +411,45 @@ show_figlet() {
 }
 
 show_usage() {
-  clear
-  brief_usage noexit
-  prompt_continue
+  while true; do
+    clear
+    if [ "${have_figlet}" ]; then
+      show_figlet "Usage"
+    else
+      [ "${have_rich}" ] && rich "[cyan]Usage[/cyan]" -p -a rounded -c -C
+    fi
+    printf "\n"
+    brief_usage noexit
+    printf "\n\n"
+    options=()
+    PS3="${BOLD}Enter a choice (number, shortcut, or text, 'h' help): ${NORM}"
+    options+=("Examples" "Full Usage" "Main Menu" "Quit (q)")
+    select opt in "${options[@]}"; do
+      case "$opt,$REPLY" in
+      "Example"*,* | *,"Example"* | "example"*,* | *,"example"*)
+        show_examples noexit | less
+        break
+        ;;
+      "Full"*,* | *,"Full"* | "full"*,* | *,"full"*)
+        usage noexit | less
+        break
+        ;;
+      "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+        break 2
+        ;;
+      "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+        printf "\nExiting kitty-control\n"
+        exit 0
+        ;;
+      *,*)
+        printf "\nCould not match '${REPLY}' with a menu entry."
+        printf "\nPlease try again with an exact match.\n"
+        break
+        ;;
+      esac
+      REPLY=
+    done
+  done
 }
 
 show_menu() {
