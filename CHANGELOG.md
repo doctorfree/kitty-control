@@ -6,6 +6,15 @@
 
 ### 🐞 Fixed
 
+## v1.0.1r5
+
+### ⚡️ Added
+
+- Add bold text to usage and examples
+- Use `dracula` theme for `config/diff.conf` diff kitten config
+
+### 🐞 Fixed
+
 ## v1.0.1r4
 
 ### ⚡️ Added
