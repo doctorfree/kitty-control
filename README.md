@@ -292,18 +292,26 @@ kitty-control diff /path/to/file1 /path/to/file2
 
 ### Example Kitty Configuration
 
-Included in this repository is a full
-[example Kitty configuration](config/README.md) in the `./config/` subdirectory.
-This example configuration is provided for reference. It includes two
-configuration subdirectories, `laptop` and `tv` with a `kitty.conf` in each.
-Also included are `kitty` themes, Python scripts, example `kitty` sessions,
-and some advanced `kitty` configuration. The example sessions rely on some
-external facilities that may not be present like `btop` but the configuration
-should be close to usable out of the box. To install this example configuration
-copy the `config` directory to somewhere like `~/.config/kitty-example/`:
+Included in this repository are reference Kitty configurations.
+
+* [Kitty configuration with config subdirs](config-example1/README.md):
+    in the `./config-example1/` subdirectory
+* [Kitty configuration for `tmux` users](config-example2/README.md):
+    in the `./config-example2/` subdirectory (from https://github.com/ttys3/my-kitty-config)
+
+These example configuration are provided for reference.
+
+`config-example1` includes two configuration subdirectories, `laptop` and
+`tv` with a `kitty.conf` in each.  Also included are `kitty` themes, Python
+scripts, example `kitty` sessions, and some advanced `kitty` configuration.
+The example sessions rely on some external facilities that may not be present
+like `btop` but the configuration should be close to usable out of the box.
+
+To install an example configuration copy the `config-example?` directory to
+somewhere like `~/.config/kitty-example/`. For example:
 
 ```bash
-cp -a config ~/.config/kitty-example
+cp -a config-example1 ~/.config/kitty-example
 kitty --config ~/.config/kitty-example/kitty.conf --session ~/.config/kitty-example/sessions/startup --title 'Example Kitty Terminal Session'
 ```
 
@@ -313,8 +321,8 @@ This uses `zsh`. To use `bash` invoke with:
 kitty --config ~/.config/kitty-example/kitty-bash.conf --session ~/.config/kitty-example/sessions/startup-bash --title 'Example Kitty Terminal Session'
 ```
 
-The example `kitty` configuration provided here is not required for use with
-`kitty-control`. It is provided as reference with the hope that it will be
+The example `kitty` configurations provided here are not required for use with
+`kitty-control`. They are provided as reference with the hope that it will be
 helpful in tailoring your own configuration.
 
 ## Update
