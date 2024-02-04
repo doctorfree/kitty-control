@@ -1,4 +1,6 @@
-# my-kitty-config
+# Example Kitty Configuration
+
+**Note:** This Kitty configuration was copied from https://github.com/ttys3/my-kitty-config
 
 the kitty config for tmux users
 

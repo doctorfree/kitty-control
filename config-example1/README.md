@@ -1,5 +1,10 @@
 ## Kitty Configuration
 
+**Note:** This is the Kitty configuration used by the author of `kitty-control`
+and demonstrates the use of multiple Kitty configurations customized for use
+in different environments. These custom Kitty configs reside in subdirectories
+(in this example `laptop` and `tv`) and can be managed using `kitty-control`.
+
 See https://sw.kovidgoyal.net/kitty/conf/
 
 ### Table of Contents
