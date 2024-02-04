@@ -212,7 +212,22 @@ toggle-fullscreen() {
 }
 
 install_kitty() {
-  LOCAL=".local/kitty.app"
+  darwin=
+  platform=$(uname -s)
+  [ "${platform}" == "Darwin" ] && darwin=1
+  if [ "${darwin}" ]; then
+    LOCAL="/Applications/kitty.app/Contents"
+    KBIN="${LOCAL}/MacOS"
+    KTINFO="${LOCAL}/Resources/kitty/terminfo/kitty.terminfo"
+    KXTERM="${LOCAL}/Resources/kitty/terminfo/78/xterm-kitty"
+    KSTERM="${LOCAL}/Resources/terminfo/78/xterm-kitty"
+  else
+    LOCAL="${HOME}/.local/kitty.app"
+    KBIN="${LOCAL}/bin"
+    KTINFO="${LOCAL}/lib/kitty/terminfo/kitty.terminfo"
+    KXTERM="${LOCAL}/lib/kitty/terminfo/x/xterm-kitty"
+    KSTERM="${LOCAL}/share/terminfo/x/xterm-kitty"
+  fi
   printf "\n\tInstalling/Upgrading Kitty terminal emulator ..."
   curl --silent --location \
     https://sw.kovidgoyal.net/kitty/installer.sh >/tmp/kitty-$$.sh
@@ -229,22 +244,26 @@ install_kitty() {
     rm -f /tmp/kitty-$$.sh
     # Create a symbolic link to add kitty to PATH
     [ -d ~/.local/bin ] || mkdir -p ~/.local/bin
-    if [ -x ~/${LOCAL}/bin/kitty ]; then
+    if [ -x ${KBIN}/kitty ]; then
       [ -x ~/.local/bin/kitty ] || {
-        ln -s ~/${LOCAL}/bin/kitty ~/.local/bin/
+        ln -s ${KBIN}/kitty ~/.local/bin/
       }
     else
       printf "\nUnable to create Kitty link to ~/.local/bin/\n"
     fi
-    if [ -x ~/${LOCAL}/bin/kitten ]; then
+    if [ -x ~/${KBIN}/kitten ]; then
       [ -x ~/.local/bin/kitten ] || {
-        ln -s ~/${LOCAL}/bin/kitten ~/.local/bin/
+        ln -s ~/${KBIN}/kitten ~/.local/bin/
       }
     else
       printf "\nUnable to create kitten link to ~/.local/bin/\n"
     fi
     # Link the kitty man pages somewhere it can be found by the man command
-    LINMAN="${HOME}/${LOCAL}/share/man"
+    if [ "${darwin}" ]; then
+      LINMAN="/Applications/kitty.app/Contents/Resources/man"
+    else
+      LINMAN="${LOCAL}/share/man"
+    fi
     [ -d ~/.local/share/man/man1 ] || mkdir -p ~/.local/share/man/man1
     [ -f ~/.local/share/man/man1/kitty.1 ] || {
       [ -d ${HOME}/.local/share/man/man1 ] || {
@@ -265,28 +284,28 @@ install_kitty() {
     }
     # Place the kitty.desktop file somewhere it can be found by the OS
     [ -d ~/.local/share/applications ] || mkdir -p ~/.local/share/applications
-    [ -f "${HOME}/${LOCAL}/share/applications/kitty.desktop" ] && {
+    [ -f "${LOCAL}/share/applications/kitty.desktop" ] && {
       [ -f ~/.local/share/applications/kitty.desktop ] || {
-        cp ~/${LOCAL}/share/applications/kitty.desktop \
+        cp ${LOCAL}/share/applications/kitty.desktop \
           ~/.local/share/applications/
       }
     }
     # If you want to open text files and images in kitty via your file manager
     # also add the kitty-open.desktop file
-    [ -f "${HOME}/${LOCAL}/share/applications/kitty-open.desktop" ] && {
+    [ -f "${LOCAL}/share/applications/kitty-open.desktop" ] && {
       [ -f ~/.local/share/applications/kitty-open.desktop ] || {
-        cp ~/${LOCAL}/share/applications/kitty-open.desktop \
+        cp ${LOCAL}/share/applications/kitty-open.desktop \
           ~/.local/share/applications/
       }
     }
     # Update the paths to the kitty and its icon in the kitty.desktop file(s)
     for desktop in "${HOME}"/.local/share/applications/kitty*.desktop; do
       [ "${desktop}" == "${HOME}/.local/share/applications/kitty*.desktop" ] && continue
-      [ -f ${HOME}/${LOCAL}/share/icons/hicolor/256x256/apps/kitty.png ] && {
-        sed -i "s|Icon=kitty|Icon=${HOME}/${LOCAL}/share/icons/hicolor/256x256/apps/kitty.png|g" "${desktop}"
+      [ -f ${LOCAL}/share/icons/hicolor/256x256/apps/kitty.png ] && {
+        sed -i "s|Icon=kitty|Icon=${LOCAL}/share/icons/hicolor/256x256/apps/kitty.png|g" "${desktop}"
       }
-      [ -x ${HOME}/${LOCAL}/bin/kitty ] && {
-        sed -i "s|Exec=kitty|Exec=${HOME}/${LOCAL}/bin/kitty|g" "${desktop}"
+      [ -x ${LOCAL}/bin/kitty ] && {
+        sed -i "s|Exec=kitty|Exec=${LOCAL}/bin/kitty|g" "${desktop}"
       }
     done
     printf " done!\n"
@@ -305,17 +324,16 @@ install_kitty() {
     [ -d ${HOME}/.terminfo/78 ] || mkdir -p ${HOME}/.terminfo/78
     have_tic=$(type -p tic)
     [ "${have_tic}" ] && {
-      [ -f "${HOME}/${LOCAL}/lib/kitty/terminfo/kitty.terminfo" ] && {
-        tic -x -o ${HOME}/.terminfo \
-          "${HOME}/${LOCAL}/lib/kitty/terminfo/kitty.terminfo" >/dev/null 2>&1
+      [ -f "${KTINFO}" ] && {
+        tic -x -o ${HOME}/.terminfo "${KTINFO}" >/dev/null 2>&1
       }
     }
     [ -f "${KITERM}" ] || [ -f "${MATERM}" ] || {
-      if [ -f "${HOME}/${LOCAL}/lib/kitty/terminfo/x/xterm-kitty" ]; then
-        cp "${HOME}/${LOCAL}/lib/kitty/terminfo/x/xterm-kitty" "${KITERM}"
+      if [ -f "${KXTERM}" ]; then
+        cp "${KXTERM}" "${KITERM}"
       else
-        if [ -f "${HOME}/${LOCAL}/share/terminfo/x/xterm-kitty" ]; then
-          cp "${HOME}/${LOCAL}/share/terminfo/x/xterm-kitty" "${KITERM}"
+        if [ -f "${KSTERM}" ]; then
+          cp "${KSTERM}" "${KITERM}"
         else
           printf "\nUnable to create Kitty terminfo entry ${KITERM}\n"
         fi
