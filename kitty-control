@@ -34,7 +34,7 @@ OPTS=
 
 brief_usage() {
   printf "Usage: kitty-control [-a] [-c command] [dark] [-e] [-f] [-i /path/to/image]"
-  printf "\n    [-m|t <match>] [-s /path/to/socket] [-u|h|v] [back <color>] [theme]"
+  printf "\n    [-m|t <match>] [-s /path/to/socket] [-u|h|v] [back <color>] [term] [theme]"
   printf "\n    [diff [opts] <path1> <path2>] [fore <color>] [font [num]] [load [subdir]]"
   printf "\n    [icat [opts] <image>] [list] [title <title>] [tran [opacity]] [unicode]"
   [ "$1" == "noexit" ] || {
@@ -104,6 +104,7 @@ usage() {
   printf "\n           e.g. 'kitty-control load tv' would load ~/.config/kitty/tv/kitty.conf"
   printf "\n           'kitty-control load default' loads the ~/.config/kitty/kitty.conf config"
   printf "\n           'kitty-control load --help' displays a help message for the load command"
+  printf "\n    'term' Displays information about the terminal using the query_terminal kitten"
   printf "\n    'theme' Displays the interactive theme selection kitten"
   printf "\n    'title <tab title>' Sets the Kitty tab title to \"tab title\""
   printf "\n          Quote tab titles which contain spaces, e.g. \"This Is My Tab Title\""
@@ -396,6 +397,10 @@ while [[ $1 ]]; do
         shift
       fi
       setopcty="${OPACITY}"
+      ;;
+    term*|--term*)
+      kitty +kitten query_terminal
+      shift
       ;;
     theme*|--theme*)
       kitty +kitten themes

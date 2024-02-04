@@ -13,6 +13,7 @@
 - Add support for the `diff` kitten with `kitty-control diff <file1|dir1> <file2|dir2>`
 - Add support for the `icat` kitten with `kitty-control icat /path/to/image`
 - Add support for the `unicode_input` kitten with `kitty-control unicode`
+- Add support for the `query_terminal` kitten with `kitty-control term`
 - Add support for `--` prefix to all arguments
 
 ### 🐞 Fixed

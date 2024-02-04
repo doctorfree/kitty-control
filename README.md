@@ -91,8 +91,8 @@ several examples, `kitty-control -e`. To display the full usage message and
 examples run `kitty-control -h`.
 
 ```
-Usage: kitty-control [-a] [-c command] [-e] [-f] [-i /path/to/image]
-    [-m|t <match>] [-s /path/to/socket] [-u|h|v] [back <color>] [dark]
+Usage: kitty-control [-a] [-c command] [dark] [-e] [-f] [-i /path/to/image]
+    [-m|t <match>] [-s /path/to/socket] [-u|h|v] [back <color>] [term] [theme]
     [diff [opts] <path1> <path2>] [fore <color>] [font [num]] [load [subdir]]
     [icat [opts] <image>] [list] [title <title>] [tran [opacity]] [unicode]
 Where:
@@ -123,6 +123,8 @@ Where:
            e.g. 'kitty-control load tv' would load ~/.config/kitty/tv/kitty.conf
            'kitty-control load default' loads the ~/.config/kitty/kitty.conf config
            'kitty-control load --help' displays a help message for the load command
+    'term' Displays information about the terminal using the query_terminal kitten
+    'theme' Displays the interactive theme selection kitten
     'title <tab title>' Sets the Kitty tab title to "tab title"
           Quote tab titles which contain spaces, e.g. "This Is My Tab Title"
           Use '-m <match>' to specify the tab to match
@@ -190,16 +192,17 @@ of these arguments:
 | **No Dash** | **Double Dash** |
 | ----------- | --------------- |
 |   back      |   --back        |
-|   fore      |   --fore        |
+|   dark      |   --dark        |
 |   diff      |   --diff        |
+|   font      |   --font        |
+|   fore      |   --fore        |
 |   icat      |   --icat        |
 |   list      |   --list        |
 |   load      |   --load        |
-|   dark      |   --dark        |
-|   font      |   --font        |
+|   term      |   --term        |
 |   title     |   --title       |
-|   tran      |   --tran        |
 |   theme     |   --theme       |
+|   tran      |   --tran        |
 |   unicode   |   --unicode     |
 
 Users in the habit of using `--option ...` can do so for all `kitty-control` options.
