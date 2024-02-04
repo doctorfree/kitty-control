@@ -33,8 +33,8 @@ fi
 OPTS=
 
 brief_usage() {
-  printf "Usage: kitty-control [-a] [-c command] [-e] [-f] [-i /path/to/image]"
-  printf "\n    [-m|t <match>] [-s /path/to/socket] [-u|h|v] [back <color>] [dark]"
+  printf "Usage: kitty-control [-a] [-c command] [dark] [-e] [-f] [-i /path/to/image]"
+  printf "\n    [-m|t <match>] [-s /path/to/socket] [-u|h|v] [back <color>] [theme]"
   printf "\n    [diff [opts] <path1> <path2>] [fore <color>] [font [num]] [load [subdir]]"
   printf "\n    [icat [opts] <image>] [list] [title <title>] [tran [opacity]] [unicode]"
   [ "$1" == "noexit" ] || {
@@ -104,6 +104,7 @@ usage() {
   printf "\n           e.g. 'kitty-control load tv' would load ~/.config/kitty/tv/kitty.conf"
   printf "\n           'kitty-control load default' loads the ~/.config/kitty/kitty.conf config"
   printf "\n           'kitty-control load --help' displays a help message for the load command"
+  printf "\n    'theme' Displays the interactive theme selection kitten"
   printf "\n    'title <tab title>' Sets the Kitty tab title to \"tab title\""
   printf "\n          Quote tab titles which contain spaces, e.g. \"This Is My Tab Title\""
   printf "\n          Use '-m <match>' to specify the tab to match"
@@ -167,38 +168,6 @@ kitty-fontsize() {
   fi
 }
 
-kitty-command() {
-  kitty @ ${SOCKET} $1 ${OPTS}
-}
-
-toggle-fullscreen() {
-  kitty @ ${SOCKET} resize-os-window --action toggle-fullscreen ${OPTS}
-}
-
-kitty-list() {
-  kitty @ ${SOCKET} ls ${OPTS}
-}
-
-kitty-reload() {
-  kitty @ ${SOCKET} kitten read_config.py "$1"
-}
-
-kitty-diff() {
-  kitty +kitten diff $1 $2
-}
-
-kitty-icat() {
-  kitty +kitten icat $1
-}
-
-kitty-background() {
-  kitty @ ${SOCKET} set-background-image ${OPTS} $1
-}
-
-kitty-opacity() {
-  kitty @ ${SOCKET} set-background-opacity ${OPTS} $1
-}
-
 set-background() {
   if [ "$1" == "reset" ]; then
     kitty @ ${SOCKET} set-colors ${OPTS} --reset
@@ -213,10 +182,6 @@ set-foreground() {
   else
     kitty @ ${SOCKET} set-colors ${OPTS} foreground=$1
   fi
-}
-
-set-title() {
-  kitty @ ${SOCKET} set-tab-title ${OPTS} "$1"
 }
 
 [ "$1" ] || brief_usage
@@ -305,7 +270,7 @@ while [[ $1 ]]; do
       printf "\nkitty-control version ${VERSION} release ${RELEASE}\n\n"
       exit 0
       ;;
-    back*)
+    back*|--back*)
       if [ "$2" ]; then
         backgrnd="$2"
         shift 2
@@ -314,7 +279,7 @@ while [[ $1 ]]; do
         brief_usage
       fi
       ;;
-    fore*)
+    fore*|--fore*)
       if [ "$2" ]; then
         foregrnd="$2"
         shift 2
@@ -323,29 +288,29 @@ while [[ $1 ]]; do
         brief_usage
       fi
       ;;
-    diff)
+    diff|--diff)
       if [ "$2" ] && [ "$3" ]; then
-        kitty-diff "$2" "$3"
+        kitty +kitten diff $2 $3
         shift 3
       else
         printf "\nERROR: diff keyword requires two file or directory arguments"
         brief_usage
       fi
       ;;
-    icat)
+    icat|--icat)
       if [ "$2" ]; then
-        kitty-icat "$2"
+        kitty +kitten icat $2
         shift 2
       else
         printf "\nERROR: icat keyword requires an image as argument"
         brief_usage
       fi
       ;;
-    list|ls)
-      kitty-list
+    list|ls|--list|--ls)
+      kitty @ ${SOCKET} ls ${OPTS}
       shift
       ;;
-    load|reload)
+    load|reload|--load|--reload)
       if [ "$2" ]; then
         if [ "$2" == "--help" ]; then
           printf "\nThe 'kitty-control load <subdir>' command loads the Kitty configuration"
@@ -366,11 +331,11 @@ while [[ $1 ]]; do
           exit 0
         else
           if [ -f "${CONFDIR}/$2/kitty.conf" ]; then
-            kitty-reload "${CONFDIR}/$2/kitty.conf"
+            kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/$2/kitty.conf"
             shift 2
           else
             if [ "$2" == "default" ]; then
-              kitty-reload "${CONFDIR}/kitty.conf"
+              kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/kitty.conf"
               shift 2
             else
               printf "\n ${CONFDIR}/$2/kitty.conf does not exist\n"
@@ -379,15 +344,15 @@ while [[ $1 ]]; do
           fi
         fi
       else
-        kitty-reload "${CONFDIR}/kitty.conf"
+        kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/kitty.conf"
         shift
       fi
       ;;
-    dark|opaque)
+    dark|opaque|--dark|--opaque)
       setopcty="1.0"
       shift
       ;;
-    fontmin*|fontdec*)
+    fontmin*|fontdec*|--fontmin*|--fontdec*)
       if [ "$2" ]; then
         fontdown="$2"
         shift 2
@@ -396,7 +361,7 @@ while [[ $1 ]]; do
         shift
       fi
       ;;
-    fontplus|fontinc*)
+    fontplus|fontinc*|--fontplus|--fontinc*)
       if [ "$2" ]; then
         fontplus="$2"
         shift 2
@@ -405,7 +370,7 @@ while [[ $1 ]]; do
         shift
       fi
       ;;
-    font*)
+    font*|--font*)
       if [ "$2" ]; then
         fontsize="$2"
         shift 2
@@ -414,16 +379,16 @@ while [[ $1 ]]; do
         shift
       fi
       ;;
-    title)
+    title|--title)
       if [ "$2" ]; then
-        set-title "$2"
+        kitty @ ${SOCKET} set-tab-title ${OPTS} "$2"
         shift 2
       else
         printf "\nERROR: title keyword requires an argument"
         brief_usage
       fi
       ;;
-    opacity|tran*)
+    opacity|tran*|--opacity|--tran*)
       if [ "$2" ]; then
         OPACITY="$2"
         shift 2
@@ -432,8 +397,13 @@ while [[ $1 ]]; do
       fi
       setopcty="${OPACITY}"
       ;;
-    unicode)
+    theme*|--theme*)
+      kitty +kitten themes
+      shift
+      ;;
+    unicode|--unicode)
       kitty +kitten unicode_input
+      shift
       ;;
     *)
       printf "\nUnsupported Kitty control command: $1"
@@ -448,17 +418,21 @@ done
 [ "${fontsize}" ] && kitty-fontsize "${fontsize}"
 [ "${backgrnd}" ] && set-background "${backgrnd}"
 [ "${foregrnd}" ] && set-foreground "${foregrnd}"
-[ "${fullscrn}" ] && toggle-fullscreen
-[ "${setopcty}" ] && kitty-opacity "${ssetopcty}"
+[ "${fullscrn}" ] && {
+  kitty @ ${SOCKET} resize-os-window --action toggle-fullscreen ${OPTS}
+}
+[ "${setopcty}" ] && {
+  kitty @ ${SOCKET} set-background-opacity ${OPTS} ${ssetopcty}
+}
 [ "${bg_image}" ] && {
   if [ "${bg_image}" == "none" ]; then
-    kitty-background "${bg_image}"
+    kitty @ ${SOCKET} set-background-image ${OPTS} "${bg_image}"
   else
     if [ -f "${bg_image}" ]; then
-      kitty-background "${bg_image}"
+      kitty @ ${SOCKET} set-background-image ${OPTS} "${bg_image}"
     else
       printf "\nSpecified Kitty background image ${bg_image} not found\n"
     fi
   fi
 }
-[ "${kittycmd}" ] && kitty-command "${kittycmd}"
+[ "${kittycmd}" ] && kitty @ ${SOCKET} ${kittycmd} ${OPTS}

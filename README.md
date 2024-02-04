@@ -163,6 +163,48 @@ To view a brief help message for the socket configuration run
 To display the `kitty` documentation URL for window/tab matching syntax run
 `kitty-control -m --help` or `kitty-control -t --help`.
 
+Each of the '**single dash**' options described above has a
+'**double dash**' equivalent. For example, `kitty-control -f`
+is equivalent to `kitty-control --fullscreen`.
+
+Either form can be used:
+
+| **Single Dash** | **Double Dash** |
+| --------------- | --------------- |
+|  `-a`           |  `--all`        |
+|  `-c`           |  `--command`    |
+|  `-i`           |  `--image`      |
+|  `-f`           |  `--fullscreen` |
+|  `-m`           |  `--match`      |
+|  `-s`           |  `--socket`     |
+|  `-t`           |  `--tab`        |
+|  `-e`           |  `--examples`   |
+|  `-h`           |  `--help`       |
+|  `-u`           |  `--usage`      |
+|  `-v`           |  `--version`    |
+
+Similarly, each of the positional arguments without a prefacing dash
+has a '**double dash**' equivalent. Simply prepend `--` before any
+of these arguments:
+
+| **No Dash** | **Double Dash** |
+| ----------- | --------------- |
+|   back      |   --back        |
+|   fore      |   --fore        |
+|   diff      |   --diff        |
+|   icat      |   --icat        |
+|   list      |   --list        |
+|   load      |   --load        |
+|   dark      |   --dark        |
+|   font      |   --font        |
+|   title     |   --title       |
+|   tran      |   --tran        |
+|   theme     |   --theme       |
+|   unicode   |   --unicode     |
+
+Users in the habit of using `--option ...` can do so for all `kitty-control` options.
+Those comfortable with the `-o ...` format may also do so. Or mix 'em up.
+
 ## Environment
 
 Environment variables can be used to influence `kitty` behavior. See
