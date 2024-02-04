@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
-SCRIPT_PATH="$(realpath $SCRIPT_PATH)"
+SCRIPT_PATH="$(realpath "$SCRIPT_PATH")"
 
 rm -f ${HOME}/.local/bin/kitty-control
 rm -f ${HOME}/.config/kitty/read_config.py
@@ -12,5 +12,24 @@ rm -f ${HOME}/.config/kitty/read_config.py
     }
   }
 }
+
+FDEST="${HOME}/.local/share/figlet-fonts"
+for ff in "${SCRIPT_PATH}"/figlet-fonts/*
+do
+  [ "${ff}" == "${SCRIPT_PATH}/figlet-fonts/*" ] && continue
+  bn=$(basename "${ff}")
+  [ -f "${FDEST}/${bn}"  ] || continue
+  diff "${ff}" "${FDEST}/${bn}" > /dev/null && {
+    rm -f "${FDEST}/${bn}"
+  }
+done
+
+empty=1
+for i in "${FDEST}"/*
+do
+  [ "$i" == "${FDEST}/*" ] && continue
+  empty=
+done
+[ "${empty}" ] && rmdir "${FDEST}"
 
 printf "Removal of kitty-control complete\n\n"

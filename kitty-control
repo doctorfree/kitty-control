@@ -31,7 +31,12 @@ else
 fi
 # Kitty remote control options are used to specify which windows/tabs to modify
 OPTS=
-
+# Menu system vars
+FONTDIR="${HOME}/.local/share/figlet-fonts"
+LOLCAT="lolcat"
+# Array with font names
+fonts=("Fire Font-k" "Graceful" "Script" "Shadow" "Slant" "Small" "Standard")
+# Use tput to get the bold and normal text sequence
 BOLD=$(tput bold 2>/dev/null)
 NORM=$(tput sgr0 2>/dev/null)
 
@@ -39,7 +44,8 @@ brief_usage() {
   printf "${BOLD}Usage: kitty-control [-a] [-c command] [dark] [-e] [-f] [-i /path/to/image]"
   printf "\n    [-m|t <match>] [-s /path/to/socket] [-u|h|v] [back <color>] [term] [theme]"
   printf "\n    [diff [opts] <path1> <path2>] [fore <color>] [font [num]] [load [subdir]]"
-  printf "\n    [icat [opts] <image>] [list] [title <title>] [tran [opacity]] [unicode]${NORM}"
+  printf "\n    [icat [opts] <image>] [list] [menu] [title <title>] [tran [opacity]]"
+  printf "\n    [unicode] [upgrade]${NORM}"
   [ "$1" == "noexit" ] || {
     printf "\n\nTo display several examples run 'kitty-control -e'"
     printf "\nFor a full usage message run 'kitty-control -u'"
@@ -108,6 +114,7 @@ usage() {
   printf "\n           e.g. 'kitty-control load tv' would load ~/.config/kitty/tv/kitty.conf"
   printf "\n           'kitty-control load default' loads the ~/.config/kitty/kitty.conf config"
   printf "\n           'kitty-control load --help' displays a help message for the load command"
+  printf "\n    '${BOLD}menu${NORM}' Displays the kitty-control interactive menu system"
   printf "\n    '${BOLD}term${NORM}'"
     printf " Displays information about the terminal using the query_terminal kitten"
   printf "\n    '${BOLD}theme${NORM}' Displays the interactive theme selection kitten"
@@ -119,6 +126,7 @@ usage() {
   printf "\n           Specify a second argument to set a custom background opacity:"
   printf "\n           e.g. 'kitty-control transparent 0.9'"
   printf "\n    '${BOLD}unicode${NORM}' Displays the Unicode input kitten"
+  printf "\n    '${BOLD}upgrade${NORM}' Upgrades Kitty to the latest version"
   printf "\n    '${BOLD}-a${NORM}'"
     printf " Indicates modify all windows rather than just the currently active OS window"
   printf "\n    '${BOLD}-c command${NORM}'"
@@ -193,6 +201,258 @@ set-foreground() {
   else
     kitty @ ${SOCKET} set-colors ${OPTS} foreground=$1
   fi
+}
+
+set-opacity() {
+  kitty @ ${SOCKET} set-background-opacity ${OPTS} $1
+}
+
+toggle-fullscreen() {
+  kitty @ ${SOCKET} resize-os-window --action toggle-fullscreen ${OPTS}
+}
+
+install_kitty() {
+  LOCAL=".local/kitty.app"
+  printf "\n\tInstalling/Upgrading Kitty terminal emulator ..."
+  curl --silent --location \
+    https://sw.kovidgoyal.net/kitty/installer.sh >/tmp/kitty-$$.sh
+  [ $? -eq 0 ] || {
+    rm -f /tmp/kitty-$$.sh
+    curl --insecure --silent --location \
+      https://sw.kovidgoyal.net/kitty/installer.sh >/tmp/kitty-$$.sh
+    cat /tmp/kitty-$$.sh | sed -e "s/curl -/curl -k/" >/tmp/k$$
+    cp /tmp/k$$ /tmp/kitty-$$.sh
+    rm -f /tmp/k$$
+  }
+  if [ -s /tmp/kitty-$$.sh ]; then
+    sh /tmp/kitty-$$.sh launch=n >/dev/null 2>&1
+    rm -f /tmp/kitty-$$.sh
+    # Create a symbolic link to add kitty to PATH
+    [ -d ~/.local/bin ] || mkdir -p ~/.local/bin
+    if [ -x ~/${LOCAL}/bin/kitty ]; then
+      [ -x ~/.local/bin/kitty ] || {
+        ln -s ~/${LOCAL}/bin/kitty ~/.local/bin/
+      }
+    else
+      printf "\nUnable to create Kitty link to ~/.local/bin/\n"
+    fi
+    if [ -x ~/${LOCAL}/bin/kitten ]; then
+      [ -x ~/.local/bin/kitten ] || {
+        ln -s ~/${LOCAL}/bin/kitten ~/.local/bin/
+      }
+    else
+      printf "\nUnable to create kitten link to ~/.local/bin/\n"
+    fi
+    # Link the kitty man pages somewhere it can be found by the man command
+    LINMAN="${HOME}/${LOCAL}/share/man"
+    [ -d ~/.local/share/man/man1 ] || mkdir -p ~/.local/share/man/man1
+    [ -f ~/.local/share/man/man1/kitty.1 ] || {
+      [ -d ${HOME}/.local/share/man/man1 ] || {
+        mkdir -p ${HOME}/.local/share/man/man1
+      }
+      [ -f "${LINMAN}/man1/kitty.1" ] && {
+        ln -s "${LINMAN}/man1/kitty.1" ~/.local/share/man/man1/
+      }
+    }
+    [ -d ~/.local/share/man/man5 ] || mkdir -p ~/.local/share/man/man5
+    [ -f ~/.local/share/man/man5/kitty.conf.5 ] || {
+      [ -d ${HOME}/.local/share/man/man5 ] || {
+        mkdir -p ${HOME}/.local/share/man/man5
+      }
+      [ -f "${LINMAN}/man5/kitty.conf.5" ] && {
+        ln -s "${LINMAN}/man5/kitty.conf.5" ~/.local/share/man/man5/
+      }
+    }
+    # Place the kitty.desktop file somewhere it can be found by the OS
+    [ -d ~/.local/share/applications ] || mkdir -p ~/.local/share/applications
+    [ -f "${HOME}/${LOCAL}/share/applications/kitty.desktop" ] && {
+      [ -f ~/.local/share/applications/kitty.desktop ] || {
+        cp ~/${LOCAL}/share/applications/kitty.desktop \
+          ~/.local/share/applications/
+      }
+    }
+    # If you want to open text files and images in kitty via your file manager
+    # also add the kitty-open.desktop file
+    [ -f "${HOME}/${LOCAL}/share/applications/kitty-open.desktop" ] && {
+      [ -f ~/.local/share/applications/kitty-open.desktop ] || {
+        cp ~/${LOCAL}/share/applications/kitty-open.desktop \
+          ~/.local/share/applications/
+      }
+    }
+    # Update the paths to the kitty and its icon in the kitty.desktop file(s)
+    for desktop in "${HOME}"/.local/share/applications/kitty*.desktop; do
+      [ "${desktop}" == "${HOME}/.local/share/applications/kitty*.desktop" ] && continue
+      [ -f ${HOME}/${LOCAL}/share/icons/hicolor/256x256/apps/kitty.png ] && {
+        sed -i "s|Icon=kitty|Icon=${HOME}/${LOCAL}/share/icons/hicolor/256x256/apps/kitty.png|g" "${desktop}"
+      }
+      [ -x ${HOME}/${LOCAL}/bin/kitty ] && {
+        sed -i "s|Exec=kitty|Exec=${HOME}/${LOCAL}/bin/kitty|g" "${desktop}"
+      }
+    done
+    printf " done!\n"
+  else
+    printf "\n${BOLD}ERROR:${NORM} Download of kitty installation script failed"
+    printf "\nSee https://sw.kovidgoyal.net/kitty/binary/#manually-installing"
+    printf "\nto manually install the kitty terminal emulator\n"
+  fi
+
+  # Install the Kitty terminfo entry
+  KITERM="${HOME}/.terminfo/x/xterm-kitty"
+  MATERM="${HOME}/.terminfo/78/xterm-kitty"
+  [ -f "${KITERM}" ] || [ -f "${MATERM}" ] || {
+    [ -d ${HOME}/.terminfo ] || mkdir -p ${HOME}/.terminfo
+    [ -d ${HOME}/.terminfo/x ] || mkdir -p ${HOME}/.terminfo/x
+    [ -d ${HOME}/.terminfo/78 ] || mkdir -p ${HOME}/.terminfo/78
+    have_tic=$(type -p tic)
+    [ "${have_tic}" ] && {
+      [ -f "${HOME}/${LOCAL}/lib/kitty/terminfo/kitty.terminfo" ] && {
+        tic -x -o ${HOME}/.terminfo \
+          "${HOME}/${LOCAL}/lib/kitty/terminfo/kitty.terminfo" >/dev/null 2>&1
+      }
+    }
+    [ -f "${KITERM}" ] || [ -f "${MATERM}" ] || {
+      if [ -f "${HOME}/${LOCAL}/lib/kitty/terminfo/x/xterm-kitty" ]; then
+        cp "${HOME}/${LOCAL}/lib/kitty/terminfo/x/xterm-kitty" "${KITERM}"
+      else
+        if [ -f "${HOME}/${LOCAL}/share/terminfo/x/xterm-kitty" ]; then
+          cp "${HOME}/${LOCAL}/share/terminfo/x/xterm-kitty" "${KITERM}"
+        else
+          printf "\nUnable to create Kitty terminfo entry ${KITERM}\n"
+        fi
+      fi
+    }
+  }
+}
+
+prompt_continue() {
+  printf "\nPress <Enter> to continue ... "
+  read -r yn
+}
+
+set_haves() {
+  have_fzf=$(type -p fzf)
+  have_figlet=$(type -p figlet)
+  have_lolcat=$(type -p lolcat)
+  have_rich=$(type -p rich)
+}
+
+show_figlet() {
+  if [ "$1" ]; then
+    FIG_TEXT="$1"
+  else
+    FIG_TEXT="Kitty Control"
+  fi
+  # Seed random generator
+  RANDOM=$$$(date +%s)
+  USE_FONT=${fonts[$RANDOM % ${#fonts[@]}]}
+  [ "${USE_FONT}" ] || USE_FONT="Standard"
+  if [ "${have_lolcat}" ]; then
+    figlet -c -d "${FONTDIR}" -f "${USE_FONT}" -k -t ${FIG_TEXT} 2>/dev/null | ${LOLCAT}
+  else
+    figlet -c -d "${FONTDIR}" -f "${USE_FONT}" -k -t ${FIG_TEXT} 2>/dev/null
+  fi
+}
+
+show_usage() {
+  clear
+  brief_usage noexit
+  prompt_continue
+}
+
+show_menu() {
+  help=
+  set_haves
+  while true; do
+    clear
+    if [ "${have_figlet}" ]; then
+      show_figlet
+    else
+      [ "${have_rich}" ] && rich "[cyan]Kitty Control Menu[/cyan]" -p -a rounded -c -C
+    fi
+    options=()
+    PS3="${BOLD}Enter a choice (number, shortcut, or text, 'h' help): ${NORM}"
+# Usage: kitty-control [-a] [-c command] [-e] [-i /path/to/image]
+# [-m|t <match>] [-s /path/to/socket] [-u|h|v] [back <color>]
+# [diff [opts] <path1> <path2>] [fore <color>] [font [num]] [load [subdir]]
+# [icat [opts] <image>] [title <title>] [tran [opacity]] [unicode]
+# 
+#  display several examples run 'kitty-control -e'
+#  a full usage message run 'kitty-control -u'
+#  a full usage message with examples run 'kitty-control -h'
+    options+=("Dark/Opaque" "List Current Info" "Transparent" "Toggle Fullscreen")
+    options+=("Select Theme" "Terminal Info" "Unicode Input" "Show Usage Message")
+    options+=("Quit (q)")
+    select opt in "${options[@]}"; do
+      case "$opt,$REPLY" in
+      "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+        printf "\n"
+        show_help
+        help=1
+        break
+        ;;
+      "Dark/Opaque",* | *,"Dark/Opaque")
+        set-opacity "1.0"
+        break
+        ;;
+      "List Current Info",* | *,"List Current Info")
+        kitty @ ${SOCKET} ls ${OPTS} | less
+        break
+        ;;
+      "Select Theme",* | *,"Select Theme")
+        kitty +kitten themes
+        break
+        ;;
+      "Terminal Info",* | *,"Terminal Info")
+        kitty +kitten query_terminal
+        break
+        ;;
+      "Transparent",* | *,"Transparent")
+        set-opacity "${OPACITY}"
+        break
+        ;;
+      "Toggle Fullscreen",* | *,"Toggle Fullscreen")
+        toggle-fullscreen
+        sleep 2
+        break
+        ;;
+      "Unicode Input",* | *,"Unicode Input")
+        kitty +kitten unicode_input
+        break
+        ;;
+      "Show Usage Message",* | *,"Show Usage Message")
+        show_usage
+        break
+        ;;
+      "Kitty Control Manual"*,* | *,"Kitty Control Manual"*)
+        printf "\n"
+        man kitty-control
+        break
+        ;;
+      "Check for Updates",* | *,"Check for Updates")
+        printf "\nChecking for available updates to Lazyman installed configs\n\n"
+        if [ "${have_rich}" ]; then
+          check_updates rich
+        else
+          check_updates
+          printf "\n"
+        fi
+        prompt_continue
+        break
+        ;;
+      "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+        printf "\nExiting kitty-control\n"
+        exit 0
+        ;;
+      *,*)
+        printf "\nCould not match '${REPLY}' with a menu entry."
+        printf "\nPlease try again with an exact match.\n"
+        break
+        ;;
+      esac
+      REPLY=
+    done
+  done
+  [ "${help}" ] && show_main_menu
 }
 
 [ "$1" ] || brief_usage
@@ -390,6 +650,10 @@ while [[ $1 ]]; do
         shift
       fi
       ;;
+    menu|--menu)
+      show_menu
+      shift
+      ;;
     title|--title)
       if [ "$2" ]; then
         kitty @ ${SOCKET} set-tab-title ${OPTS} "$2"
@@ -420,6 +684,10 @@ while [[ $1 ]]; do
       kitty +kitten unicode_input
       shift
       ;;
+    upgrade|--upgrade)
+      install_kitty
+      shift
+      ;;
     *)
       printf "\nUnsupported Kitty control command: $1"
       usage
@@ -433,12 +701,8 @@ done
 [ "${fontsize}" ] && kitty-fontsize "${fontsize}"
 [ "${backgrnd}" ] && set-background "${backgrnd}"
 [ "${foregrnd}" ] && set-foreground "${foregrnd}"
-[ "${fullscrn}" ] && {
-  kitty @ ${SOCKET} resize-os-window --action toggle-fullscreen ${OPTS}
-}
-[ "${setopcty}" ] && {
-  kitty @ ${SOCKET} set-background-opacity ${OPTS} ${ssetopcty}
-}
+[ "${fullscrn}" ] && toggle-fullscreen
+[ "${setopcty}" ] && set-opacity "${setopcty}"
 [ "${bg_image}" ] && {
   if [ "${bg_image}" == "none" ]; then
     kitty @ ${SOCKET} set-background-image ${OPTS} "${bg_image}"
