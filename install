@@ -60,8 +60,22 @@ chmod 755 ${FDEST}/*.sh
 have_fzf=$(type -p fzf)
 [ "${have_fzf}" ] || {
   [ -d ${HOME}/.fzf ] && mv ${HOME}/.fzf ${HOME}/.fzf$$
-  git clone --depth 1 https://github.com/junegunn/fzf.git ${HOME}/.fzf
-  ${HOME}/.fzf/install --all >/dev/null 2>&1
+  git clone --depth 1 https://github.com/junegunn/fzf.git \
+    ${HOME}/.fzf >/dev/null 2>&1
+  [ -f ${HOME}/.fzf/install ] && chmod 755 ${HOME}/.fzf/install
+  [ -x ${HOME}/.fzf/install ] && ${HOME}/.fzf/install --all >/dev/null 2>&1
+}
+
+# Check for ranger file manager
+have_ranger=$(type -p ranger)
+[ "${have_ranger}" ] || {
+  printf "\nThe Ranger file manager is not required by kitty-control."
+  printf "\nHowever, some additional features are enabled by Ranger."
+  printf "\nRanger is not found on this system. To install ranger:\n"
+  printf "\n\tgit clone https://github.com/ranger/ranger"
+  printf "\n\tcd ranger"
+  printf "\n\tgit checkout stable"
+  printf "\n\tsudo make install # requires administrative privilege\n\n"
 }
 
 printf "Installation of kitty-control complete ✨ 🌟 ✨\n"
