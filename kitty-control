@@ -387,7 +387,11 @@ install_kitty() {
 }
 
 prompt_continue() {
-  printf "\nPress <Enter> to continue ... "
+  if [ "${have_rich}" ]; then
+    rich "Press [magenta]<Enter>[/] to continue ... " -p
+  else
+    printf "\nPress <Enter> to continue ... "
+  fi
   read -r yn
 }
 
@@ -526,6 +530,48 @@ show_figlet() {
   fi
 }
 
+show_help() {
+  clear
+  if [ "${have_rich}" ]; then
+    rich "[cyan]Kitty Control Menu Help[/cyan]" -p -a rounded -c -C
+    rich "[green]Control kitty from a menu system[/green]" -p -c
+  else
+    printf "\n\tKitty Control Menu Help\n"
+    printf "\n\tControl kitty from a menu system\n"
+  fi
+  printf "\nEnter a menu option number or keyword to select an option.\n"
+  if [ "${have_rich}" ]; then
+    rich "[cyan]Keywords:[/] [green]bg fg clear dark font help info list load theme full tran view quit[/]" -p
+  else
+    printf "Keywords: ${BOLD}bg fg clear dark font help info list load theme full tran view quit${NORM}"
+  fi
+  printf "\nSome shortcuts have single key support:\n"
+  if [ "${have_rich}" ]; then
+    rich "  [yellow]d[/] = [green]dark[/], [yellow]F[/] = [green]full[/], [yellow]f[/] = [green]font[/], [yellow]h[/] = [green]help[/], [yellow]i[/] = [green]info[/], [yellow]L[/] = [green]list[/]," -p
+    rich "  [yellow]l[/] = [green]load[/], [yellow]q[/] = [green]quit[/], [yellow]T[/] = [green]theme[/], [yellow]t[/] = [green]tran[/], [yellow]v[/] = [green]view[/]" -p
+  else
+    printf "  'd' = dark, 'F' = full, 'f' = font, 'h' = help, 'i' = info, 'L' = list,"
+    printf "\n  'l' = load, 'q' = quit, 'T' = theme, 't' = tran, 'v' = view"
+  fi
+  printf "\nIn the fuzzy selection dialogs, enter a few letters to fuzzy select from the options\n"
+  if [ "${have_rich}" ]; then
+    rich "or use the [magenta]<Up-Arrow>[/] and [magenta]<Down-Arrow>[/] keys to move through the options." -p
+    rich "Press [magenta]<Enter>[/] to select the highlighted option." -p
+  else
+    printf "or use the <Up-Arrow> and <Down-Arrow> keys to move through the options."
+    printf "\nPress <Enter> to select the highlighted option.\n"
+  fi
+  printf "\nNot all actions are available from the interactive menu interface.\n"
+  printf "\nKitty Control can also be used from the command line.\n"
+  if [ "${have_rich}" ]; then
+    rich "See: [cyan]kitty-control -h[/] for full usage details" -p
+  else
+    printf "${BOLD}${LINE}See:${NORM} ${BOLD}kitty-control -h${NORM} for full usage details\n"
+  fi
+  printf "\n"
+  prompt_continue
+}
+
 show_usage() {
   use_type="$1"
   figlet_text="Usage"
@@ -607,11 +653,10 @@ show_menu() {
     select opt in "${options[@]}"; do
       case "$opt,$REPLY" in
       "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-        printf "\n"
         show_help
         break
         ;;
-      "Background Color",* | *,"Background Color")
+      "Background Color",* | *,"Background Color" | "bg",* | *,"bg")
         if [ "${have_fzf}" ]; then
           choice=$(printf "%s\n" "${colors[@]}" | fzf --prompt="😺 Select Background Color  " --layout=reverse --border --exit-0)
           [ "${choice}" ] && {
@@ -644,7 +689,7 @@ show_menu() {
         fi
         break
         ;;
-      "Foreground Color",* | *,"Foreground Color")
+      "Foreground Color",* | *,"Foreground Color" | "fg",* | *,"fg")
         if [ "${have_fzf}" ]; then
           choice=$(printf "%s\n" "${colors[@]}" | fzf --prompt="😺 Select Foreground Color  " --layout=reverse --border --exit-0)
           [ "${choice}" ] && {
@@ -672,11 +717,11 @@ show_menu() {
         [ "${FILE}" ] && kitty @ ${SOCKET} set-background-image ${OPTS} "${FILE}"
         break
         ;;
-      "Clear Background Image",* | *,"Clear Background Image")
+      "Clear"*,* | *,"Clear"* | "clear"*,* | *,"clear"*)
         kitty @ ${SOCKET} set-background-image ${OPTS} none
         break
         ;;
-      "Dark"*,* | *,"Dark"* | "dark"*,* | *,"dark"* | "Opaq"*,* | *,"Opaq"* | "opaq"*,* | *,"opaq"*)
+      "Dark"*,* | *,"Dark"* | "dark"*,* | *,"dark"* | "d",* | *,"d")
         set-opacity "1.0"
         break
         ;;
@@ -718,7 +763,7 @@ show_menu() {
         show_usage examples
         break
         ;;
-      "Font"*,* | *,"Font"* | "font"*,* | *,"font"*)
+      "Font"*,* | *,"Font"* | "font"*,* | *,"font"* | "f",* | *,"f")
         if [ "${have_fzf}" ]; then
           choice=$(printf "%s\n" "${fontsizes[@]}" | fzf --prompt="😺 Select Font Size Adjustment  " --layout=reverse --border --exit-0)
           [ "${choice}" ] && {
@@ -736,11 +781,11 @@ show_menu() {
         fi
         break
         ;;
-      "List"*,* | *,"List"* | "list"*,* | *,"list"*)
+      "List"*,* | *,"List"* | "list"*,* | *,"list"* | "L",* | *,"L")
         kitty @ ${SOCKET} ls ${OPTS} | less
         break
         ;;
-      "Load"*,* | *,"Load"* | "load"*,* | *,"load"*)
+      "Load"*,* | *,"Load"* | "load"*,* | *,"load"* | "l",* | *,"l")
         if [ "${have_fzf}" ]; then
           choice=$(printf "%s\n" "${configs[@]}" | fzf --prompt="😺 Select Kitty Configuration  " --layout=reverse --border --exit-0)
           [ "${choice}" ] && {
@@ -759,7 +804,7 @@ show_menu() {
         fi
         break
         ;;
-      "View"*,* | *,"View"* | "view"*,* | *,"view"*)
+      "View"*,* | *,"View"* | "view"*,* | *,"view"* | "v",* | *,"v")
         FILE=
         select_file image
         [ "${FILE}" ] && {
@@ -769,16 +814,16 @@ show_menu() {
         }
         break
         ;;
-      "Theme"*,* | *,"Theme"* | "theme"*,* | *,"theme"*)
+      "Theme"*,* | *,"Theme"* | "theme"*,* | *,"theme"* | "T",* | *,"T")
         kitty +kitten themes
         break
         ;;
-      "Term"*,* | *,"Term"* | "term"*,* | *,"term"*)
+      "Term"*,* | *,"Term"* | "term"*,* | *,"term"* | "info",* | *,"info" | "i",* | *,"i")
         kitty +kitten query_terminal
         prompt_continue
         break
         ;;
-      "Tran"*,* | *,"Tran"* | "tran"*,* | *,"tran"*)
+      "Tran"*,* | *,"Tran"* | "tran"*,* | *,"tran"* | "t",* | *,"t")
         if [ "${have_fzf}" ]; then
           choice=$(printf "%s\n" "${translevels[@]}" | fzf --prompt="😺 Select Transparency Opacity  " --layout=reverse --border --exit-0)
           [ "${choice}" ] && {
@@ -796,7 +841,7 @@ show_menu() {
         fi
         break
         ;;
-      "Toggle"*,* | *,"Toggle"* | "toggle"*,* | *,"toggle"*)
+      "Toggle"*,* | *,"Toggle"* | "toggle"*,* | *,"toggle"* | "full",* | *,"full" | "F",* | *,"F")
         toggle-fullscreen
         sleep 1
         break
