@@ -50,8 +50,8 @@ brief_usage() {
   printf "${BOLD}Usage: kitty-control [-a] [back <color>] [-c command] [dark]"
   printf "\n    [diff [opts] <path1> <path2>] [-e|E] [-f] [font [num]] [fore <color>]"
   printf "\n    [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]"
-  printf "\n    [-u|h|v] [term] [theme] [icat [opts] <image>] [list] [menu] [title <title>]"
-  printf "\n    [transparent [opacity]] [unicode] [upgrade]${NORM}"
+  printf "\n    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list] [menu]"
+  printf "\n    [title <title>] [transparent [opacity]] [unicode] [upgrade]${NORM}"
   [ "$1" == "noexit" ] || {
     printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
       printf " displays an interactive menu system"
@@ -131,6 +131,7 @@ usage() {
   printf "\n    '${BOLD}title <tab title>${NORM}' Sets the Kitty tab title to \"tab title\""
   printf "\n          Quote tab titles which contain spaces, e.g. \"This Is My Tab Title\""
   printf "\n          Use '-m <match>' to specify the tab to match"
+  printf "\n    '${BOLD}tools${NORM}' Installs 'figlet' and 'ranger' if not already present"
   printf "\n    '${BOLD}tran [opacity]${NORM}' Sets the Kitty background opacity to 0.8"
   printf "\n           Can use 'tran', 'opacity', 'trans' or 'transparent'"
   printf "\n           Specify a second argument to set a custom background opacity:"
@@ -168,6 +169,41 @@ usage() {
   printf "\nSee https://sw.kovidgoyal.net/kitty/remote-control/#control-kitty-from-scripts\n"
   [ "$1" == "examples" ] && show_examples
   [ "$1" == "noexit" ] || exit 1
+}
+
+install_figlet() {
+  have_make=$(type -p make)
+  if [ "${have_make}" ]; then
+    HERE=$(pwd)
+    git clone https://github.com/cmatsuoka/figlet /tmp/figlet$$
+    cd /tmp/figlet$$
+    sudo make install
+    cd "${HERE}"
+    rm -rf /tmp/figlet$$
+    have_figlet=$(type -p figlet)
+  else
+    printf "\nInstallation of figlet requires 'make' but 'make' not found."
+    printf "\nInstall 'make' and try again. Skipping installation of figlet.\n"
+    prompt_continue
+  fi
+}
+
+install_ranger() {
+  have_make=$(type -p make)
+  if [ "${have_make}" ]; then
+    HERE=$(pwd)
+    git clone https://github.com/ranger/ranger /tmp/ranger$$
+    cd /tmp/ranger$$
+    git checkout stable
+    sudo make install
+    cd "${HERE}"
+    rm -rf /tmp/ranger$$
+    have_ranger=$(type -p ranger)
+  else
+    printf "\nInstallation of ranger requires 'make' but 'make' not found."
+    printf "\nInstall 'make' and try again. Skipping installation of ranger.\n"
+    prompt_continue
+  fi
 }
 
 kitty-fontminus() {
@@ -506,9 +542,11 @@ select_folder() {
 
 
 set_haves() {
+  have_gcc=$(type -p gcc)
   have_fzf=$(type -p fzf)
   have_figlet=$(type -p figlet)
   have_lolcat=$(type -p lolcat)
+  have_make=$(type -p make)
   have_ranger=$(type -p ranger)
   have_rich=$(type -p rich)
 }
@@ -643,7 +681,10 @@ show_menu() {
     done
     options+=("Background Color" "Background Image" "Clear Background Image")
     options+=("Dark/Opaque" "Diff Files" "Diff Folders" "Examples" "Font Size")
-    options+=("Foreground Color" "List Current Info")
+    options+=("Foreground Color")
+    [ "${have_figlet}" ] || options+=("Install Figlet")
+    [ "${have_ranger}" ] || options+=("Install Ranger")
+    options+=("List Current Info")
     [ ${numconfs} -gt 1 ] && {
       options+=("Load Kitty Configuration")
     }
@@ -779,6 +820,14 @@ show_menu() {
           printf "\nmenu system. Install fzf and re-run kitty-control\n"
           prompt_continue
         fi
+        break
+        ;;
+      "Install Figlet",* | *,"Install Figlet")
+        install_figlet
+        break
+        ;;
+      "Install Ranger",* | *,"Install Ranger")
+        install_ranger
         break
         ;;
       "List"*,* | *,"List"* | "list"*,* | *,"list"* | "L",* | *,"L")
@@ -1083,6 +1132,21 @@ while [[ $1 ]]; do
     theme*|--theme*)
       kitty +kitten themes
       shift
+      ;;
+    tool*|--tool*)
+      set_haves
+      if [ "${have_make}" ]; then
+        [ "${have_figlet}" ] || {
+          if [ "${have_gcc}" ]; then
+            install_figlet
+          else
+            printf "\nInstallation of figlet requires 'gcc' but 'gcc' not found."
+          fi
+        }
+        [ "${have_ranger}" ] || install_ranger
+      else
+        printf "\nInstallation of tools requires 'make' but 'make' not found."
+      fi
       ;;
     unicode|--unicode)
       kitty +kitten unicode_input

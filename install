@@ -66,17 +66,5 @@ have_fzf=$(type -p fzf)
   [ -x ${HOME}/.fzf/install ] && ${HOME}/.fzf/install --all >/dev/null 2>&1
 }
 
-# Check for ranger file manager
-have_ranger=$(type -p ranger)
-[ "${have_ranger}" ] || {
-  printf "\nThe Ranger file manager is not required by kitty-control."
-  printf "\nHowever, some additional features are enabled by Ranger."
-  printf "\nRanger is not found on this system. To install ranger:\n"
-  printf "\n\tgit clone https://github.com/ranger/ranger"
-  printf "\n\tcd ranger"
-  printf "\n\tgit checkout stable"
-  printf "\n\tsudo make install # requires administrative privilege\n\n"
-}
-
 printf "Installation of kitty-control complete ✨ 🌟 ✨\n"
 printf "\nSee ${REPO_URL}#readme\n\n"

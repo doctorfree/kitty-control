@@ -55,6 +55,19 @@ cd kitty-control
 # source $HOME/.bashrc
 ```
 
+The [Ranger file manager](https://github.com/ranger/ranger) is not required by
+`kitty-control`. However, some additional features are enabled by Ranger.
+If `ranger` is not installed on your system you may wish to install `ranger`
+to enable easier file and directory selections with `kitty-control`.
+The installation of `ranger` requires administrative privilege:
+
+```bash
+git clone https://github.com/ranger/ranger
+cd ranger
+git checkout stable
+sudo make install # requires administrative privilege
+```
+
 For convenience, alias `kitty-control` to `kc` by adding
 `alias kc='kitty-control'` to your shell initialization (e.g. `~/.aliases`).
 
@@ -93,8 +106,8 @@ To display a usage message use `kitty-control -u`. To see several examples,
 Usage: kitty-control [-a] [back <color>] [-c command] [dark]
     [diff [opts] <path1> <path2>] [-e|E] [-f] [font [num]] [fore <color>]
     [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]
-    [-u|h|v] [term] [theme] [icat [opts] <image>] [list] [menu] [title <title>]
-    [transparent [opacity]] [unicode] [upgrade]
+    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list] [menu]
+    [title <title>] [transparent [opacity]] [unicode] [upgrade]
 Where:
     'back color' Sets the background color to 'color'
            If 'color' is 'reset' restores foreground and background to startup value
@@ -129,6 +142,7 @@ Where:
     'title <tab title>' Sets the Kitty tab title to "tab title"
           Quote tab titles which contain spaces, e.g. "This Is My Tab Title"
           Use '-m <match>' to specify the tab to match
+    'tools' Installs 'figlet' and 'ranger' if not already present
     'tran [opacity]' Sets the Kitty background opacity to 0.8
            Can use 'tran', 'opacity', 'trans' or 'transparent'
            Specify a second argument to set a custom background opacity:
