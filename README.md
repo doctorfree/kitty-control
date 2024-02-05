@@ -85,16 +85,16 @@ and `kitty-control` at your fingertips.
 
 ## Usage
 
-Invoking `kitty-control` without arguments displays a brief usage message
-and exits. To display a full usage message use `kitty-control -u`. To see
-several examples, `kitty-control -e`. To display the full usage message and
-examples run `kitty-control -h`.
+Invoking `kitty-control` without arguments displays an interactive menu system.
+To display a usage message use `kitty-control -u`. To see several examples,
+`kitty-control -e`. To display the full usage message run `kitty-control -h`.
 
 ```
-Usage: kitty-control [-a] [-c command] [dark] [-e] [-f] [-i /path/to/image]
-    [-m|t <match>] [-s /path/to/socket] [-u|h|v] [back <color>] [term] [theme]
-    [diff [opts] <path1> <path2>] [fore <color>] [font [num]] [load [subdir]]
-    [icat [opts] <image>] [list] [title <title>] [tran [opacity]] [unicode]
+Usage: kitty-control [-a] [back <color>] [-c command] [dark]
+    [diff [opts] <path1> <path2>] [-e|E] [-f] [font [num]] [fore <color>]
+    [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]
+    [-u|h|v] [term] [theme] [icat [opts] <image>] [list] [menu] [title <title>]
+    [transparent [opacity]] [unicode] [upgrade]
 Where:
     'back color' Sets the background color to 'color'
            If 'color' is 'reset' restores foreground and background to startup value
@@ -123,6 +123,7 @@ Where:
            e.g. 'kitty-control load tv' would load ~/.config/kitty/tv/kitty.conf
            'kitty-control load default' loads the ~/.config/kitty/kitty.conf config
            'kitty-control load --help' displays a help message for the load command
+    'menu' Displays the kitty-control interactive menu system
     'term' Displays information about the terminal using the query_terminal kitten
     'theme' Displays the interactive theme selection kitten
     'title <tab title>' Sets the Kitty tab title to "tab title"
@@ -133,12 +134,14 @@ Where:
            Specify a second argument to set a custom background opacity:
            e.g. 'kitty-control transparent 0.9'
     'unicode' Displays the Unicode input kitten
+    'upgrade' Upgrades Kitty to the latest version
     '-a' Indicates modify all windows rather than just the currently active OS window
     '-c command' specifies a Kitty command to run (enclose command and arguments in quotes)
         Can be used to run arbitrary commands, e.g. 'kitty-control -c get-colors'
     '-e' Displays several example invocations and exits
+    '-E' Displays full usage message with examples and exits
     '-f' Indicates toggle fullscreen
-    '-h' Displays the usage message with examples and exits
+    '-h' Displays a full usage message and exits
     '-i /path/to/image' sets the background image for the specified Kitty windows
         If /path/to/image is 'none' then any existing image will be removed
     '-m <match>' Specifies the window to match
@@ -148,8 +151,10 @@ Where:
     '-s /path/to/socket' Specifies the socket Kitty is listening on if enabled
         If /path/to/socket is '--help' some help on configuring a Kitty socket is provided
         '-s /path/...' can be used to send commands to Kitty from another terminal
-    '-u' Displays the usage message and exits
+    '-u' Displays a brief usage message and exits
     '-v' Displays the kitty-control version and exits
+
+Without any arguments 'kitty-control' displays an interactive menu system
 Adjusting the background opacity or font size requires the original kitty.conf
 that was used for this instance of Kitty to have enabled the following:
     'dynamic_background_opacity yes' and 'allow_remote_control yes'

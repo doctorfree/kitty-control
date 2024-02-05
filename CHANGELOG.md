@@ -6,6 +6,21 @@
 
 ### 🐞 Fixed
 
+## v1.0.2r1
+
+### ⚡️ Added
+
+- Add interactive menu system
+- Install `fzf`
+- Add usage menu
+- Add support for both Linux and macOS
+- Add figlet fonts
+- Add kitty config from github user `ttys3`
+
+### 🐞 Fixed
+
+- Rename example subdirs, describe briefly in readme
+
 ## v1.0.1r5
 
 ### ⚡️ Added

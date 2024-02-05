@@ -8,8 +8,8 @@
 #
 # Written Feb 1, 2024 by Ronald Joe Record <ronaldrecord@gmail.com>
 #
-VERSION=1.0.1
-RELEASE=5
+VERSION=1.0.2
+RELEASE=1
 # The Kitty configuration directory
 CONFDIR="${HOME}/.config/kitty"
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
@@ -52,9 +52,9 @@ brief_usage() {
   printf "\n    [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]"
   printf "\n    [-u|h|v] [term] [theme] [icat [opts] <image>] [list] [menu] [title <title>]"
   printf "\n    [transparent [opacity]] [unicode] [upgrade]${NORM}"
-  printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
-    printf " displays an interactive menu system"
   [ "$1" == "noexit" ] || {
+    printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
+      printf " displays an interactive menu system"
     printf "\nFor a brief usage message run '${BOLD}kitty-control -u${NORM}'"
     printf "\nFor a full usage message run '${BOLD}kitty-control -h${NORM}'"
     printf "\nTo display several examples run '${BOLD}kitty-control -e${NORM}'"
@@ -159,6 +159,8 @@ usage() {
   printf "\n        '-s /path/...' can be used to send commands to Kitty from another terminal"
   printf "\n    '${BOLD}-u${NORM}' Displays a brief usage message and exits"
   printf "\n    '${BOLD}-v${NORM}' Displays the kitty-control version and exits"
+  printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
+    printf " displays an interactive menu system"
   printf "\nAdjusting the background opacity or font size requires the original kitty.conf"
   printf "\nthat was used for this instance of Kitty to have enabled the following:"
   printf "\n    '${BOLD}dynamic_background_opacity yes${NORM}'"
@@ -910,6 +912,12 @@ while [[ $1 ]]; do
       shift
       ;;
     -h | --help)
+      usage
+      shift
+      ;;
+    -H | --Help)
+      BOLD=
+      NORM=
       usage
       shift
       ;;
