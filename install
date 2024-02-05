@@ -1,16 +1,17 @@
 #!/bin/bash
 
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
-SCRIPT_PATH="$(realpath $SCRIPT_PATH)"
+SCRIPT_PATH="$(realpath "$SCRIPT_PATH")"
 REPO_URL="https://github.com/doctorfree/kitty-control"
 
-[ -f ${SCRIPT_PATH}/kitty-control ] || {
-  have_git=$(type -p git)
-  [ "${have_git}" ] || {
-    printf "\nERROR: cannot locate required git command"
-    printf "\nInstall git and re-run this install script\n\n"
-    exit 1
-  }
+have_git=$(type -p git)
+[ "${have_git}" ] || {
+  printf "\nERROR: cannot locate required git command"
+  printf "\nInstall git and re-run this install script\n\n"
+  exit 1
+}
+
+[ -f "${SCRIPT_PATH}"/kitty-control ] || {
   git clone ${REPO_URL} /tmp/kc$$ >/dev/null 2>&1
   [ -x /tmp/kc$$/install ] || {
     [ -f /tmp/kc$$/install ] || {
@@ -25,20 +26,56 @@ REPO_URL="https://github.com/doctorfree/kitty-control"
 }
 
 [ -d ${HOME}/.local/bin ] || mkdir -p ${HOME}/.local/bin
-cp ${SCRIPT_PATH}/kitty-control ${HOME}/.local/bin/kitty-control
+cp "${SCRIPT_PATH}"/kitty-control ${HOME}/.local/bin/kitty-control
 chmod 755 ${HOME}/.local/bin/kitty-control
 
 [ -d ${HOME}/.config/kitty ] || mkdir -p ${HOME}/.config/kitty
-cp ${SCRIPT_PATH}/kitten/read_config.py ${HOME}/.config/kitty
+cp "${SCRIPT_PATH}"/kitten/read_config.py ${HOME}/.config/kitty
 chmod 644 ${HOME}/.config/kitty/read_config.py
 
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
   [ "${KITTY_CONFIG_DIRECTORY}" == "${HOME}/.config/kitty" ] || {
     [ -d "${KITTY_CONFIG_DIRECTORY}" ] && {
-      cp ${SCRIPT_PATH}/kitten/read_config.py ${KITTY_CONFIG_DIRECTORY}
+      cp "${SCRIPT_PATH}"/kitten/read_config.py ${KITTY_CONFIG_DIRECTORY}
       chmod 644 ${KITTY_CONFIG_DIRECTORY}/read_config.py
     }
   }
+}
+
+# Install Figlet Fonts used by kitty-control
+FDEST="${HOME}/.local/share/figlet-fonts"
+[ -d ${HOME}/.local/share ] || mkdir -p ${HOME}/.local/share
+[ -d ${FDEST} ] || mkdir -p ${FDEST}
+for ff in "${SCRIPT_PATH}"/figlet-fonts/*
+do
+  [ "${ff}" == "${SCRIPT_PATH}/figlet-fonts/*" ] && continue
+  bn=$(basename "${ff}")
+  [ -f "${FDEST}/${bn}"  ] && continue
+  cp "${ff}" ${FDEST}
+  chmod 644 "${FDEST}/${bn}"
+done
+chmod 755 ${FDEST}/*.sh
+
+# Install fzf fuzzy finder
+have_fzf=$(type -p fzf)
+[ "${have_fzf}" ] || {
+  [ -d ${HOME}/.fzf ] && mv ${HOME}/.fzf ${HOME}/.fzf$$
+  git clone --depth 1 https://github.com/junegunn/fzf.git \
+    ${HOME}/.fzf >/dev/null 2>&1
+  [ -f ${HOME}/.fzf/install ] && chmod 755 ${HOME}/.fzf/install
+  [ -x ${HOME}/.fzf/install ] && ${HOME}/.fzf/install --all >/dev/null 2>&1
+}
+
+# Check for ranger file manager
+have_ranger=$(type -p ranger)
+[ "${have_ranger}" ] || {
+  printf "\nThe Ranger file manager is not required by kitty-control."
+  printf "\nHowever, some additional features are enabled by Ranger."
+  printf "\nRanger is not found on this system. To install ranger:\n"
+  printf "\n\tgit clone https://github.com/ranger/ranger"
+  printf "\n\tcd ranger"
+  printf "\n\tgit checkout stable"
+  printf "\n\tsudo make install # requires administrative privilege\n\n"
 }
 
 printf "Installation of kitty-control complete ✨ 🌟 ✨\n"

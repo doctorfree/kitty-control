@@ -31,28 +31,42 @@ else
 fi
 # Kitty remote control options are used to specify which windows/tabs to modify
 OPTS=
-
+# Menu system vars
+FONTDIR="${HOME}/.local/share/figlet-fonts"
+LOLCAT="lolcat"
+# Array with font names
+fonts=("Fire Font-k" "Graceful" "Script" "Shadow" "Slant" "Small" "Standard")
+# Font size choices for menu
+fontsizes=("default" "+1" "+2" "+4" "+8" "+12" "-1" "-2" "-4" "-8" "-12")
+# Transparency opacity choices for menu
+translevels=("default" "1.0" "0.9" "0.8" "0.7" "0.6" "0.5" "0.4" "0.3" "0.2" "0.1" "0.0")
+# Colors
+colors=("reset" "black" "white" "red" "green" "yellow" "blue" "magenta" "cyan")
+# Use tput to get the bold and normal text sequence
 BOLD=$(tput bold 2>/dev/null)
 NORM=$(tput sgr0 2>/dev/null)
 
 brief_usage() {
-  printf "${BOLD}Usage: kitty-control [-a] [-c command] [dark] [-e] [-f] [-i /path/to/image]"
-  printf "\n    [-m|t <match>] [-s /path/to/socket] [-u|h|v] [back <color>] [term] [theme]"
-  printf "\n    [diff [opts] <path1> <path2>] [fore <color>] [font [num]] [load [subdir]]"
-  printf "\n    [icat [opts] <image>] [list] [title <title>] [tran [opacity]] [unicode]${NORM}"
+  printf "${BOLD}Usage: kitty-control [-a] [back <color>] [-c command] [dark]"
+  printf "\n    [diff [opts] <path1> <path2>] [-e|E] [-f] [font [num]] [fore <color>]"
+  printf "\n    [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]"
+  printf "\n    [-u|h|v] [term] [theme] [icat [opts] <image>] [list] [menu] [title <title>]"
+  printf "\n    [transparent [opacity]] [unicode] [upgrade]${NORM}"
+  printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
+    printf " displays an interactive menu system"
   [ "$1" == "noexit" ] || {
-    printf "\n\nTo display several examples run 'kitty-control -e'"
-    printf "\nFor a full usage message run 'kitty-control -u'"
-    printf "\nFor a full usage message with examples run 'kitty-control -h'\n\n"
+    printf "\nFor a brief usage message run '${BOLD}kitty-control -u${NORM}'"
+    printf "\nFor a full usage message run '${BOLD}kitty-control -h${NORM}'"
+    printf "\nTo display several examples run '${BOLD}kitty-control -e${NORM}'"
+    printf "\nTo display the full usage message and examples run '${BOLD}kitty-control -E${NORM}'\n\n"
     exit 1
   }
 }
 
 show_examples() {
-  brief_usage noexit
   printf "\nExample invocations of kitty-control\n"
   printf "\nTo set a transparent Kitty background with 0.9 opacity:"
-  printf "\n\t${BOLD}kitty-control tran 0.9${NORM}"
+  printf "\n\t${BOLD}kitty-control transparent 0.9${NORM}"
   printf "\nTo set the Kitty background to fully opaque (no transparency):"
   printf "\n\t${BOLD}kitty-control dark${NORM}"
   printf "\nTo set the Kitty background color to black and foreground color to white:"
@@ -72,8 +86,10 @@ show_examples() {
   printf "\nTo set the tab title of the tab currently titled '~/src/borg' to 'Borg Backup':"
   printf "\n\t${BOLD}kitty-control -m \"title:borg\" title \"Borg Backup\"${NORM}"
   printf "\nTo restore the original Kitty configuration:"
-  printf "\n\t${BOLD}kitty-control load default${NORM}\n"
-  exit 1
+  printf "\n\t${BOLD}kitty-control load default${NORM}"
+  printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
+    printf " displays an interactive menu system\n"
+  [ "$1" == "noexit" ] || exit 1
 }
 
 usage() {
@@ -108,6 +124,7 @@ usage() {
   printf "\n           e.g. 'kitty-control load tv' would load ~/.config/kitty/tv/kitty.conf"
   printf "\n           'kitty-control load default' loads the ~/.config/kitty/kitty.conf config"
   printf "\n           'kitty-control load --help' displays a help message for the load command"
+  printf "\n    '${BOLD}menu${NORM}' Displays the kitty-control interactive menu system"
   printf "\n    '${BOLD}term${NORM}'"
     printf " Displays information about the terminal using the query_terminal kitten"
   printf "\n    '${BOLD}theme${NORM}' Displays the interactive theme selection kitten"
@@ -119,14 +136,16 @@ usage() {
   printf "\n           Specify a second argument to set a custom background opacity:"
   printf "\n           e.g. 'kitty-control transparent 0.9'"
   printf "\n    '${BOLD}unicode${NORM}' Displays the Unicode input kitten"
+  printf "\n    '${BOLD}upgrade${NORM}' Upgrades Kitty to the latest version"
   printf "\n    '${BOLD}-a${NORM}'"
     printf " Indicates modify all windows rather than just the currently active OS window"
   printf "\n    '${BOLD}-c command${NORM}'"
     printf " specifies a Kitty command to run (enclose command and arguments in quotes)"
   printf "\n        Can be used to run arbitrary commands, e.g. 'kitty-control -c get-colors'"
   printf "\n    '${BOLD}-e${NORM}' Displays several example invocations and exits"
+  printf "\n    '${BOLD}-E${NORM}' Displays full usage message with examples and exits"
   printf "\n    '${BOLD}-f${NORM}' Indicates toggle fullscreen"
-  printf "\n    '${BOLD}-h${NORM}' Displays the usage message with examples and exits"
+  printf "\n    '${BOLD}-h${NORM}' Displays a full usage message and exits"
   printf "\n    '${BOLD}-i /path/to/image${NORM}'"
     printf " sets the background image for the specified Kitty windows"
   printf "\n        If /path/to/image is 'none' then any existing image will be removed"
@@ -138,7 +157,7 @@ usage() {
     printf " Specifies the socket Kitty is listening on if enabled"
   printf "\n        If /path/to/socket is '--help' some help on configuring a Kitty socket is provided"
   printf "\n        '-s /path/...' can be used to send commands to Kitty from another terminal"
-  printf "\n    '${BOLD}-u${NORM}' Displays the usage message and exits"
+  printf "\n    '${BOLD}-u${NORM}' Displays a brief usage message and exits"
   printf "\n    '${BOLD}-v${NORM}' Displays the kitty-control version and exits"
   printf "\nAdjusting the background opacity or font size requires the original kitty.conf"
   printf "\nthat was used for this instance of Kitty to have enabled the following:"
@@ -146,7 +165,7 @@ usage() {
     printf " and '${BOLD}allow_remote_control yes${NORM}'"
   printf "\nSee https://sw.kovidgoyal.net/kitty/remote-control/#control-kitty-from-scripts\n"
   [ "$1" == "examples" ] && show_examples
-  exit 1
+  [ "$1" == "noexit" ] || exit 1
 }
 
 kitty-fontminus() {
@@ -179,6 +198,37 @@ kitty-fontsize() {
   fi
 }
 
+load-config() {
+  if [ "$1" == "--help" ]; then
+    printf "\nThe 'kitty-control load <subdir>' command loads the Kitty configuration"
+    printf "\nfile in '~/.config/kitty/<subdir>/kitty.conf'. The current instance of"
+    printf "\nkitty continues to run and the specified configuration file is loaded."
+    printf "\nAll tabs and state are preserved while the new configuration is loaded."
+    printf "\n\nThe new Kitty configuration file must be prepared beforehand and located"
+    printf "\nin the specified subdirectory in the Kitty configuration folder."
+    printf "\n\nFor example, if you have one Kitty configuration used for a large screen"
+    printf "\nTV and another used for a laptop then placing the TV Kitty configuration"
+    printf "\nin ~/.config/kitty/tv/kitty.conf and the laptop Kitty configuration in"
+    printf "\n~/.config/kitty/laptop/kitty.conf would allow you to switch between these"
+    printf "\ntwo Kitty configurations with kitty-control as follows:"
+    printf "\n\tkitty-control load tv # When your display is the TV as monitor"
+    printf "\n\tkitty-control load laptop # When you're using the laptop built-in display"
+    printf "\n\nTo restore the Kitty configuration in ~/.config/kitty/kitty.conf:"
+    printf "\n\tkitty-control load default\n\n"
+    exit 0
+  else
+    if [ -f "${CONFDIR}/$1/kitty.conf" ]; then
+      kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/$1/kitty.conf"
+    else
+      if [ "$1" == "default" ]; then
+        kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/kitty.conf"
+      else
+        printf "\n ${CONFDIR}/$1/kitty.conf does not exist\n"
+      fi
+    fi
+  fi
+}
+
 set-background() {
   if [ "$1" == "reset" ]; then
     kitty @ ${SOCKET} set-colors ${OPTS} --reset
@@ -195,7 +245,593 @@ set-foreground() {
   fi
 }
 
-[ "$1" ] || brief_usage
+set-opacity() {
+  kitty @ ${SOCKET} set-background-opacity ${OPTS} $1
+}
+
+toggle-fullscreen() {
+  kitty @ ${SOCKET} resize-os-window --action toggle-fullscreen ${OPTS}
+}
+
+install_kitty() {
+  darwin=
+  platform=$(uname -s)
+  [ "${platform}" == "Darwin" ] && darwin=1
+  if [ "${darwin}" ]; then
+    LOCAL="/Applications/kitty.app/Contents"
+    KBIN="${LOCAL}/MacOS"
+    KTINFO="${LOCAL}/Resources/kitty/terminfo/kitty.terminfo"
+    KXTERM="${LOCAL}/Resources/kitty/terminfo/78/xterm-kitty"
+    KSTERM="${LOCAL}/Resources/terminfo/78/xterm-kitty"
+  else
+    LOCAL="${HOME}/.local/kitty.app"
+    KBIN="${LOCAL}/bin"
+    KTINFO="${LOCAL}/lib/kitty/terminfo/kitty.terminfo"
+    KXTERM="${LOCAL}/lib/kitty/terminfo/x/xterm-kitty"
+    KSTERM="${LOCAL}/share/terminfo/x/xterm-kitty"
+  fi
+  printf "\n\tInstalling/Upgrading Kitty terminal emulator ..."
+  curl --silent --location \
+    https://sw.kovidgoyal.net/kitty/installer.sh >/tmp/kitty-$$.sh
+  [ $? -eq 0 ] || {
+    rm -f /tmp/kitty-$$.sh
+    curl --insecure --silent --location \
+      https://sw.kovidgoyal.net/kitty/installer.sh >/tmp/kitty-$$.sh
+    cat /tmp/kitty-$$.sh | sed -e "s/curl -/curl -k/" >/tmp/k$$
+    cp /tmp/k$$ /tmp/kitty-$$.sh
+    rm -f /tmp/k$$
+  }
+  if [ -s /tmp/kitty-$$.sh ]; then
+    sh /tmp/kitty-$$.sh launch=n >/dev/null 2>&1
+    rm -f /tmp/kitty-$$.sh
+    # Create a symbolic link to add kitty to PATH
+    [ -d ~/.local/bin ] || mkdir -p ~/.local/bin
+    if [ -x ${KBIN}/kitty ]; then
+      [ -x ~/.local/bin/kitty ] || {
+        ln -s ${KBIN}/kitty ~/.local/bin/
+      }
+    else
+      printf "\nUnable to create Kitty link to ~/.local/bin/\n"
+    fi
+    if [ -x ~/${KBIN}/kitten ]; then
+      [ -x ~/.local/bin/kitten ] || {
+        ln -s ~/${KBIN}/kitten ~/.local/bin/
+      }
+    else
+      printf "\nUnable to create kitten link to ~/.local/bin/\n"
+    fi
+    # Link the kitty man pages somewhere it can be found by the man command
+    if [ "${darwin}" ]; then
+      LINMAN="/Applications/kitty.app/Contents/Resources/man"
+    else
+      LINMAN="${LOCAL}/share/man"
+    fi
+    [ -d ~/.local/share/man/man1 ] || mkdir -p ~/.local/share/man/man1
+    [ -f ~/.local/share/man/man1/kitty.1 ] || {
+      [ -d ${HOME}/.local/share/man/man1 ] || {
+        mkdir -p ${HOME}/.local/share/man/man1
+      }
+      [ -f "${LINMAN}/man1/kitty.1" ] && {
+        ln -s "${LINMAN}/man1/kitty.1" ~/.local/share/man/man1/
+      }
+    }
+    [ -d ~/.local/share/man/man5 ] || mkdir -p ~/.local/share/man/man5
+    [ -f ~/.local/share/man/man5/kitty.conf.5 ] || {
+      [ -d ${HOME}/.local/share/man/man5 ] || {
+        mkdir -p ${HOME}/.local/share/man/man5
+      }
+      [ -f "${LINMAN}/man5/kitty.conf.5" ] && {
+        ln -s "${LINMAN}/man5/kitty.conf.5" ~/.local/share/man/man5/
+      }
+    }
+    # Place the kitty.desktop file somewhere it can be found by the OS
+    [ -d ~/.local/share/applications ] || mkdir -p ~/.local/share/applications
+    [ -f "${LOCAL}/share/applications/kitty.desktop" ] && {
+      [ -f ~/.local/share/applications/kitty.desktop ] || {
+        cp ${LOCAL}/share/applications/kitty.desktop \
+          ~/.local/share/applications/
+      }
+    }
+    # If you want to open text files and images in kitty via your file manager
+    # also add the kitty-open.desktop file
+    [ -f "${LOCAL}/share/applications/kitty-open.desktop" ] && {
+      [ -f ~/.local/share/applications/kitty-open.desktop ] || {
+        cp ${LOCAL}/share/applications/kitty-open.desktop \
+          ~/.local/share/applications/
+      }
+    }
+    # Update the paths to the kitty and its icon in the kitty.desktop file(s)
+    for desktop in "${HOME}"/.local/share/applications/kitty*.desktop; do
+      [ "${desktop}" == "${HOME}/.local/share/applications/kitty*.desktop" ] && continue
+      [ -f ${LOCAL}/share/icons/hicolor/256x256/apps/kitty.png ] && {
+        sed -i "s|Icon=kitty|Icon=${LOCAL}/share/icons/hicolor/256x256/apps/kitty.png|g" "${desktop}"
+      }
+      [ -x ${LOCAL}/bin/kitty ] && {
+        sed -i "s|Exec=kitty|Exec=${LOCAL}/bin/kitty|g" "${desktop}"
+      }
+    done
+    printf " done!\n"
+  else
+    printf "\n${BOLD}ERROR:${NORM} Download of kitty installation script failed"
+    printf "\nSee https://sw.kovidgoyal.net/kitty/binary/#manually-installing"
+    printf "\nto manually install the kitty terminal emulator\n"
+  fi
+
+  # Install the Kitty terminfo entry
+  KITERM="${HOME}/.terminfo/x/xterm-kitty"
+  MATERM="${HOME}/.terminfo/78/xterm-kitty"
+  [ -f "${KITERM}" ] || [ -f "${MATERM}" ] || {
+    [ -d ${HOME}/.terminfo ] || mkdir -p ${HOME}/.terminfo
+    [ -d ${HOME}/.terminfo/x ] || mkdir -p ${HOME}/.terminfo/x
+    [ -d ${HOME}/.terminfo/78 ] || mkdir -p ${HOME}/.terminfo/78
+    have_tic=$(type -p tic)
+    [ "${have_tic}" ] && {
+      [ -f "${KTINFO}" ] && {
+        tic -x -o ${HOME}/.terminfo "${KTINFO}" >/dev/null 2>&1
+      }
+    }
+    [ -f "${KITERM}" ] || [ -f "${MATERM}" ] || {
+      if [ -f "${KXTERM}" ]; then
+        cp "${KXTERM}" "${KITERM}"
+      else
+        if [ -f "${KSTERM}" ]; then
+          cp "${KSTERM}" "${KITERM}"
+        else
+          printf "\nUnable to create Kitty terminfo entry ${KITERM}\n"
+        fi
+      fi
+    }
+  }
+}
+
+prompt_continue() {
+  printf "\nPress <Enter> to continue ... "
+  read -r yn
+}
+
+choose_file() {
+  TMP="$(mktemp)"
+  ranger --choosefile="${TMP}" "${HOME}" 1>&2
+  cat ${TMP}
+  rm -f ${TMP}
+}
+
+choose_folder() {
+  TMP="$(mktemp)"
+  ranger --choosedir="${TMP}" "${HOME}" 1>&2
+  cat ${TMP}
+  rm -f ${TMP}
+}
+
+select_file() {
+  # Can be called with e.g. 'select_file image' to use 'image' as file type
+  # If no argument is passed then any file will do
+  keyword=
+  selectedFile=
+  [ "$1" ] && keyword="$1"
+  if [ "${have_ranger}" ]; then
+    selectedFile="$(choose_file)"
+  else
+#   selectedFile=$(dialog --stdout --title "Please select a file" --fselect ${HOME} 0 0)
+    printf "\nEnter the path to a file\n"
+    while true; do
+      read -r -p "Enter file path ('q' to exit): " filepath
+      [ "${filepath}" == "q" ] && break
+      if [ -f "${filepath}" ]; then
+        selectedFile="${filepath}"
+        break
+      else
+        if [ "${filepath}" ]; then
+          printf "Specified file ${filepath} does not exist or is not a plain file."
+        else
+          printf "\nEmpty file path entered."
+        fi
+        printf "\nPlease enter a valid file path or 'q' to exit this dialog.\n"
+      fi
+    done
+  fi
+  if [ "${selectedFile}" ]; then
+    if [ "${keyword}" ]; then
+      thisfile=
+      file "${selectedFile}" | grep -i "${keyword}" >/dev/null && thisfile=1
+    else
+      thisfile=1
+    fi
+    [ "${thisfile}" ] && FILE="${selectedFile}"
+  else
+    FILE=
+  fi
+}
+
+select_folder() {
+  FOLD=
+  if [ "${have_ranger}" ]; then
+    echo ""
+    echo "Choosing a directory in Ranger is done by visiting a directory"
+    echo ""
+    echo "Use the arrow keys to browse folders"
+    echo "Press 'Enter' to enter a directory"
+    echo "Create a new directory with ':mkdir <dirname>'"
+    echo ""
+    echo "While in the directory you wish to select, quit Ranger with 'q'"
+    echo ""
+    while true; do
+      read -p "Select directory now? (y/n) " answer
+      case ${answer} in
+        [Yy]*)
+          FOLD="$(choose_folder)"
+          echo ""
+          echo "Selected directory = ${FOLD}"
+          echo ""
+          break
+          ;;
+        [Nn]*)
+          printf "\nSkipping directory selection.\n"
+          FOLD=
+          break
+          ;;
+        *)
+          echo "Please answer 'y' to select directory, or 'n' to skip."
+          ;;
+      esac
+    done
+  else
+#   FOLD=$(dialog --stdout \
+#                 --title "Please select an image input folder" \
+#                 --fselect ${HOME}/ 14 48)
+    printf "\nEnter the path to a directory\n"
+    while true; do
+      read -r -p "Enter directory path ('q' to exit): " foldpath
+      [ "${foldpath}" == "q" ] && break
+      if [ -d "${foldpath}" ]; then
+        FOLD="${foldpath}"
+        break
+      else
+        if [ "${foldpath}" ]; then
+          printf "Specified directory ${foldpath} does not exist or is not a directory."
+        else
+          printf "\nEmpty directory path entered."
+        fi
+        printf "\nPlease enter a valid directory path or 'q' to exit this dialog.\n"
+      fi
+    done
+  fi
+}
+
+
+set_haves() {
+  have_fzf=$(type -p fzf)
+  have_figlet=$(type -p figlet)
+  have_lolcat=$(type -p lolcat)
+  have_ranger=$(type -p ranger)
+  have_rich=$(type -p rich)
+}
+
+show_figlet() {
+  if [ "$1" ]; then
+    FIG_TEXT="$1"
+  else
+    FIG_TEXT="Kitty Control"
+  fi
+  # Seed random generator
+  RANDOM=$$$(date +%s)
+  USE_FONT=${fonts[$RANDOM % ${#fonts[@]}]}
+  [ "${USE_FONT}" ] || USE_FONT="Standard"
+  if [ "${have_lolcat}" ]; then
+    figlet -c -d "${FONTDIR}" -f "${USE_FONT}" -k -t ${FIG_TEXT} 2>/dev/null | ${LOLCAT}
+  else
+    figlet -c -d "${FONTDIR}" -f "${USE_FONT}" -k -t ${FIG_TEXT} 2>/dev/null
+  fi
+}
+
+show_usage() {
+  use_type="$1"
+  figlet_text="Usage"
+  [ "${use_type}" == "examples" ] && figlet_text="Examples"
+  while true; do
+    clear
+    if [ "${have_figlet}" ]; then
+      show_figlet "${figlet_text}"
+    else
+      [ "${have_rich}" ] && rich "[cyan]${figlet_text}[/cyan]" -p -a rounded -c -C
+    fi
+    printf "\n"
+    if [ "${use_type}" == "examples" ]; then
+      show_examples noexit | less
+    else
+      brief_usage noexit
+    fi
+    printf "\n\n"
+    options=()
+    PS3="${BOLD}Enter a choice (number, shortcut, or text, 'h' help): ${NORM}"
+    options+=("Examples" "Full Usage" "Main Menu" "Quit (q)")
+    select opt in "${options[@]}"; do
+      case "$opt,$REPLY" in
+      "Example"*,* | *,"Example"* | "example"*,* | *,"example"*)
+        show_examples noexit | less
+        break
+        ;;
+      "Full"*,* | *,"Full"* | "full"*,* | *,"full"*)
+        usage noexit | less
+        break
+        ;;
+      "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+        break 2
+        ;;
+      "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+        printf "\nExiting kitty-control\n"
+        exit 0
+        ;;
+      *,*)
+        printf "\nCould not match '${REPLY}' with a menu entry."
+        printf "\nPlease try again with an exact match.\n"
+        break
+        ;;
+      esac
+      REPLY=
+    done
+  done
+}
+
+show_menu() {
+  set_haves
+  while true; do
+    clear
+    if [ "${have_figlet}" ]; then
+      show_figlet
+    else
+      [ "${have_rich}" ] && rich "[cyan]Kitty Control[/cyan]" -p -a rounded -c -C
+    fi
+    printf "\n"
+    options=()
+    PS3="${BOLD}Enter a choice (number, shortcut, or text, 'h' help): ${NORM}"
+    numconfs=1
+    configs=("default")
+    for kconf in ${CONFDIR}/*/kitty.conf
+    do
+      [ "${kconf}" == "${CONFDIR}/*/kitty.conf" ] && continue
+      ((numconfs++))
+      configs+=("${kconf}")
+    done
+    options+=("Background Color" "Background Image" "Clear Background Image")
+    options+=("Dark/Opaque" "Diff Files" "Diff Folders" "Examples" "Font Size")
+    options+=("Foreground Color" "List Current Info")
+    [ ${numconfs} -gt 1 ] && {
+      options+=("Load Kitty Configuration")
+    }
+    options+=("Show Usage Message" "Theme Selection")
+    options+=("Terminal Info" "Toggle Fullscreen" "Transparent" "Unicode Input")
+    options+=("Upgrade Kitty" "View an Image" "Quit (q)")
+    select opt in "${options[@]}"; do
+      case "$opt,$REPLY" in
+      "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+        printf "\n"
+        show_help
+        break
+        ;;
+      "Background Color",* | *,"Background Color")
+        if [ "${have_fzf}" ]; then
+          choice=$(printf "%s\n" "${colors[@]}" | fzf --prompt="😺 Select Background Color  " --layout=reverse --border --exit-0)
+          [ "${choice}" ] && {
+            forepre=$(kitty @ get-colors | grep "^foreground" | awk '{ print $2 }')
+            backpre=$(kitty @ get-colors | grep "^background" | awk '{ print $2 }')
+            set-background "${choice}"
+            case "${choice}" in
+              black)
+                set-foreground white
+                ;;
+              white)
+                set-foreground black
+                ;;
+              *)
+                true
+                ;;
+            esac
+            forecolor=$(kitty @ get-colors | grep "^foreground" | awk '{ print $2 }')
+            backcolor=$(kitty @ get-colors | grep "^background" | awk '{ print $2 }')
+            [ "${forecolor}" == "${backcolor}" ] && {
+              set-foreground "${forepre}"
+              set-background "${backpre}"
+            }
+          }
+        else
+          printf "\nERROR: Cannot locate required fzf fuzzy finder"
+          printf "\nTo set Kitty background color using the Kitty Control"
+          printf "\nmenu system. Install fzf and re-run kitty-control\n"
+          prompt_continue
+        fi
+        break
+        ;;
+      "Foreground Color",* | *,"Foreground Color")
+        if [ "${have_fzf}" ]; then
+          choice=$(printf "%s\n" "${colors[@]}" | fzf --prompt="😺 Select Foreground Color  " --layout=reverse --border --exit-0)
+          [ "${choice}" ] && {
+            forepre=$(kitty @ get-colors | grep "^foreground" | awk '{ print $2 }')
+            backpre=$(kitty @ get-colors | grep "^background" | awk '{ print $2 }')
+            set-foreground "${choice}"
+            forecolor=$(kitty @ get-colors | grep "^foreground" | awk '{ print $2 }')
+            backcolor=$(kitty @ get-colors | grep "^background" | awk '{ print $2 }')
+            [ "${forecolor}" == "${backcolor}" ] && {
+              set-foreground "${forepre}"
+              set-background "${backpre}"
+            }
+          }
+        else
+          printf "\nERROR: Cannot locate required fzf fuzzy finder"
+          printf "\nTo set Kitty foreground color using the Kitty Control"
+          printf "\nmenu system. Install fzf and re-run kitty-control\n"
+          prompt_continue
+        fi
+        break
+        ;;
+      "Background Image",* | *,"Background Image")
+        FILE=
+        select_file image
+        [ "${FILE}" ] && kitty @ ${SOCKET} set-background-image ${OPTS} "${FILE}"
+        break
+        ;;
+      "Clear Background Image",* | *,"Clear Background Image")
+        kitty @ ${SOCKET} set-background-image ${OPTS} none
+        break
+        ;;
+      "Dark"*,* | *,"Dark"* | "dark"*,* | *,"dark"* | "Opaq"*,* | *,"Opaq"* | "opaq"*,* | *,"opaq"*)
+        set-opacity "1.0"
+        break
+        ;;
+      "Diff File"*,* | *,"Diff File"* | "diff file"*,* | *,"diff file"*)
+        FILE=
+        file1=
+        file2=
+        select_file
+        [ "${FILE}" ] && {
+          file1="${FILE}"
+          select_file
+          [ "${FILE}" ] && {
+            file2="${FILE}"
+          }
+        }
+        [ "${file1}" ] && [ "${file2}" ] && {
+          kitty +kitten diff "${file1}" "${file2}"
+        }
+        break
+        ;;
+      "Diff Fold"*,* | *,"Diff Fold"* | "diff fold"*,* | *,"diff fold"*)
+        FOLD=
+        fold1=
+        fold2=
+        select_folder
+        [ "${FOLD}" ] && {
+          fold1="${FOLD}"
+          select_folder
+          [ "${FOLD}" ] && {
+            fold2="${FOLD}"
+          }
+        }
+        [ "${fold1}" ] && [ "${fold2}" ] && {
+          kitty +kitten diff "${fold1}" "${fold2}"
+        }
+        break
+        ;;
+      "Exam"*,* | *,"Exam"* | "exam"*,* | *,"exam"*)
+        show_usage examples
+        break
+        ;;
+      "Font"*,* | *,"Font"* | "font"*,* | *,"font"*)
+        if [ "${have_fzf}" ]; then
+          choice=$(printf "%s\n" "${fontsizes[@]}" | fzf --prompt="😺 Select Font Size Adjustment  " --layout=reverse --border --exit-0)
+          [ "${choice}" ] && {
+            if [ "${choice}" == "default" ]; then
+              kitty-fontsize 0
+            else
+              kitty-fontsize "${choice}"
+            fi
+          }
+        else
+          printf "\nERROR: Cannot locate required fzf fuzzy finder"
+          printf "\nTo set Kitty font size using the Kitty Control"
+          printf "\nmenu system. Install fzf and re-run kitty-control\n"
+          prompt_continue
+        fi
+        break
+        ;;
+      "List"*,* | *,"List"* | "list"*,* | *,"list"*)
+        kitty @ ${SOCKET} ls ${OPTS} | less
+        break
+        ;;
+      "Load"*,* | *,"Load"* | "load"*,* | *,"load"*)
+        if [ "${have_fzf}" ]; then
+          choice=$(printf "%s\n" "${configs[@]}" | fzf --prompt="😺 Select Kitty Configuration  " --layout=reverse --border --exit-0)
+          [ "${choice}" ] && {
+            if [ "${choice}" == "default" ]; then
+              load-config "${choice}"
+            else
+              subdir=$(echo "${choice}" | awk -F '/' '{ printf $(NF - 1) }')
+              load-config "${subdir}"
+            fi
+          }
+        else
+          printf "\nERROR: Cannot locate required fzf fuzzy finder"
+          printf "\nTo load Kitty configurations using the Kitty Control"
+          printf "\nmenu system. Install fzf and re-run kitty-control\n"
+          prompt_continue
+        fi
+        break
+        ;;
+      "View"*,* | *,"View"* | "view"*,* | *,"view"*)
+        FILE=
+        select_file image
+        [ "${FILE}" ] && {
+          kitty +kitten icat ${FILE}
+          printf "\nTo view this image use: kitty +kitten icat ${FILE}\n"
+          prompt_continue
+        }
+        break
+        ;;
+      "Theme"*,* | *,"Theme"* | "theme"*,* | *,"theme"*)
+        kitty +kitten themes
+        break
+        ;;
+      "Term"*,* | *,"Term"* | "term"*,* | *,"term"*)
+        kitty +kitten query_terminal
+        prompt_continue
+        break
+        ;;
+      "Tran"*,* | *,"Tran"* | "tran"*,* | *,"tran"*)
+        if [ "${have_fzf}" ]; then
+          choice=$(printf "%s\n" "${translevels[@]}" | fzf --prompt="😺 Select Transparency Opacity  " --layout=reverse --border --exit-0)
+          [ "${choice}" ] && {
+            if [ "${choice}" == "default" ]; then
+              set-opacity "${OPACITY}"
+            else
+              set-opacity "${choice}"
+            fi
+          }
+        else
+          printf "\nERROR: Cannot locate required fzf fuzzy finder"
+          printf "\nTo set Kitty transparency using the Kitty Control"
+          printf "\nmenu system. Install fzf and re-run kitty-control\n"
+          prompt_continue
+        fi
+        break
+        ;;
+      "Toggle"*,* | *,"Toggle"* | "toggle"*,* | *,"toggle"*)
+        toggle-fullscreen
+        sleep 1
+        break
+        ;;
+      "Unicode"*,* | *,"Unicode"* | "unicode"*,* | *,"unicode"*)
+        kitty +kitten unicode_input
+        break
+        ;;
+      "Show"*,* | *,"Show"* | "show"*,* | *,"show"*)
+        show_usage usage
+        break
+        ;;
+      "Manual"*,* | *,"Manual"* | "manual"*,* | *,"manual"*)
+        printf "\n"
+        man kitty-control
+        break
+        ;;
+      "Upgrade"*,* | *,"Upgrade"* | "upgrade"*,* | *,"upgrade"*)
+        install_kitty
+        break
+        ;;
+      "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+        printf "\nExiting kitty-control\n"
+        exit 0
+        ;;
+      *,*)
+        printf "\nCould not match '${REPLY}' with a menu entry."
+        printf "\nPlease try again with an exact match.\n"
+        break
+        ;;
+      esac
+      REPLY=
+    done
+  done
+}
+
+[ "$1" ] || show_menu
 
 # Some actions need to be delayed until after any configuration load
 bg_image=
@@ -269,12 +905,16 @@ while [[ $1 ]]; do
       show_examples
       shift
       ;;
-    -h | --help)
+    -E | --Examples)
       usage examples
       shift
       ;;
-    -u | --usage)
+    -h | --help)
       usage
+      shift
+      ;;
+    -u | --usage)
+      brief_usage
       shift
       ;;
     -v | --version)
@@ -323,37 +963,8 @@ while [[ $1 ]]; do
       ;;
     load|reload|--load|--reload)
       if [ "$2" ]; then
-        if [ "$2" == "--help" ]; then
-          printf "\nThe 'kitty-control load <subdir>' command loads the Kitty configuration"
-          printf "\nfile in '~/.config/kitty/<subdir>/kitty.conf'. The current instance of"
-          printf "\nkitty continues to run and the specified configuration file is loaded."
-          printf "\nAll tabs and state are preserved while the new configuration is loaded."
-          printf "\n\nThe new Kitty configuration file must be prepared beforehand and located"
-          printf "\nin the specified subdirectory in the Kitty configuration folder."
-          printf "\n\nFor example, if you have one Kitty configuration used for a large screen"
-          printf "\nTV and another used for a laptop then placing the TV Kitty configuration"
-          printf "\nin ~/.config/kitty/tv/kitty.conf and the laptop Kitty configuration in"
-          printf "\n~/.config/kitty/laptop/kitty.conf would allow you to switch between these"
-          printf "\ntwo Kitty configurations with kitty-control as follows:"
-          printf "\n\tkitty-control load tv # When your display is the TV as monitor"
-          printf "\n\tkitty-control load laptop # When you're using the laptop built-in display"
-          printf "\n\nTo restore the Kitty configuration in ~/.config/kitty/kitty.conf:"
-          printf "\n\tkitty-control load default\n\n"
-          exit 0
-        else
-          if [ -f "${CONFDIR}/$2/kitty.conf" ]; then
-            kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/$2/kitty.conf"
-            shift 2
-          else
-            if [ "$2" == "default" ]; then
-              kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/kitty.conf"
-              shift 2
-            else
-              printf "\n ${CONFDIR}/$2/kitty.conf does not exist\n"
-              shift 2
-            fi
-          fi
-        fi
+        load-config "$2"
+        shift 2
       else
         kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/kitty.conf"
         shift
@@ -390,6 +1001,10 @@ while [[ $1 ]]; do
         shift
       fi
       ;;
+    menu|--menu)
+      show_menu
+      shift
+      ;;
     title|--title)
       if [ "$2" ]; then
         kitty @ ${SOCKET} set-tab-title ${OPTS} "$2"
@@ -420,6 +1035,10 @@ while [[ $1 ]]; do
       kitty +kitten unicode_input
       shift
       ;;
+    upgrade|--upgrade)
+      install_kitty
+      shift
+      ;;
     *)
       printf "\nUnsupported Kitty control command: $1"
       usage
@@ -433,12 +1052,8 @@ done
 [ "${fontsize}" ] && kitty-fontsize "${fontsize}"
 [ "${backgrnd}" ] && set-background "${backgrnd}"
 [ "${foregrnd}" ] && set-foreground "${foregrnd}"
-[ "${fullscrn}" ] && {
-  kitty @ ${SOCKET} resize-os-window --action toggle-fullscreen ${OPTS}
-}
-[ "${setopcty}" ] && {
-  kitty @ ${SOCKET} set-background-opacity ${OPTS} ${ssetopcty}
-}
+[ "${fullscrn}" ] && toggle-fullscreen
+[ "${setopcty}" ] && set-opacity "${setopcty}"
 [ "${bg_image}" ] && {
   if [ "${bg_image}" == "none" ]; then
     kitty @ ${SOCKET} set-background-image ${OPTS} "${bg_image}"
