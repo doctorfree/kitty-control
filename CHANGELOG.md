@@ -4,6 +4,9 @@
 
 ### ⚡️ Added
 
+- Add install tools option and menu support for installing `figlet` and `ranger`
+- Add menu help and menu shortcut keywords
+
 ### 🐞 Fixed
 
 ## v1.0.2r1
