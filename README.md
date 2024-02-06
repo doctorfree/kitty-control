@@ -48,6 +48,14 @@ simplify and ease those `kitty` customizations used fairly frequently.
 
 ## Install
 
+### With curl
+
+```bash
+curl -sL https://raw.githubusercontent.com/doctorfree/kitty-control/main/install | sh /dev/stdin
+```
+
+### With a clone
+
 ```bash
 git clone https://github.com/doctorfree/kitty-control
 cd kitty-control
@@ -57,18 +65,35 @@ cd kitty-control
 # source $HOME/.bashrc
 ```
 
-The [Ranger file manager](https://github.com/ranger/ranger) is not required by
-`kitty-control`. However, some additional features are enabled by Ranger.
-If `ranger` is not installed on your system you may wish to install `ranger`
-to enable easier file and directory selections with `kitty-control`.
-The installation of `ranger` requires administrative privilege:
+### From a release download
+
+For example, to install `kitty-control` version 1.0.2 release 3:
 
 ```bash
-git clone https://github.com/ranger/ranger
-cd ranger
-git checkout stable
-sudo make install # requires administrative privilege
+wget -q -O /tmp/ins$$ https://github.com/doctorfree/kitty-control/releases/download/v1.0.2r3/install
+chmod 755 /tmp/ins$$
+/tmp/ins$$
+rm -f /tmp/ins$$
 ```
+
+### Tools
+
+The `kitty-control` menu system uses `ranger` and `figlet` if installed.
+
+Neither the [Ranger file manager](https://github.com/ranger/ranger) nor
+the [FIGlet font text display](http://www.figlet.org) programs are
+required by `kitty-control`. However, some additional features are enabled
+if they are present.
+
+Both `figlet` and `ranger` can be installed with the command:
+
+```bash
+kitty-control tools
+```
+
+The installation of `ranger` and `figlet` require administrative privilege.
+
+### Aliases
 
 For convenience, alias `kitty-control` to `kc` by adding
 `alias kc='kitty-control'` to your shell initialization (e.g. `~/.aliases`).
@@ -358,7 +383,15 @@ helpful in tailoring your own configuration.
 
 ## Update
 
-To update `kitty-control` perform a `git pull` in the cloned `kitty-control`
+To update `kitty-control` execute the command `kitty-control upgrade`.
+
+Alternately, an update can be performed with `curl`:
+
+```bash
+curl -sL https://raw.githubusercontent.com/doctorfree/kitty-control/main/install | sh /dev/stdin
+```
+
+Updates can also be performed with a `git pull` in the cloned `kitty-control`
 directory:
 
 ```bash
