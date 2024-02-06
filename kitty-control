@@ -48,17 +48,16 @@ NORM=$(tput sgr0 2>/dev/null)
 
 brief_usage() {
   printf "${BOLD}Usage: kitty-control [-a] [back <color>] [-c command] [dark]"
-  printf "\n    [diff [opts] <path1> <path2>] [-e|E] [-f] [font [num]] [fore <color>]"
+  printf "\n    [diff [opts] <path1> <path2>] [-e] [-f] [font [num]] [fore <color>]"
   printf "\n    [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]"
-  printf "\n    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list] [menu]"
-  printf "\n    [title <title>] [transparent [opacity]] [unicode] [upgrade]${NORM}"
+  printf "\n    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list] [man]"
+  printf "\n    [menu] [title <title>] [transparent [opacity]] [unicode] [upgrade]${NORM}"
   [ "$1" == "noexit" ] || {
     printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
       printf " displays an interactive menu system"
     printf "\nFor a brief usage message run '${BOLD}kitty-control -u${NORM}'"
     printf "\nFor a full usage message run '${BOLD}kitty-control -h${NORM}'"
-    printf "\nTo display several examples run '${BOLD}kitty-control -e${NORM}'"
-    printf "\nTo display the full usage message and examples run '${BOLD}kitty-control -E${NORM}'\n\n"
+    printf "\nTo display several examples run '${BOLD}kitty-control -e${NORM}'\n\n"
     exit 1
   }
 }
@@ -124,6 +123,7 @@ usage() {
   printf "\n           e.g. 'kitty-control load tv' would load ~/.config/kitty/tv/kitty.conf"
   printf "\n           'kitty-control load default' loads the ~/.config/kitty/kitty.conf config"
   printf "\n           'kitty-control load --help' displays a help message for the load command"
+  printf "\n    '${BOLD}man${NORM}' Displays the kitty-control manual"
   printf "\n    '${BOLD}menu${NORM}' Displays the kitty-control interactive menu system"
   printf "\n    '${BOLD}term${NORM}'"
     printf " Displays information about the terminal using the query_terminal kitten"
@@ -144,7 +144,6 @@ usage() {
     printf " specifies a Kitty command to run (enclose command and arguments in quotes)"
   printf "\n        Can be used to run arbitrary commands, e.g. 'kitty-control -c get-colors'"
   printf "\n    '${BOLD}-e${NORM}' Displays several example invocations and exits"
-  printf "\n    '${BOLD}-E${NORM}' Displays full usage message with examples and exits"
   printf "\n    '${BOLD}-f${NORM}' Indicates toggle fullscreen"
   printf "\n    '${BOLD}-h${NORM}' Displays a full usage message and exits"
   printf "\n    '${BOLD}-i /path/to/image${NORM}'"
@@ -268,13 +267,21 @@ check_control_version() {
 
 show_versions() {
   control_version=$(get_control_version)
-  printf "\nInstalled kitty-control version: v${VERSION}r${RELEASE}"
-  printf "\nAvailable kitty-control version: ${control_version}"
-  release_version=$(get_release_version)
+  install_version=$(get_install_version)
+  printf "\nInstalled kitty-control version: ${install_version}"
+  if [ "${install_version}" == "${control_version}" ]; then
+    printf " (current)"
+  else
+    printf "\nAvailable kitty-control version: ${control_version}"
+  fi
   release_version=$(curl -fsSL "https://sw.kovidgoyal.net/kitty/current-version.txt")
   install_version=$(kitty --version | awk '{ print $2 }')
   printf "\nInstalled kitty version: ${install_version}"
-  printf "\nAvailable kitty version: ${release_version}\n\n"
+  if [ "${install_version}" == "${release_version}" ]; then
+    printf " (current)\n\n"
+  else
+    printf "\nAvailable kitty version: ${release_version}\n\n"
+  fi
 }
 
 install_figlet() {
@@ -813,7 +820,7 @@ show_menu() {
     [ ${numconfs} -gt 1 ] && {
       options+=("Load Kitty Configuration")
     }
-    options+=("Show Usage Message" "Theme Selection")
+    options+=("Manual Page" "Show Usage/Version" "Theme Selection")
     options+=("Terminal Info" "Toggle Fullscreen" "Transparent" "Unicode Input")
     release_version=$(curl -fsSL "https://sw.kovidgoyal.net/kitty/current-version.txt")
     install_version=$(kitty --version | awk '{ print $2 }')
@@ -1151,7 +1158,9 @@ while [[ $1 ]]; do
       shift
       ;;
     -E | --Examples)
-      usage examples
+      BOLD=
+      NORM=
+      show_examples
       shift
       ;;
     -h | --help)
@@ -1251,6 +1260,10 @@ while [[ $1 ]]; do
         fontsize="0"
         shift
       fi
+      ;;
+    man|--man)
+      man kitty-control
+      shift
       ;;
     menu|--menu)
       show_menu

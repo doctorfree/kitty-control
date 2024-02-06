@@ -11,6 +11,7 @@ have_git=$(type -p git)
   exit 1
 }
 
+# If standalone install, clone the repository, run the install script, exit
 [ -f "${SCRIPT_PATH}"/kitty-control ] || {
   git clone ${REPO_URL} /tmp/kc$$ >/dev/null 2>&1
   [ -x /tmp/kc$$/install ] || {
@@ -25,6 +26,7 @@ have_git=$(type -p git)
   exit 0
 }
 
+# Copy kitty-control, read_config.py, man page
 [ -d ${HOME}/.local/bin ] || mkdir -p ${HOME}/.local/bin
 cp "${SCRIPT_PATH}"/kitty-control ${HOME}/.local/bin/kitty-control
 chmod 755 ${HOME}/.local/bin/kitty-control
@@ -41,6 +43,11 @@ chmod 644 ${HOME}/.config/kitty/read_config.py
     }
   }
 }
+
+[ -d ${HOME}/.local/share ] || mkdir -p ${HOME}/.local/share
+[ -d ${HOME}/.local/share/man ] || mkdir -p ${HOME}/.local/share/man
+[ -d ${HOME}/.local/share/man/man1 ] || mkdir -p ${HOME}/.local/share/man/man1
+cp -p "${SCRIPT_PATH}"/man/man1/* ${HOME}/.local/share/man/man1
 
 # Install Figlet Fonts used by kitty-control
 FDEST="${HOME}/.local/share/figlet-fonts"

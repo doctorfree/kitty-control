@@ -11,8 +11,12 @@
 ### ⚡️ Added
 
 - Add support for upgrades to both `kitty` and `kitty-control`
+- Add `kitty-control` man page
+- Add `kitty-control man` option to display man page
 
 ### 🐞 Fixed
+
+- Fix version/release retrieval
 
 ## v1.0.2r2
 

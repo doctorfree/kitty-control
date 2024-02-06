@@ -39,7 +39,8 @@ Scripting some `kitty` customization enables support for automation and
 provides an additional layer of convenience. In particular, scripted
 `kitty` actions enables quick and easy switching between preconfigured
 `kitty` configuration files without losing state or having to quit `kitty`
-and restart with another configuration.
+and restart with another configuration. This is accomplished through the
+use of the `read_config.py` custom `kitten` included with `kitty-control`.
 
 Thus we have `kitty-control`, a `bash` script that intends to
 simplify and ease those `kitty` customizations used fairly frequently.
@@ -104,10 +105,10 @@ To display a usage message use `kitty-control -u`. To see several examples,
 
 ```
 Usage: kitty-control [-a] [back <color>] [-c command] [dark]
-    [diff [opts] <path1> <path2>] [-e|E] [-f] [font [num]] [fore <color>]
+    [diff [opts] <path1> <path2>] [-e] [-f] [font [num]] [fore <color>]
     [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]
-    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list] [menu]
-    [title <title>] [transparent [opacity]] [unicode] [upgrade]
+    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list] [man]
+    [menu] [title <title>] [transparent [opacity]] [unicode] [upgrade]
 Where:
     'back color' Sets the background color to 'color'
            If 'color' is 'reset' restores foreground and background to startup value
@@ -136,6 +137,7 @@ Where:
            e.g. 'kitty-control load tv' would load ~/.config/kitty/tv/kitty.conf
            'kitty-control load default' loads the ~/.config/kitty/kitty.conf config
            'kitty-control load --help' displays a help message for the load command
+    'man' Displays the kitty-control manual
     'menu' Displays the kitty-control interactive menu system
     'term' Displays information about the terminal using the query_terminal kitten
     'theme' Displays the interactive theme selection kitten
@@ -153,7 +155,6 @@ Where:
     '-c command' specifies a Kitty command to run (enclose command and arguments in quotes)
         Can be used to run arbitrary commands, e.g. 'kitty-control -c get-colors'
     '-e' Displays several example invocations and exits
-    '-E' Displays full usage message with examples and exits
     '-f' Indicates toggle fullscreen
     '-h' Displays a full usage message and exits
     '-i /path/to/image' sets the background image for the specified Kitty windows
