@@ -6,6 +6,14 @@
 
 ### 🐞 Fixed
 
+## v1.0.2r3
+
+### ⚡️ Added
+
+- Add support for upgrades to both `kitty` and `kitty-control`
+
+### 🐞 Fixed
+
 ## v1.0.2r2
 
 ### ⚡️ Added
