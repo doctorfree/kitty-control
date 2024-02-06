@@ -9,6 +9,7 @@ Control some aspects of the Kitty terminal emulator from the command line
 - [Overview](#overview)
 - [Install](#install)
 - [Usage](#usage)
+- [Screenshot](#screenshot)
 - [Environment](#environment)
 - [Examples](#examples)
     - [Example Kitty Configuration](#example-kitty-configuration)
@@ -210,6 +211,16 @@ Either form can be used:
 |  `-v`           |  `--version`    |    |  `theme`    |  `--theme`      |
 |                 |                 |    |  `tran`     |  `--tran`       |
 |                 |                 |    |  `unicode`  |  `--unicode`    |
+
+## Screenshot
+
+The main `kitty-control` interactive menu provides dynamically generated
+menu entries. For example, if either `kitty` or `kitty-control` have an
+available upgrade then menu entries to upgrade will be added.
+
+The `kitty-control` main menu:
+
+![Main Menu](https://raw.githubusercontent.com/wiki/doctorfree/kitty-control/control-menu.png)
 
 ## Environment
 
