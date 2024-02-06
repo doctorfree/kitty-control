@@ -4,10 +4,19 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.2r2
+
+### ⚡️ Added
+
+- Get available `kitty` and `kitty-control` versions and add them to output of `-v`
 - Add install tools option and menu support for installing `figlet` and `ranger`
 - Add menu help and menu shortcut keywords
 
 ### 🐞 Fixed
+
+- Check `Kitty` version and upgrade only if not current
 
 ## v1.0.2r1
 
