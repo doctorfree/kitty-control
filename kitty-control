@@ -39,7 +39,7 @@ fonts=("Fire Font-k" "Graceful" "Script" "Shadow" "Slant" "Small" "Standard")
 # Font size choices for menu
 fontsizes=("default" "+1" "+2" "+4" "+8" "+12" "-1" "-2" "-4" "-8" "-12")
 # Transparency opacity choices for menu
-translevels=("default" "1.0" "0.9" "0.8" "0.7" "0.6" "0.5" "0.4" "0.3" "0.2" "0.1" "0.0")
+translevels=("default" "1.0" "0.95" "0.9" "0.85" "0.8" "0.75" "0.7" "0.65" "0.6" "0.55" "0.5" "0.45" "0.4" "0.35" "0.3" "0.25" "0.2" "0.15" "0.1" "0.05" "0.0")
 # Colors
 colors=("reset" "black" "white" "red" "green" "yellow" "blue" "magenta" "cyan")
 # Use tput to get the bold and normal text sequence
@@ -563,6 +563,20 @@ prompt_continue() {
   read -r yn
 }
 
+heading() {
+  clear
+  if [ "${have_rich}" ]; then
+    rich "[cyan]$1[/cyan]" -p -a rounded -c -C
+  else
+    if [ "${have_figlet}" ]; then
+      show_figlet "$2"
+    else
+      printf "\nSelect $1\n"
+    fi
+  fi
+  printf "\n"
+}
+
 choose_file() {
   TMP="$(mktemp)"
   ranger --choosefile="${TMP}" "${HOME}" 1>&2
@@ -760,34 +774,65 @@ show_usage() {
       brief_usage noexit
     fi
     show_versions
-    options=()
-    PS3="${BOLD}Enter a choice (number, shortcut, or text, 'h' help): ${NORM}"
-    options+=("Examples" "Full Usage" "Main Menu" "Quit (q)")
-    select opt in "${options[@]}"; do
-      case "$opt,$REPLY" in
-      "Example"*,* | *,"Example"* | "example"*,* | *,"example"*)
-        show_examples noexit | less
-        break
-        ;;
-      "Full"*,* | *,"Full"* | "full"*,* | *,"full"*)
-        usage noexit | less
-        break
-        ;;
-      "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-        break 2
-        ;;
-      "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-        printf "\nExiting kitty-control\n"
-        exit 0
-        ;;
-      *,*)
-        printf "\nCould not match '${REPLY}' with a menu entry."
-        printf "\nPlease try again with an exact match.\n"
-        break
-        ;;
-      esac
-      REPLY=
-    done
+    options=("Examples" "Full Usage" "Main Menu" "Quit (q)")
+    if [ "${have_fzf}" ]; then
+      choice=$(printf "%s\n" "${options[@]}" | fzf --prompt="😺 Select option  " --height=8 --layout=reverse --border --exit-0)
+      [ "${choice}" ] && {
+        case "${choice}" in
+          Example*)
+            show_examples noexit | less
+            break
+            ;;
+          Full*)
+            usage noexit | less
+            break
+            ;;
+          Main*)
+            break 2
+            ;;
+          Quit*)
+            printf "\nExiting kitty-control\n"
+            exit 0
+            ;;
+          *)
+            printf "\nCould not match '${choice}' with an entry."
+            printf "\nPlease try again with an exact match.\n"
+            break
+            ;;
+        esac
+      }
+    else
+      PS3="${BOLD}Enter a choice (number, shortcut, or text, 'h' help): ${NORM}"
+      select opt in "${options[@]}"; do
+        case "$opt,$REPLY" in
+        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+          show_help
+          break
+          ;;
+        "Example"*,* | *,"Example"* | "example"*,* | *,"example"*)
+          show_examples noexit | less
+          break
+          ;;
+        "Full"*,* | *,"Full"* | "full"*,* | *,"full"*)
+          usage noexit | less
+          break
+          ;;
+        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+          break 2
+          ;;
+        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          printf "\nExiting kitty-control\n"
+          exit 0
+          ;;
+        *,*)
+          printf "\nCould not match '${REPLY}' with a menu entry."
+          printf "\nPlease try again with an exact match.\n"
+          break
+          ;;
+        esac
+        REPLY=
+      done
+    fi
   done
 }
 
@@ -1023,20 +1068,62 @@ show_menu() {
         break
         ;;
       "Tran"*,* | *,"Tran"* | "tran"*,* | *,"tran"* | "t",* | *,"t")
+        tropts=( "${translevels[@]}" )
+        tropts+=( "main menu" "quit" )
         if [ "${have_fzf}" ]; then
-          choice=$(printf "%s\n" "${translevels[@]}" | fzf --prompt="😺 Select Transparency Opacity  " --layout=reverse --border --exit-0)
+          heading "Transparency Opacity" "Transparency"
+          choice=$(printf "%s\n" "${tropts[@]}" | fzf --prompt="😺 Select Transparency Opacity  " --height=18 --layout=reverse --border --exit-0)
           [ "${choice}" ] && {
-            if [ "${choice}" == "default" ]; then
-              set-opacity "${OPACITY}"
-            else
+            case "${choice}" in
+              "default"*)
+                set-opacity "${OPACITY}"
+                ;;
+              "main"*)
+                break
+                ;;
+              "quit"*)
+                printf "\nExiting kitty-control\n"
+                exit 0
+                ;;
+              *)
               set-opacity "${choice}"
-            fi
+              ;;
+            esac
           }
         else
-          printf "\nERROR: Cannot locate required fzf fuzzy finder"
-          printf "\nTo set Kitty transparency using the Kitty Control"
-          printf "\nmenu system. Install fzf and re-run kitty-control\n"
-          prompt_continue
+          while true; do
+            heading "Transparency Opacity" "Transparency"
+            PS3="${BOLD}Select Transparency Opacity (number, shortcut, or text, 'h' help): ${NORM}"
+            select opt in "${tropts[@]}"; do
+              case "$opt,$REPLY" in
+              "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+                show_help
+                break
+                ;;
+              "default"*,* | *,"default"*)
+                set-opacity "${OPACITY}"
+                break 2
+                ;;
+              [0-9].[0-9]*,* | *,[0-9].[0-9]*)
+                set-opacity "${opt}"
+                break 2
+                ;;
+              "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+                break 2
+                ;;
+              "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+                printf "\nExiting kitty-control\n"
+                exit 0
+                ;;
+              *,*)
+                printf "\nCould not match '${REPLY}' with a menu entry."
+                printf "\nPlease try again with an exact match.\n"
+                break
+                ;;
+              esac
+              REPLY=
+            done
+          done
         fi
         break
         ;;
