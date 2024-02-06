@@ -9,7 +9,7 @@
 # Written Feb 1, 2024 by Ronald Joe Record <ronaldrecord@gmail.com>
 #
 VERSION=1.0.2
-RELEASE=1
+RELEASE=2
 # The Kitty configuration directory
 CONFDIR="${HOME}/.config/kitty"
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
@@ -159,7 +159,7 @@ usage() {
   printf "\n        If /path/to/socket is '--help' some help on configuring a Kitty socket is provided"
   printf "\n        '-s /path/...' can be used to send commands to Kitty from another terminal"
   printf "\n    '${BOLD}-u${NORM}' Displays a brief usage message and exits"
-  printf "\n    '${BOLD}-v${NORM}' Displays the kitty-control version and exits"
+  printf "\n    '${BOLD}-v${NORM}' Displays the kitty-control and kitty versions then exits"
   printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
     printf " displays an interactive menu system"
   printf "\nAdjusting the background opacity or font size requires the original kitty.conf"
@@ -171,8 +171,23 @@ usage() {
   [ "$1" == "noexit" ] || exit 1
 }
 
-check_kitty_version() {
+check_control_version() {
+  VTOP="https://raw.githubusercontent.com/doctorfree/kitty-control"
+  VURL="${VTOP}/main/VERSION"
+  curl -fsSL "${VURL}" > /tmp/kcv$$
+  kcver=$(cat /tmp/kcv$$ | grep VERSION | awk -F '=' '{ print $2 }')
+  kcrel=$(cat /tmp/kcv$$ | grep RELEASE | awk -F '=' '{ print $2 }')
+  rm -f /tmp/kcv$$
+  echo "v${kcver}r${kcrel}"
+}
+
+get_release_version() {
   release_version=$(curl -fsSL "https://sw.kovidgoyal.net/kitty/current-version.txt")
+  echo "${release_version}"
+}
+
+check_kitty_version() {
+  release_version=$(get_release_version)
   release_major=$(echo ${release_version} | awk -F '.' '{ print $1 }')
   release_midde=$(echo ${release_version} | awk -F '.' '{ print $2 }')
   release_minor=$(echo ${release_version} | awk -F '.' '{ print $3 }')
@@ -187,18 +202,28 @@ check_kitty_version() {
   [ "${install_midde}" ] || install_midde=0
   [ "${install_minor}" ] || install_minor=0
   if [ ${release_major} -gt ${install_major} ]; then
-    echo "1"
+    echo "${release_version}"
   else
     if [ ${release_midde} -gt ${install_midde} ]; then
-      echo "1"
+      echo "${release_version}"
     else
       if [ ${release_minor} -gt ${install_minor} ]; then
-        echo "1"
+        echo "${release_version}"
       else
         echo ""
       fi
     fi
   fi
+}
+
+show_versions() {
+  control_version=$(check_control_version)
+  printf "\nInstalled kitty-control version: v${VERSION}r${RELEASE}"
+  printf "\nAvailable kitty-control version: ${control_version}"
+  release_version=$(get_release_version)
+  install_version=$(kitty --version | awk '{ print $2 }')
+  printf "\nInstalled kitty version: ${install_version}"
+  printf "\nAvailable kitty version: ${release_version}\n\n"
 }
 
 install_figlet() {
@@ -720,8 +745,6 @@ show_menu() {
     }
     options+=("Show Usage Message" "Theme Selection")
     options+=("Terminal Info" "Toggle Fullscreen" "Transparent" "Unicode Input")
-    install_version=
-    release_version=
     update_kitty=$(check_kitty_version)
     [ "${update_kitty}" ] && options+=("Upgrade Kitty (${install_version} -> ${release_version})")
     options+=("View an Image" "Quit (q)")
@@ -971,6 +994,8 @@ fontplus=
 fontdown=
 fontsize=
 fullscrn=
+install_version=
+release_version=
 kittycmd=
 setopcty=
 while [[ $1 ]]; do
@@ -1054,7 +1079,7 @@ while [[ $1 ]]; do
       shift
       ;;
     -v | --version)
-      printf "\nkitty-control version ${VERSION} release ${RELEASE}\n\n"
+      show_versions
       exit 0
       ;;
     back*|--back*)
@@ -1188,7 +1213,11 @@ while [[ $1 ]]; do
       ;;
     upgrade|--upgrade)
       update_kitty=$(check_kitty_version)
-      [ "${update_kitty}" ] && install_kitty
+      if [ "${update_kitty}" ]; then
+        install_kitty
+      else
+        printf "\nInstalled version of Kitty is current ✨ 🌟 ✨\n"
+      fi
       shift
       ;;
     *)

@@ -61,7 +61,7 @@ Where:
         If /path/to/socket is '--help' some help on configuring a Kitty socket is provided
         '-s /path/...' can be used to send commands to Kitty from another terminal
     '-u' Displays a brief usage message and exits
-    '-v' Displays the kitty-control version and exits
+    '-v' Displays the kitty-control and kitty versions then exits
 
 Without any arguments 'kitty-control' displays an interactive menu system
 Adjusting the background opacity or font size requires the original kitty.conf
