@@ -171,6 +171,36 @@ usage() {
   [ "$1" == "noexit" ] || exit 1
 }
 
+check_kitty_version() {
+  release_version=$(curl -fsSL "https://sw.kovidgoyal.net/kitty/current-version.txt")
+  release_major=$(echo ${release_version} | awk -F '.' '{ print $1 }')
+  release_midde=$(echo ${release_version} | awk -F '.' '{ print $2 }')
+  release_minor=$(echo ${release_version} | awk -F '.' '{ print $3 }')
+  [ "${release_major}" ] || release_major=0
+  [ "${release_midde}" ] || release_midde=0
+  [ "${release_minor}" ] || release_minor=0
+  install_version=$(kitty --version | awk '{ print $2 }')
+  install_major=$(echo ${install_version} | awk -F '.' '{ print $1 }')
+  install_midde=$(echo ${install_version} | awk -F '.' '{ print $2 }')
+  install_minor=$(echo ${install_version} | awk -F '.' '{ print $3 }')
+  [ "${install_major}" ] || install_major=0
+  [ "${install_midde}" ] || install_midde=0
+  [ "${install_minor}" ] || install_minor=0
+  if [ ${release_major} -gt ${install_major} ]; then
+    echo "1"
+  else
+    if [ ${release_midde} -gt ${install_midde} ]; then
+      echo "1"
+    else
+      if [ ${release_minor} -gt ${install_minor} ]; then
+        echo "1"
+      else
+        echo ""
+      fi
+    fi
+  fi
+}
+
 install_figlet() {
   have_make=$(type -p make)
   if [ "${have_make}" ]; then
@@ -690,7 +720,11 @@ show_menu() {
     }
     options+=("Show Usage Message" "Theme Selection")
     options+=("Terminal Info" "Toggle Fullscreen" "Transparent" "Unicode Input")
-    options+=("Upgrade Kitty" "View an Image" "Quit (q)")
+    install_version=
+    release_version=
+    update_kitty=$(check_kitty_version)
+    [ "${update_kitty}" ] && options+=("Upgrade Kitty (${install_version} -> ${release_version})")
+    options+=("View an Image" "Quit (q)")
     select opt in "${options[@]}"; do
       case "$opt,$REPLY" in
       "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
@@ -1153,7 +1187,8 @@ while [[ $1 ]]; do
       shift
       ;;
     upgrade|--upgrade)
-      install_kitty
+      update_kitty=$(check_kitty_version)
+      [ "${update_kitty}" ] && install_kitty
       shift
       ;;
     *)
