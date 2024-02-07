@@ -43,7 +43,8 @@ fontsizes=("default" "+1" "+2" "+4" "+6" "+8" "+10" "+12" "-1" "-2" "-4" "-6" "-
 # Transparency opacity choices for menu
 translevels=("default" "1.0" "0.95" "0.9" "0.85" "0.8" "0.75" "0.7" "0.65" "0.6" "0.55" "0.5" "0.45" "0.4" "0.35" "0.3" "0.25" "0.2" "0.15" "0.1" "0.05" "0.0")
 # Colors
-colors=("reset" "black" "white" "red" "green" "yellow" "blue" "magenta" "cyan")
+colors=("reset" "black" "white" "red" "green" "yellow" "blue" "magenta" "cyan" "custom")
+# Give fzf a nice look
 export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
   --color=fg:#d0d0d0,fg+:#d0d0d0,bg:#0b1a38,bg+:#120f3d
   --color=hl:#5f87af,hl+:#5fd7ff,info:#afaf87,marker:#87ff00
@@ -463,7 +464,7 @@ set-background() {
   if [ "$1" == "reset" ]; then
     kitty @ ${SOCKET} set-colors ${OPTS} --reset
   else
-    kitty @ ${SOCKET} set-colors ${OPTS} background=$1
+    kitty @ ${SOCKET} set-colors ${OPTS} background=$1 tab_bar_background=$1
   fi
 }
 
@@ -866,6 +867,42 @@ show_usage() {
   done
 }
 
+prompt-color-input() {
+  ${CLEAR_COMMAND}
+  printf "\n\nEnter a supported color name or hex color code"
+  printf "\nSupported color names:"
+  printf "\n\tblack white red green yellow blue magenta cyan"
+  printf "\nHex color codes are of the form '#120f3d' (the '#' can be omitted)\n"
+}
+
+get-color-input() {
+  color_return=
+  while true; do
+    read -r -p "Enter color name/code ('q' to exit): " colorcode
+    [ "${colorcode}" == "q" ] && break
+    case ${colorcode} in
+      black|white|red|green|yellow|blue|magenta|cyan)
+        color_return="${colorcode}"
+        break
+        ;;
+      "")
+        printf "\nEmpty color. Enter a color name, code, or 'q'\n"
+        prompt_continue
+        ;;
+      *)
+        first_color=${colorcode::1}
+        if [[ "${first_color}" == "#" ]]; then
+          color_return="${colorcode}"
+        else
+          color_return="#${colorcode}"
+        fi
+        break
+        ;;
+    esac
+  done
+  echo "${color_return}"
+}
+
 try_background() {
   color_choice="$1"
   forepre=$(kitty @ get-colors | grep "^foreground" | awk '{ print $2 }')
@@ -911,6 +948,12 @@ menu_background_color() {
     choice=$(printf "%s\n" "${bgopts[@]}" | fzf --prompt="😺 Select Background Color  " --height=15 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
+        "custom"*)
+          prompt-color-input
+          color_choice=$(get-color-input)
+          [ "${color_choice}" ] && try_background "${color_choice}"
+          break
+          ;;
         "main"*)
           break
           ;;
@@ -938,6 +981,12 @@ menu_background_color() {
         "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
           show_help
           break
+          ;;
+        "Custom",* | *,"Custom" | "custom",* | *,"custom")
+          prompt-color-input
+          color_choice=$(get-color-input)
+          [ "${color_choice}" ] && try_background "${color_choice}"
+          break 2
           ;;
         "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
           break 2
@@ -969,6 +1018,12 @@ menu_foreground_color() {
     choice=$(printf "%s\n" "${fgopts[@]}" | fzf --prompt="😺 Select Foreground Color  " --height=15 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
+        "custom"*)
+          prompt-color-input
+          color_choice=$(get-color-input)
+          [ "${color_choice}" ] && try_foreground "${color_choice}"
+          break
+          ;;
         "main"*)
           break
           ;;
@@ -996,6 +1051,12 @@ menu_foreground_color() {
         "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
           show_help
           break
+          ;;
+        "Custom",* | *,"Custom" | "custom",* | *,"custom")
+          prompt-color-input
+          color_choice=$(get-color-input)
+          [ "${color_choice}" ] && try_foreground "${color_choice}"
+          break 2
           ;;
         "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
           break 2

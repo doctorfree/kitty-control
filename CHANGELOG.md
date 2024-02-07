@@ -4,6 +4,8 @@
 
 ### ⚡️ Added
 
+- Set `fzf` colors and theme in `FZF_DEFAULT_OPTS`
+
 ### 🐞 Fixed
 
 ## v1.0.3r1
