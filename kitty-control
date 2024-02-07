@@ -34,6 +34,8 @@ OPTS=
 # Menu system vars
 FONTDIR="${HOME}/.local/share/figlet-fonts"
 LOLCAT="lolcat"
+# Clear the screen, can be "clear" or "tput clear"
+CLEAR_COMMAND="tput clear"
 # Array with font names
 fonts=("Fire Font-k" "Graceful" "Script" "Shadow" "Slant" "Small" "Standard")
 # Font size choices for menu
@@ -168,6 +170,61 @@ usage() {
   printf "\nSee https://sw.kovidgoyal.net/kitty/remote-control/#control-kitty-from-scripts\n"
   [ "$1" == "examples" ] && show_examples
   [ "$1" == "noexit" ] || exit 1
+}
+
+prompt_continue() {
+  if [ "${have_rich}" ]; then
+    rich "Press [magenta]<Enter>[/] to continue" -p
+  else
+    printf "\nPress <Enter> to continue ... "
+  fi
+  read -r yn
+}
+
+set_show_shortcuts() {
+  if [ "${have_fzf}" ]; then
+    shortcuts="bg/back c/clear d/dark F/full f/font fg/fore fzf/fuzzy"
+  else
+    shortcuts="bg/back c/clear d/dark F/full f/font fg/fore"
+  fi
+  addtlcuts="h/help i/info L/list l/load q/quit T/theme t/tran v/view"
+  if [ "${have_rich}" ]; then
+    rich "[b cyan]Shortcuts:[/] [b yellow]${shortcuts}[/]" -p
+    rich "           [b yellow]${addtlcuts}[/]" -p
+  else
+    printf "\nShortcuts: ${BOLD}${shortcuts}${NORM}"
+    printf "\n           ${BOLD}${addtlcuts}${NORM}\n"
+  fi
+}
+
+show_help() {
+  ${CLEAR_COMMAND}
+  if [ "${have_rich}" ]; then
+    rich "[cyan]Kitty Control Menu Help[/cyan]" -p -a rounded -c -C
+    rich "[green]Control kitty from a menu system[/green]" -p -c
+  else
+    printf "\n\tKitty Control Menu Help\n"
+    printf "\n\tControl kitty from a menu system\n"
+  fi
+  printf "\nEnter a menu option number or shortcut to select an option.\n\n"
+  set_show_shortcuts
+  printf "\nIn the fuzzy selection dialogs, enter a few letters to fuzzy select from the options\n"
+  if [ "${have_rich}" ]; then
+    rich "or use the [magenta]<Up-Arrow>[/] and [magenta]<Down-Arrow>[/] keys to move through the options." -p
+    rich "Press [magenta]<Enter>[/] to select the highlighted option." -p
+  else
+    printf "or use the <Up-Arrow> and <Down-Arrow> keys to move through the options."
+    printf "\nPress <Enter> to select the highlighted option.\n"
+  fi
+  printf "\nNot all actions are available from the interactive menu interface.\n"
+  printf "\nKitty Control can also be used from the command line.\n"
+  if [ "${have_rich}" ]; then
+    rich "See: [cyan]kitty-control -h[/] for full usage details" -p
+  else
+    printf "${BOLD}${LINE}See:${NORM} ${BOLD}kitty-control -h${NORM} for full usage details\n"
+  fi
+  printf "\n"
+  prompt_continue
 }
 
 get_control_version() {
@@ -566,17 +623,8 @@ upgrade_kitty_control() {
   RELEASE=$(echo ${install_version} | awk -F 'r' '{ print $2 }')
 }
 
-prompt_continue() {
-  if [ "${have_rich}" ]; then
-    rich "Press [magenta]<Enter>[/] to continue ... " -p
-  else
-    printf "\nPress <Enter> to continue ... "
-  fi
-  read -r yn
-}
-
 heading() {
-  clear
+  ${CLEAR_COMMAND}
   if [ "${have_rich}" ]; then
     rich "[cyan]$1[/cyan]" -p -a rounded -c -C
   else
@@ -726,54 +774,12 @@ show_figlet() {
   fi
 }
 
-show_help() {
-  clear
-  if [ "${have_rich}" ]; then
-    rich "[cyan]Kitty Control Menu Help[/cyan]" -p -a rounded -c -C
-    rich "[green]Control kitty from a menu system[/green]" -p -c
-  else
-    printf "\n\tKitty Control Menu Help\n"
-    printf "\n\tControl kitty from a menu system\n"
-  fi
-  printf "\nEnter a menu option number or keyword to select an option.\n"
-  if [ "${have_rich}" ]; then
-    rich "[cyan]Keywords:[/] [green]bg fg clear dark font help info list load theme full tran view quit[/]" -p
-  else
-    printf "Keywords: ${BOLD}bg fg clear dark font help info list load theme full tran view quit${NORM}"
-  fi
-  printf "\nSome shortcuts have single key support:\n"
-  if [ "${have_rich}" ]; then
-    rich "  [yellow]d[/] = [green]dark[/], [yellow]F[/] = [green]full[/], [yellow]f[/] = [green]font[/], [yellow]h[/] = [green]help[/], [yellow]i[/] = [green]info[/], [yellow]L[/] = [green]list[/]," -p
-    rich "  [yellow]l[/] = [green]load[/], [yellow]q[/] = [green]quit[/], [yellow]T[/] = [green]theme[/], [yellow]t[/] = [green]tran[/], [yellow]v[/] = [green]view[/]" -p
-  else
-    printf "  'd' = dark, 'F' = full, 'f' = font, 'h' = help, 'i' = info, 'L' = list,"
-    printf "\n  'l' = load, 'q' = quit, 'T' = theme, 't' = tran, 'v' = view"
-  fi
-  printf "\nIn the fuzzy selection dialogs, enter a few letters to fuzzy select from the options\n"
-  if [ "${have_rich}" ]; then
-    rich "or use the [magenta]<Up-Arrow>[/] and [magenta]<Down-Arrow>[/] keys to move through the options." -p
-    rich "Press [magenta]<Enter>[/] to select the highlighted option." -p
-  else
-    printf "or use the <Up-Arrow> and <Down-Arrow> keys to move through the options."
-    printf "\nPress <Enter> to select the highlighted option.\n"
-  fi
-  printf "\nNot all actions are available from the interactive menu interface.\n"
-  printf "\nKitty Control can also be used from the command line.\n"
-  if [ "${have_rich}" ]; then
-    rich "See: [cyan]kitty-control -h[/] for full usage details" -p
-  else
-    printf "${BOLD}${LINE}See:${NORM} ${BOLD}kitty-control -h${NORM} for full usage details\n"
-  fi
-  printf "\n"
-  prompt_continue
-}
-
 show_usage() {
   use_type="$1"
   figlet_text="Usage"
   [ "${use_type}" == "examples" ] && figlet_text="Examples"
   while true; do
-    clear
+    ${CLEAR_COMMAND}
     if [ "${use_figlet}" ]; then
       show_figlet "${figlet_text}"
     else
@@ -803,6 +809,7 @@ show_usage() {
             break 2
             ;;
           Quit*)
+            ${CLEAR_COMMAND}
             printf "\nExiting kitty-control\n"
             exit 0
             ;;
@@ -833,6 +840,7 @@ show_usage() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          ${CLEAR_COMMAND}
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -901,6 +909,7 @@ menu_background_color() {
           break
           ;;
         "quit"*)
+          ${CLEAR_COMMAND}
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -928,6 +937,7 @@ menu_background_color() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          ${CLEAR_COMMAND}
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -957,6 +967,7 @@ menu_foreground_color() {
           break
           ;;
         "quit"*)
+          ${CLEAR_COMMAND}
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -984,6 +995,7 @@ menu_foreground_color() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          ${CLEAR_COMMAND}
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1047,6 +1059,7 @@ menu_font_size() {
           break
           ;;
         "quit"*)
+          ${CLEAR_COMMAND}
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1074,6 +1087,7 @@ menu_font_size() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          ${CLEAR_COMMAND}
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1103,6 +1117,7 @@ menu_load_config() {
           break
           ;;
         "quit"*)
+          ${CLEAR_COMMAND}
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1130,6 +1145,7 @@ menu_load_config() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          ${CLEAR_COMMAND}
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1159,6 +1175,7 @@ menu_set_trans() {
           break
           ;;
         "quit"*)
+          ${CLEAR_COMMAND}
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1189,6 +1206,7 @@ menu_set_trans() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          ${CLEAR_COMMAND}
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1206,29 +1224,28 @@ menu_set_trans() {
 
 select_with_fzf() {
   fzopts=("$@")
-  fzopts+=( "help" "main menu" "quit" )
+  fzopts+=( "Help" "Main Menu" )
   while true; do
-    clear
+    ${CLEAR_COMMAND}
     heading "Kitty Control" "Kitty Control"
-    choice=$(printf "%s\n" "${fzopts[@]}" | fzf --prompt="😺 Select Menu Option  " --height=18 --layout=reverse --border --exit-0)
-    [ "${choice}" ] && {
+    choice=$(printf "%s\n" "${fzopts[@]}" | fzf -m --prompt="😺 Select Menu Option  " --height=18 --layout=reverse --border --exit-0)
+    if [ "${choice}" ]; then
       case "${choice}" in
-        "help"*)
+        "h" | "H" | "help"* | "Help"*)
           show_help
-          break
           ;;
-        "main"*)
+        "Main"* | "main"*)
           break
           ;;
         "reset"*)
           set-foreground reset
           break
           ;;
-        "Background Color"* | "bg")
+        "Background Color"* | "bg" | "back")
           menu_background_color
           break
           ;;
-        "Foreground Color"* | "fg")
+        "Foreground Color"* | "fg" | "fore")
           menu_foreground_color
           break
           ;;
@@ -1238,7 +1255,7 @@ select_with_fzf() {
           [ "${FILE}" ] && kitty @ ${SOCKET} set-background-image ${OPTS} "${FILE}"
           break
           ;;
-        "Clear"* | "clear"*)
+        "Clear"* | "clear"* | "c")
           kitty @ ${SOCKET} set-background-image ${OPTS} none
           break
           ;;
@@ -1364,6 +1381,7 @@ select_with_fzf() {
           break
           ;;
         "Quit"* | "quit"* | "Q" | "q")
+          ${CLEAR_COMMAND}
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1373,14 +1391,16 @@ select_with_fzf() {
           break
           ;;
       esac
-    }
+    else
+      break
+    fi
   done
 }
 
 show_menu() {
   set_haves
   while true; do
-    clear
+    ${CLEAR_COMMAND}
     if [ "${use_figlet}" ]; then
       show_figlet
     else
@@ -1443,30 +1463,18 @@ show_menu() {
       options+=("Upgrade kitty-control (${install_version} -> ${control_version})")
     }
     options+=("View an Image" "Quit (q)")
-    if [ "${have_fzf}" ]; then
-      shortcuts="bg/background d/dark F/full f/font fg/foreground fzf/fuzzy select"
-    else
-      shortcuts="bg/background d/dark F/full f/font fg/foreground"
-    fi
-    addtlcuts="h/help i/info L/list l/load q/quit T/theme t/tran v/view"
-    if [ "${have_rich}" ]; then
-      rich "[b cyan]Shortcuts:[/] [b yellow]${shortcuts}[/]" -p
-      rich "           [b yellow]${addtlcuts}[/]" -p
-    else
-      printf "\nShortcuts: ${BOLD}${shortcuts}${NORM}"
-      printf "\n           ${BOLD}${addtlcuts}${NORM}\n"
-    fi
+    set_show_shortcuts
     select opt in "${options[@]}"; do
       case "$opt,$REPLY" in
       "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
         show_help
         break
         ;;
-      "Background Color",* | *,"Background Color" | "bg",* | *,"bg")
+      "Background Color",* | *,"Background Color" | "bg",* | *,"bg" | "back",* | *,"back")
         menu_background_color
         break
         ;;
-      "Foreground Color",* | *,"Foreground Color" | "fg",* | *,"fg")
+      "Foreground Color",* | *,"Foreground Color" | "fg",* | *,"fg" | "fore",* | *,"fore")
         menu_foreground_color
         break
         ;;
@@ -1476,7 +1484,7 @@ show_menu() {
         [ "${FILE}" ] && kitty @ ${SOCKET} set-background-image ${OPTS} "${FILE}"
         break
         ;;
-      "Clear"*,* | *,"Clear"* | "clear"*,* | *,"clear"*)
+      "Clear"*,* | *,"Clear"* | "clear"*,* | *,"clear"* | "c",* | *,"c")
         kitty @ ${SOCKET} set-background-image ${OPTS} none
         break
         ;;
@@ -1500,7 +1508,7 @@ show_menu() {
         menu_font_size
         break
         ;;
-      "Fzf",* | *,"Fzf" | "fzf",* | *,"fzf")
+      "Fzf",* | *,"Fzf" | "fzf",* | *,"fzf" | "Fuzzy",* | *,"Fuzzy" | "fuzzy",* | *,"fuzzy")
         select_with_fzf "${options[@]}"
         break
         ;;
@@ -1598,6 +1606,7 @@ show_menu() {
         break
         ;;
       "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+        ${CLEAR_COMMAND}
         printf "\nExiting kitty-control\n"
         exit 0
         ;;
@@ -1889,7 +1898,7 @@ done
 [ "${setopcty}" ] && set-opacity "${setopcty}"
 [ "${bg_image}" ] && {
   if [ "${bg_image}" == "none" ]; then
-    kitty @ ${SOCKET} set-background-image ${OPTS} "${bg_image}"
+    kitty @ ${SOCKET} set-background-image ${OPTS} none
   else
     if [ -f "${bg_image}" ]; then
       kitty @ ${SOCKET} set-background-image ${OPTS} "${bg_image}"
