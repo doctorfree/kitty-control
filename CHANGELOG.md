@@ -6,6 +6,19 @@
 
 ### 🐞 Fixed
 
+## v1.0.2r4
+
+### ⚡️ Added
+
+- Add installation methods with `curl` and `wget` to readme
+- Add screenshot of main menu to readme
+
+### 🐞 Fixed
+
+- Use `select` menu if no `fzf` available
+- Increase number of font sizes selectable in menu
+- Increase number of opacity choices selectable in menu
+
 ## v1.0.2r3
 
 ### ⚡️ Added
