@@ -4,11 +4,22 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.3r1
+
+### ⚡️ Added
+
+- Add shortcut to enable `fzf` fuzzy selection of main menu entries
 - Add toggle for `figlet`, `fzf`, `ranger` use in main menu
+- Add `ENVIRONMENT` section to man page
+- Use `show_help` in fzf selection help
 
 ### 🐞 Fixed
 
-- Add `ENVIRONMENT` section to man page
+- Adjust shortcuts
+- Fix `fzf` escape
+- Shorten height of `fzf` selection window
 
 ## v1.0.2r4
 

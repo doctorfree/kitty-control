@@ -8,6 +8,14 @@ The `kitty-control` command can be installed on `Linux` or `macOS`. It is a comm
 
 ## Installation
 
+### With curl
+
+```bash
+curl -sL https://raw.githubusercontent.com/doctorfree/kitty-control/main/install | sh /dev/stdin
+```
+
+### With a clone
+
 ```bash
 git clone https://github.com/doctorfree/kitty-control
 cd kitty-control
@@ -16,6 +24,8 @@ cd kitty-control
 # echo "export PATH="$HOME/.local/bin:$PATH" >> $HOME/.bashrc
 # source $HOME/.bashrc
 ```
+
+### From a release download
 
 Alternately, download the `install` release asset from
 https://github.com/doctorfree/kitty-control/releases/latest
