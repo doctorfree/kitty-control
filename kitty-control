@@ -294,11 +294,22 @@ install_figlet() {
     cd "${HERE}"
     rm -rf /tmp/figlet$$
     have_figlet=$(type -p figlet)
+    [ "${have_figlet}" ] && use_figlet=1
   else
     printf "\nInstallation of figlet requires 'make' but 'make' not found."
     printf "\nInstall 'make' and try again. Skipping installation of figlet.\n"
     prompt_continue
   fi
+}
+
+install_fzf() {
+  [ -d ${HOME}/.fzf ] && mv ${HOME}/.fzf ${HOME}/.fzf$$
+  git clone --depth 1 https://github.com/junegunn/fzf.git \
+    ${HOME}/.fzf >/dev/null 2>&1
+  [ -f ${HOME}/.fzf/install ] && chmod 755 ${HOME}/.fzf/install
+  [ -x ${HOME}/.fzf/install ] && ${HOME}/.fzf/install --all >/dev/null 2>&1
+  have_fzf=$(type -p fzf)
+  [ "${have_fzf}" ] && use_fzf=1
 }
 
 install_ranger() {
@@ -312,6 +323,7 @@ install_ranger() {
     cd "${HERE}"
     rm -rf /tmp/ranger$$
     have_ranger=$(type -p ranger)
+    [ "${have_ranger}" ] && use_ranger=1
   else
     printf "\nInstallation of ranger requires 'make' but 'make' not found."
     printf "\nInstall 'make' and try again. Skipping installation of ranger.\n"
@@ -568,7 +580,7 @@ heading() {
   if [ "${have_rich}" ]; then
     rich "[cyan]$1[/cyan]" -p -a rounded -c -C
   else
-    if [ "${have_figlet}" ]; then
+    if [ "${use_figlet}" ]; then
       show_figlet "$2"
     else
       printf "\nSelect $1\n"
@@ -597,7 +609,7 @@ select_file() {
   keyword=
   selectedFile=
   [ "$1" ] && keyword="$1"
-  if [ "${have_ranger}" ]; then
+  if [ "${use_ranger}" ]; then
     selectedFile="$(choose_file)"
   else
 #   selectedFile=$(dialog --stdout --title "Please select a file" --fselect ${HOME} 0 0)
@@ -633,7 +645,7 @@ select_file() {
 
 select_folder() {
   FOLD=
-  if [ "${have_ranger}" ]; then
+  if [ "${use_ranger}" ]; then
     echo ""
     echo "Choosing a directory in Ranger is done by visiting a directory"
     echo ""
@@ -762,7 +774,7 @@ show_usage() {
   [ "${use_type}" == "examples" ] && figlet_text="Examples"
   while true; do
     clear
-    if [ "${have_figlet}" ]; then
+    if [ "${use_figlet}" ]; then
       show_figlet "${figlet_text}"
     else
       [ "${have_rich}" ] && rich "[cyan]${figlet_text}[/cyan]" -p -a rounded -c -C
@@ -775,7 +787,7 @@ show_usage() {
     fi
     show_versions
     options=("Examples" "Full Usage" "Main Menu" "Quit (q)")
-    if [ "${have_fzf}" ]; then
+    if [ "${use_fzf}" ]; then
       choice=$(printf "%s\n" "${options[@]}" | fzf --prompt="😺 Select option  " --height=8 --layout=reverse --border --exit-0)
       [ "${choice}" ] && {
         case "${choice}" in
@@ -877,7 +889,7 @@ show_menu() {
   set_haves
   while true; do
     clear
-    if [ "${have_figlet}" ]; then
+    if [ "${use_figlet}" ]; then
       show_figlet
     else
       [ "${have_rich}" ] && rich "[cyan]Kitty Control[/cyan]" -p -a rounded -c -C
@@ -897,6 +909,7 @@ show_menu() {
     options+=("Dark/Opaque" "Diff Files" "Diff Folders" "Examples" "Font Size")
     options+=("Foreground Color")
     [ "${have_figlet}" ] || options+=("Install Figlet")
+    [ "${have_fzf}" ] || options+=("Install Fzf")
     [ "${have_ranger}" ] || options+=("Install Ranger")
     options+=("List Current Info")
     [ ${numconfs} -gt 1 ] && {
@@ -904,6 +917,27 @@ show_menu() {
     }
     options+=("Manual Page" "Show Usage/Version" "Theme Selection")
     options+=("Terminal Info" "Toggle Fullscreen" "Transparent" "Unicode Input")
+    [ "${have_figlet}" ] && {
+      if [ "${use_figlet}" ]; then
+        options+=("Use Figlet [yes]")
+      else
+        options+=("Use Figlet [no]")
+      fi
+    }
+    [ "${have_fzf}" ] && {
+      if [ "${use_fzf}" ]; then
+        options+=("Use Fzf    [yes]")
+      else
+        options+=("Use Fzf    [no]")
+      fi
+    }
+    [ "${have_ranger}" ] && {
+      if [ "${use_ranger}" ]; then
+        options+=("Use Ranger [yes]")
+      else
+        options+=("Use Ranger [no]")
+      fi
+    }
     release_version=$(curl -fsSL "https://sw.kovidgoyal.net/kitty/current-version.txt")
     install_version=$(kitty --version | awk '{ print $2 }')
     update_kitty=$(check_kitty_version "${release_version}" "${install_version}")
@@ -932,7 +966,7 @@ show_menu() {
       "Background Color",* | *,"Background Color" | "bg",* | *,"bg")
         bgopts=( "${colors[@]}" )
         bgopts+=( "main menu" "quit" )
-        if [ "${have_fzf}" ]; then
+        if [ "${use_fzf}" ]; then
           heading "Background Color" "Background"
           choice=$(printf "%s\n" "${bgopts[@]}" | fzf --prompt="😺 Select Background Color  " --height=15 --layout=reverse --border --exit-0)
           [ "${choice}" ] && {
@@ -988,7 +1022,7 @@ show_menu() {
       "Foreground Color",* | *,"Foreground Color" | "fg",* | *,"fg")
         fgopts=( "${colors[@]}" )
         fgopts+=( "main menu" "quit" )
-        if [ "${have_fzf}" ]; then
+        if [ "${use_fzf}" ]; then
           heading "Foreground Color" "Foreground"
           choice=$(printf "%s\n" "${fgopts[@]}" | fzf --prompt="😺 Select Foreground Color  " --height=15 --layout=reverse --border --exit-0)
           [ "${choice}" ] && {
@@ -1096,7 +1130,7 @@ show_menu() {
       "Font"*,* | *,"Font"* | "font"*,* | *,"font"* | "f",* | *,"f")
         foopts=( "${fontsizes[@]}" )
         foopts+=( "main menu" "quit" )
-        if [ "${have_fzf}" ]; then
+        if [ "${use_fzf}" ]; then
           heading "Font Size" "Font Size"
           choice=$(printf "%s\n" "${foopts[@]}" | fzf --prompt="😺 Select Font Size Adjustment  " --height=18 --layout=reverse --border --exit-0)
           [ "${choice}" ] && {
@@ -1153,6 +1187,10 @@ show_menu() {
         install_figlet
         break
         ;;
+      "Install Fzf",* | *,"Install Fzf")
+        install_fzf
+        break
+        ;;
       "Install Ranger",* | *,"Install Ranger")
         install_ranger
         break
@@ -1164,7 +1202,7 @@ show_menu() {
       "Load"*,* | *,"Load"* | "load"*,* | *,"load"* | "l",* | *,"l")
         cfopts=( "${configs[@]}" )
         cfopts+=( "main menu" "quit" )
-        if [ "${have_fzf}" ]; then
+        if [ "${use_fzf}" ]; then
           heading "Kitty Configuration" "Configuration"
           choice=$(printf "%s\n" "${cfopts[@]}" | fzf --prompt="😺 Select Kitty Configuration  " --height=12 --layout=reverse --border --exit-0)
           [ "${choice}" ] && {
@@ -1240,7 +1278,7 @@ show_menu() {
       "Tran"*,* | *,"Tran"* | "tran"*,* | *,"tran"* | "t",* | *,"t")
         tropts=( "${translevels[@]}" )
         tropts+=( "main menu" "quit" )
-        if [ "${have_fzf}" ]; then
+        if [ "${use_fzf}" ]; then
           heading "Transparency Opacity" "Transparency"
           choice=$(printf "%s\n" "${tropts[@]}" | fzf --prompt="😺 Select Transparency Opacity  " --height=18 --layout=reverse --border --exit-0)
           [ "${choice}" ] && {
@@ -1315,6 +1353,30 @@ show_menu() {
         man kitty-control
         break
         ;;
+      "Use Figlet"*,* | *,"Use Figlet"* | "use figlet"*,* | *,"use figlet"*)
+        if [ "${use_figlet}" ]; then
+          use_figlet=
+        else
+          use_figlet=1
+        fi
+        break
+        ;;
+      "Use Fzf"*,* | *,"Use Fzf"* | "use fzf"*,* | *,"use fzf"*)
+        if [ "${use_fzf}" ]; then
+          use_fzf=
+        else
+          use_fzf=1
+        fi
+        break
+        ;;
+      "Use Ranger"*,* | *,"Use Ranger"* | "use ranger"*,* | *,"use ranger"*)
+        if [ "${use_ranger}" ]; then
+          use_ranger=
+        else
+          use_ranger=1
+        fi
+        break
+        ;;
       "Upgrade kitty-control"*,* | *,"Upgrade kitty-control"* | "upgrade kitty-control"*,* | *,"upgrade kitty-control"*)
         upgrade_kitty_control noexit
         break
@@ -1338,6 +1400,14 @@ show_menu() {
   done
 }
 
+# Menu tools
+use_figlet=1
+use_fzf=1
+use_ranger=1
+set_haves
+[ "${have_figlet}" ] || use_figlet=
+[ "${have_fzf}" ] || use_fzf=
+[ "${have_ranger}" ] || use_ranger=
 [ "$1" ] || show_menu
 
 # Some actions need to be delayed until after any configuration load

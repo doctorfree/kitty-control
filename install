@@ -35,11 +35,21 @@ chmod 755 ${HOME}/.local/bin/kitty-control
 cp "${SCRIPT_PATH}"/kitten/read_config.py ${HOME}/.config/kitty
 chmod 644 ${HOME}/.config/kitty/read_config.py
 
+[ -f ${HOME}/.config/kitty/diff.conf ] || {
+  cp "${SCRIPT_PATH}"/config-example1/diff.conf ${HOME}/.config/kitty/diff.conf
+  chmod 644 ${HOME}/.config/kitty/diff.conf
+}
+
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
   [ "${KITTY_CONFIG_DIRECTORY}" == "${HOME}/.config/kitty" ] || {
     [ -d "${KITTY_CONFIG_DIRECTORY}" ] && {
       cp "${SCRIPT_PATH}"/kitten/read_config.py ${KITTY_CONFIG_DIRECTORY}
       chmod 644 ${KITTY_CONFIG_DIRECTORY}/read_config.py
+      [ -f ${KITTY_CONFIG_DIRECTORY}/diff.conf ] || {
+        cp "${SCRIPT_PATH}"/config-example1/diff.conf \
+            ${KITTY_CONFIG_DIRECTORY}/diff.conf
+        chmod 644 ${KITTY_CONFIG_DIRECTORY}/diff.conf
+      }
     }
   }
 }
@@ -68,7 +78,7 @@ have_fzf=$(type -p fzf)
 [ "${have_fzf}" ] || {
   [ -d ${HOME}/.fzf ] && mv ${HOME}/.fzf ${HOME}/.fzf$$
   git clone --depth 1 https://github.com/junegunn/fzf.git \
-    ${HOME}/.fzf >/dev/null 2>&1
+      ${HOME}/.fzf >/dev/null 2>&1
   [ -f ${HOME}/.fzf/install ] && chmod 755 ${HOME}/.fzf/install
   [ -x ${HOME}/.fzf/install ] && ${HOME}/.fzf/install --all >/dev/null 2>&1
 }
