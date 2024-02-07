@@ -198,6 +198,42 @@ following:
 .PP
 See
 <https://sw.kovidgoyal.net/kitty/remote-control/#control-kitty-from-scripts>
+.SH ENVIRONMENT
+.PP
+Environment variables can be used to influence \f[V]kitty\f[R] behavior.
+See <https://sw.kovidgoyal.net/kitty/glossary/#environment-variables>
+for details on environment variables \f[V]kitty\f[R] uses.
+The \f[V]kitty-control\f[R] command behavior depends on the
+\f[V]KITTY_LISTEN_ON\f[R] and \f[V]KITTY_CONFIG_DIRECTORY\f[R]
+environment variables.
+.PP
+\f[V]KITTY_LISTEN_ON\f[R] is set automatically by \f[V]kitty\f[R] and
+specifies the path to the socket \f[V]kitty\f[R] is listening on if one
+is configured.
+.PP
+\f[V]KITTY_CONFIG_DIRECTORY\f[R] can be set by the user to specify the
+directory \f[V]kitty\f[R] and \f[V]kitty-control\f[R] search for
+configuration files and kittens.
+Setting \f[V]KITTY_CONFIG_DIRECTORY\f[R] instructs \f[V]kitty\f[R] and
+\f[V]kitty-control\f[R] to ignore files in
+\f[V]\[ti]/.config/kitty\f[R].
+.PP
+For example, if \f[V]kitty\f[R] was started with the command:
+.IP
+.nf
+\f[C]
+kitty --override allow_remote_control=yes --listen-on unix:/tmp/mykitty
+\f[R]
+.fi
+.PP
+then \f[V]KITTY_LISTEN_ON\f[R] would be set to
+\f[V]unix:/tmp/mykitty\f[R] and \f[V]kitty-control\f[R] would use that
+socket to communicate with \f[V]kitty\f[R].
+The socket that \f[V]kitty-control\f[R] uses can be overridden with the
+\f[V]-s /path/to/socket\f[R] command line arguments.
+This can be used to tell \f[V]kitty-control\f[R] to communicate with
+another instance of \f[V]kitty\f[R] or used when running
+\f[V]kitty-control\f[R] from a non-kitty terminal or console.
 .SH EXAMPLES
 .TP
 \f[B]kitty-control\f[R]

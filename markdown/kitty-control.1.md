@@ -144,6 +144,34 @@ that was used for this instance of Kitty to have enabled the following:
 
 See https://sw.kovidgoyal.net/kitty/remote-control/#control-kitty-from-scripts
 
+# ENVIRONMENT
+Environment variables can be used to influence `kitty` behavior. See
+https://sw.kovidgoyal.net/kitty/glossary/#environment-variables for
+details on environment variables `kitty` uses. The `kitty-control`
+command behavior depends on the `KITTY_LISTEN_ON` and
+`KITTY_CONFIG_DIRECTORY` environment variables.
+
+`KITTY_LISTEN_ON` is set automatically by `kitty` and specifies the
+path to the socket `kitty` is listening on if one is configured.
+
+`KITTY_CONFIG_DIRECTORY` can be set by the user to specify the directory
+`kitty` and `kitty-control` search for configuration files and kittens.
+Setting `KITTY_CONFIG_DIRECTORY` instructs `kitty` and `kitty-control`
+to ignore files in `~/.config/kitty`.
+
+For example, if `kitty` was started with the command:
+
+```bash
+kitty --override allow_remote_control=yes --listen-on unix:/tmp/mykitty
+```
+
+then `KITTY_LISTEN_ON` would be set to `unix:/tmp/mykitty` and `kitty-control`
+would use that socket to communicate with `kitty`. The socket that
+`kitty-control` uses can be overridden with the `-s /path/to/socket` command
+line arguments. This can be used to tell `kitty-control` to communicate with
+another instance of `kitty` or used when running `kitty-control` from a
+non-kitty terminal or console.
+
 # EXAMPLES
 **kitty-control**
 : Without any arguments 'kitty-control' displays an interactive menu system
