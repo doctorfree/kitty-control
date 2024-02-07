@@ -198,7 +198,7 @@ set_show_shortcuts() {
   else
     shortcuts="bg/back c/clear d/dark F/full f/font fg/fore"
   fi
-  addtlcuts="h/help i/info L/list l/load q/quit T/theme t/tran v/view"
+  addtlcuts="h/help i/info L/list l/load o/opts q/quit T/theme t/tran v/view"
   if [ "${have_rich}" ]; then
     rich "[b cyan]Shortcuts:[/] [b yellow]${shortcuts}[/]" -p
     rich "           [b yellow]${addtlcuts}[/]" -p
@@ -806,7 +806,7 @@ show_usage() {
     options=("Examples" "Full Usage" "Main Menu" "Quit (q)")
     if [ "${use_fzf}" ]; then
       choice=$(printf "%s\n" "${options[@]}" | fzf --prompt="😺 Select option  " --height=8 --layout=reverse --exit-0)
-      [ "${choice}" ] && {
+      if [ "${choice}" ]; then
         case "${choice}" in
           Example*)
             show_examples noexit | less
@@ -816,7 +816,7 @@ show_usage() {
             usage noexit | less
             break
             ;;
-          Main*)
+          Main* | "")
             break 2
             ;;
           Quit*)
@@ -830,7 +830,9 @@ show_usage() {
             break
             ;;
         esac
-      }
+      else
+        break 2
+      fi
     else
       PS3="${BOLD}Enter a choice (number, shortcut, or text, 'h' help): ${NORM}"
       select opt in "${options[@]}"; do
@@ -869,10 +871,108 @@ show_usage() {
 
 prompt-color-input() {
   ${CLEAR_COMMAND}
-  printf "\n\nEnter a supported color name or hex color code"
-  printf "\nSupported color names:"
-  printf "\n\tblack white red green yellow blue magenta cyan"
-  printf "\nHex color codes are of the form '#120f3d' (the '#' can be omitted)\n"
+  if [ "${have_rich}" ]; then
+    rich "Enter a supported color name or hex color code" -p
+    rich "Supported color names:" -p
+    rich "    [cyan]black white red green yellow blue magenta cyan[/]" -p
+    rich "Hex color codes are of the form '[red]#120f3d[/]' (the '[red]#[/]' can be omitted)" -p
+  else
+    printf "\n\nEnter a supported color name or hex color code"
+    printf "\nSupported color names:"
+    printf "\n\tblack white red green yellow blue magenta cyan"
+    printf "\nHex color codes are of the form '#120f3d' (the '#' can be omitted)\n"
+  fi
+}
+
+prompt-match-input() {
+  ${CLEAR_COMMAND}
+  if [ "${have_rich}" ]; then
+    rich "[cyan]Tab/Window Matching Specification[/cyan]" -p -a rounded -c -C
+  else
+    if [ "${use_figlet}" ]; then
+      show_figlet "Match Spec"
+    else
+      printf "\n\nTab/Window Matching Specification\n\n"
+    fi
+  fi
+  printf "\n"
+  if [ "${have_rich}" ]; then
+    rich "Kitty remote control commands can be limited to matching tabs or windows" -p
+    rich "by providing a specification that matches the tabs/windows you want to effect." -p
+    printf "\n"
+    rich "You can use [red]kitty-control list[/] to get a list of tabs and windows" -p
+    printf "\n"
+    rich "Match specifications are of the form: [red]field:query[/] where field can be one of:" -p
+    rich "  [green]id index title window_id window_title pid cwd var state recent[/]" -p
+    rich "[red]query[/] is the expression to match. Expressions can be either a number or a" -p
+    rich "regular expression, and can be combined using Boolean operators." -p
+    printf "\n"
+    rich "The special value [red]all[/] matches all tabs/windows." -p
+  else
+    printf "\n\nKitty remote control commands can be limited to matching tabs or windows"
+    printf "\nby providing a specification that matches the tabs/windows you want to effect."
+    printf "\n\nYou can use 'kitty-control list' to get a list of tabs and windows"
+    printf "\n\nMatch specifications are of the form: 'field:query' where field can be one of:"
+    printf "\n  id, index, title, window_id, window_title, pid, cwd, var, state and recent"
+    printf "\n'query' is the expression to match. Expressions can be either a number or a"
+    printf "\nregular expression, and can be combined using Boolean operators."
+    printf "\n\nThe special value 'all' matches all tabs/windows.\n"
+  fi
+  printf "\n"
+}
+
+get_tabopts() {
+  tabop_return=
+  while true; do
+    read -r -p "Enter tab matching specification ('q' to exit): " tabmatch
+    [ "${tabmatch}" == "q" ] && break
+    case ${tabmatch} in
+      "-t "*)
+        tabop_return=$(echo "${tabmatch}" | sed -e "s/-t //")
+        break
+        ;;
+      "--match-tab "*)
+        tabop_return=$(echo "${tabmatch}" | sed -e "s/--match-tab //")
+        break
+        ;;
+      "")
+        printf "\nEmpty specification. Enter a tab matching spec or 'q'\n"
+        prompt_continue
+        ;;
+      *)
+        tabop_return="${tabmatch}"
+        break
+        ;;
+    esac
+  done
+  echo "${tabop_return}"
+}
+
+get_winopts() {
+  winop_return=
+  while true; do
+    read -r -p "Enter window matching specification ('q' to exit): " winmatch
+    [ "${winmatch}" == "q" ] && break
+    case ${winmatch} in
+      "-t "*)
+        winop_return=$(echo "${winmatch}" | sed -e "s/-t //")
+        break
+        ;;
+      "--match "*)
+        winop_return=$(echo "${winmatch}" | sed -e "s/--match //")
+        break
+        ;;
+      "")
+        printf "\nEmpty specification. Enter a window matching spec or 'q'\n"
+        prompt_continue
+        ;;
+      *)
+        winop_return="${winmatch}"
+        break
+        ;;
+    esac
+  done
+  echo "${winop_return}"
 }
 
 get-color-input() {
@@ -1293,6 +1393,206 @@ menu_set_trans() {
   fi
 }
 
+options_menu() {
+  while true; do
+    ${CLEAR_COMMAND}
+    if [ "${have_rich}" ]; then
+      rich "[cyan]Kitty Control Options Menu[/cyan]" -p -a rounded -c -C
+    else
+      if [ "${use_figlet}" ]; then
+        show_figlet "Options Menu"
+      else
+        printf "\n\nKitty Control Options Menu\n\n"
+      fi
+    fi
+    printf "\n"
+    kc_options=()
+    if [ "${allopt}" ]; then
+      kc_options+=("All Tabs/Windows  [yes]")
+    else
+      kc_options+=("All Tabs/Windows  [no]")
+    fi
+    kc_options+=("Tab Match Spec    [${tabopts}]")
+    kc_options+=("Window Match Spec [${winopts}]")
+    [ "${have_figlet}" ] && {
+      if [ "${use_figlet}" ]; then
+        kc_options+=("Use Figlet        [yes]")
+      else
+        kc_options+=("Use Figlet        [no]")
+      fi
+    }
+    [ "${have_fzf}" ] && {
+      if [ "${use_fzf}" ]; then
+        kc_options+=("Use Fzf           [yes]")
+      else
+        kc_options+=("Use Fzf           [no]")
+      fi
+    }
+    [ "${have_ranger}" ] && {
+      if [ "${use_ranger}" ]; then
+        kc_options+=("Use Ranger        [yes]")
+      else
+        kc_options+=("Use Ranger        [no]")
+      fi
+    }
+    kc_options+=("Help" "Main Menu" "Quit (q)")
+    if [ "${use_fzf}" ]; then
+      choice=$(printf "%s\n" "${kc_options[@]}" | fzf --prompt="😺 Toggle options  " --height=12 --layout=reverse --exit-0)
+      if [ "${choice}" ]; then
+        case "${choice}" in
+          "h" | "H" | "help" | "Help")
+            show_help
+            ;;
+          "All"* | "all"*)
+            if [ "${allopts}" ]; then
+              OPTS=$(echo "${OPTS}" | sed -e "s/ -a//")
+              allopts=
+            else
+              OPTS="${OPTS} -a"
+              allopts=1
+            fi
+            ;;
+          "Tab"* | "tab"*)
+            if [ "${tabopts}" ]; then
+              OPTS=$(echo "${OPTS}" | sed -e "s/ -t ${tabopts}//")
+              tabopts=
+            else
+              prompt-match-input
+              tabopts=$(get_tabopts)
+              [ "${tabopts}" ] && OPTS="${OPTS} -t ${tabopts}"
+            fi
+            ;;
+          "Window"* | "window"*)
+            if [ "${winopts}" ]; then
+              OPTS=$(echo "${OPTS}" | sed -e "s/ -m ${winopts}//")
+              winopts=
+            else
+              prompt-match-input
+              winopts=$(get_winopts)
+              [ "${winopts}" ] && OPTS="${OPTS} -m ${winopts}"
+            fi
+            ;;
+          "Use Figlet"* | "use figlet"*)
+            if [ "${use_figlet}" ]; then
+              use_figlet=
+            else
+              use_figlet=1
+            fi
+            ;;
+          "Use Fzf"* | "use fzf"*)
+            if [ "${use_fzf}" ]; then
+              use_fzf=
+            else
+              use_fzf=1
+            fi
+            ;;
+          "Use Ranger"* | "use ranger"*)
+            if [ "${use_ranger}" ]; then
+              use_ranger=
+            else
+              use_ranger=1
+            fi
+            ;;
+          Main* | "")
+            break
+            ;;
+          Quit*)
+            ${CLEAR_COMMAND}
+            printf "\nExiting kitty-control\n"
+            exit 0
+            ;;
+          *)
+            printf "\nCould not match '${choice}' with an entry."
+            printf "\nPlease try again with an exact match.\n"
+            ;;
+        esac
+      else
+        break
+      fi
+    else
+      PS3="${BOLD}Enter a choice (number, shortcut, or text, 'h' help): ${NORM}"
+      select opt in "${kc_options[@]}"; do
+        case "$opt,$REPLY" in
+        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+          show_help
+          break
+          ;;
+        "All"*,* | *,"All"* | "all"*,* | *,"all"*)
+          if [ "${allopts}" ]; then
+            OPTS=$(echo "${OPTS}" | sed -e "s/ -a//")
+            allopts=
+          else
+            OPTS="${OPTS} -a"
+            allopts=1
+          fi
+          break
+          ;;
+        "Tab"*,* | *,"Tab"* | "tab"*,* | *,"tab"*)
+          if [ "${tabopts}" ]; then
+            OPTS=$(echo "${OPTS}" | sed -e "s/ -t ${tabopts}//")
+            tabopts=
+          else
+            prompt-match-input
+            tabopts=$(get_tabopts)
+            [ "${tabopts}" ] && OPTS="${OPTS} -t ${tabopts}"
+          fi
+          break
+          ;;
+        "Win"*,* | *,"Win"* | "win"*,* | *,"win"*)
+          if [ "${winopts}" ]; then
+            OPTS=$(echo "${OPTS}" | sed -e "s/ -m ${winopts}//")
+            winopts=
+          else
+            prompt-match-input
+            winopts=$(get_winopts)
+            [ "${winopts}" ] && OPTS="${OPTS} -m ${winopts}"
+          fi
+          break
+          ;;
+        "Use Figlet"*,* | *,"Use Figlet"* | "use figlet"*,* | *,"use figlet"*)
+          if [ "${use_figlet}" ]; then
+            use_figlet=
+          else
+            use_figlet=1
+          fi
+          break
+          ;;
+        "Use Fzf"*,* | *,"Use Fzf"* | "use fzf"*,* | *,"use fzf"*)
+          if [ "${use_fzf}" ]; then
+            use_fzf=
+          else
+            use_fzf=1
+          fi
+          break
+          ;;
+        "Use Ranger"*,* | *,"Use Ranger"* | "use ranger"*,* | *,"use ranger"*)
+          if [ "${use_ranger}" ]; then
+            use_ranger=
+          else
+            use_ranger=1
+          fi
+          break
+          ;;
+        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+          break 2
+          ;;
+        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          ${CLEAR_COMMAND}
+          printf "\nExiting kitty-control\n"
+          exit 0
+          ;;
+        *,*)
+          printf "\nCould not match '${REPLY}' with a menu entry."
+          printf "\nPlease try again with an exact match.\n"
+          break
+          ;;
+        esac
+        REPLY=
+      done
+    fi
+  done
+}
+
 select_with_fzf() {
   fzopts=("$@")
   fzopts+=( "Help" "Main Menu" )
@@ -1419,28 +1719,8 @@ select_with_fzf() {
           man kitty-control
           break
           ;;
-        "Use Figlet"* | "use figlet"*)
-          if [ "${use_figlet}" ]; then
-            use_figlet=
-          else
-            use_figlet=1
-          fi
-          break
-          ;;
-        "Use Fzf"* | "use fzf"*)
-          if [ "${use_fzf}" ]; then
-            use_fzf=
-          else
-            use_fzf=1
-          fi
-          break
-          ;;
-        "Use Ranger"* | "use ranger"*)
-          if [ "${use_ranger}" ]; then
-            use_ranger=
-          else
-            use_ranger=1
-          fi
+        "Opt"* | "opt"* | "o")
+          options_menu
           break
           ;;
         "Upgrade kitty-control"* | "upgrade kitty-control"*)
@@ -1498,29 +1778,8 @@ show_menu() {
     [ ${numconfs} -gt 1 ] && {
       options+=("Load Kitty Configuration")
     }
-    options+=("Manual Page" "Show Usage/Version" "Theme Selection")
+    options+=("Manual Page" "Options" "Show Usage/Version" "Theme Selection")
     options+=("Terminal Info" "Toggle Fullscreen" "Transparent" "Unicode Input")
-    [ "${have_figlet}" ] && {
-      if [ "${use_figlet}" ]; then
-        options+=("Use Figlet [yes]")
-      else
-        options+=("Use Figlet [no]")
-      fi
-    }
-    [ "${have_fzf}" ] && {
-      if [ "${use_fzf}" ]; then
-        options+=("Use Fzf    [yes]")
-      else
-        options+=("Use Fzf    [no]")
-      fi
-    }
-    [ "${have_ranger}" ] && {
-      if [ "${use_ranger}" ]; then
-        options+=("Use Ranger [yes]")
-      else
-        options+=("Use Ranger [no]")
-      fi
-    }
     release_version=$(curl -fsSL "https://sw.kovidgoyal.net/kitty/current-version.txt")
     install_version=$(kitty --version | awk '{ print $2 }')
     update_kitty=$(check_kitty_version "${release_version}" "${install_version}")
@@ -1644,28 +1903,8 @@ show_menu() {
         man kitty-control
         break
         ;;
-      "Use Figlet"*,* | *,"Use Figlet"* | "use figlet"*,* | *,"use figlet"*)
-        if [ "${use_figlet}" ]; then
-          use_figlet=
-        else
-          use_figlet=1
-        fi
-        break
-        ;;
-      "Use Fzf"*,* | *,"Use Fzf"* | "use fzf"*,* | *,"use fzf"*)
-        if [ "${use_fzf}" ]; then
-          use_fzf=
-        else
-          use_fzf=1
-        fi
-        break
-        ;;
-      "Use Ranger"*,* | *,"Use Ranger"* | "use ranger"*,* | *,"use ranger"*)
-        if [ "${use_ranger}" ]; then
-          use_ranger=
-        else
-          use_ranger=1
-        fi
+      "Opt"*,* | *,"Opt"* | "opt"*,* | *,"opt"* | "o",* | *,"o")
+        options_menu
         break
         ;;
       "Upgrade kitty-control"*,* | *,"Upgrade kitty-control"* | "upgrade kitty-control"*,* | *,"upgrade kitty-control"*)
@@ -1703,6 +1942,7 @@ set_haves
 [ "$1" ] || show_menu
 
 # Some actions need to be delayed until after any configuration load
+allopt=
 bg_image=
 backgrnd=
 foregrnd=
@@ -1714,10 +1954,13 @@ install_version=
 release_version=
 kittycmd=
 setopcty=
+tabopts=
+winopts=
 while [[ $1 ]]; do
   case "$1" in
     -a | --all)
-      OPTS="$OPTS -a"
+      OPTS="${OPTS} -a"
+      allopt=1
       shift
       ;;
     -c | --command)
@@ -1737,7 +1980,8 @@ while [[ $1 ]]; do
         printf "\nSee https://sw.kovidgoyal.net/kitty/remote-control/#matching-windows-and-tabs\n\n"
         exit 0
       else
-        OPTS="$OPTS -m $2"
+        winopts="-m $2"
+        OPTS="${OPTS} ${winopts}"
       fi
       shift 2
       ;;
@@ -1768,7 +2012,8 @@ while [[ $1 ]]; do
         printf "\nSee https://sw.kovidgoyal.net/kitty/remote-control/#matching-windows-and-tabs\n\n"
         exit 0
       else
-        OPTS="$OPTS -t $2"
+        tabopts="-t $2"
+        OPTS="${OPTS} ${tabopts}"
       fi
       shift 2
       ;;

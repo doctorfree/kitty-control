@@ -5,8 +5,12 @@
 ### ⚡️ Added
 
 - Set `fzf` colors and theme in `FZF_DEFAULT_OPTS`
+- Add `custom` to `colors` array to allow entry of custom foreground/background colors
+- Add `Options` menu to set some remote control options and toggle tools use
 
 ### 🐞 Fixed
+
+- Catch all `fzf` escape keystrokes
 
 ## v1.0.3r1
 
