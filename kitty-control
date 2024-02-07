@@ -726,19 +726,6 @@ show_figlet() {
   fi
 }
 
-show_fzf_help() {
-  clear
-  if [ "${have_rich}" ]; then
-    rich "[cyan]Kitty Control Menu Fzf Help[/cyan]" -p -a rounded -c -C
-    rich "[green]Control kitty from a menu system[/green]" -p -c
-  else
-    printf "\n\tKitty Control Menu Fzf Help\n"
-    printf "\n\tControl kitty from a menu system\n"
-  fi
-  printf "\n"
-  prompt_continue
-}
-
 show_help() {
   clear
   if [ "${have_rich}" ]; then
@@ -1223,11 +1210,11 @@ select_with_fzf() {
   while true; do
     clear
     heading "Kitty Control" "Kitty Control"
-    choice=$(printf "%s\n" "${fzopts[@]}" | fzf --prompt="😺 Select Menu Option  " --height=20 --layout=reverse --border --exit-0)
+    choice=$(printf "%s\n" "${fzopts[@]}" | fzf --prompt="😺 Select Menu Option  " --height=18 --layout=reverse --border --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
         "help"*)
-          show_fzf_help
+          show_help
           break
           ;;
         "main"*)
