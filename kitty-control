@@ -726,6 +726,19 @@ show_figlet() {
   fi
 }
 
+show_fzf_help() {
+  clear
+  if [ "${have_rich}" ]; then
+    rich "[cyan]Kitty Control Menu Fzf Help[/cyan]" -p -a rounded -c -C
+    rich "[green]Control kitty from a menu system[/green]" -p -c
+  else
+    printf "\n\tKitty Control Menu Fzf Help\n"
+    printf "\n\tControl kitty from a menu system\n"
+  fi
+  printf "\n"
+  prompt_continue
+}
+
 show_help() {
   clear
   if [ "${have_rich}" ]; then
@@ -885,6 +898,498 @@ try_foreground() {
   }
 }
 
+menu_background_color() {
+  bgopts=( "${colors[@]}" )
+  bgopts+=( "main menu" "quit" )
+  if [ "${use_fzf}" ]; then
+    heading "Background Color" "Background"
+    choice=$(printf "%s\n" "${bgopts[@]}" | fzf --prompt="😺 Select Background Color  " --height=15 --layout=reverse --border --exit-0)
+    [ "${choice}" ] && {
+      case "${choice}" in
+        "main"*)
+          break
+          ;;
+        "reset"*)
+          set-background reset
+          break
+          ;;
+        "quit"*)
+          printf "\nExiting kitty-control\n"
+          exit 0
+          ;;
+        *)
+          try_background "${choice}"
+          break
+          ;;
+      esac
+    }
+  else
+    while true; do
+      heading "Background Color" "Background"
+      PS3="${BOLD}Select Background Color (number, shortcut, or text, 'h' help): ${NORM}"
+      select subopt in "${bgopts[@]}"; do
+        case "$subopt,$REPLY" in
+        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+          show_help
+          break
+          ;;
+        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+          break 2
+          ;;
+        "Reset"*,* | *,"Reset"* | "reset"*,* | *,"reset"* | "r",* | *,"r")
+          set-background reset
+          break 2
+          ;;
+        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          printf "\nExiting kitty-control\n"
+          exit 0
+          ;;
+        *,*)
+          try_background "${subopt}"
+          break 2
+          ;;
+        esac
+      done
+    done
+  fi
+}
+
+menu_foreground_color() {
+  fgopts=( "${colors[@]}" )
+  fgopts+=( "main menu" "quit" )
+  if [ "${use_fzf}" ]; then
+    heading "Foreground Color" "Foreground"
+    choice=$(printf "%s\n" "${fgopts[@]}" | fzf --prompt="😺 Select Foreground Color  " --height=15 --layout=reverse --border --exit-0)
+    [ "${choice}" ] && {
+      case "${choice}" in
+        "main"*)
+          break
+          ;;
+        "reset"*)
+          set-foreground reset
+          break
+          ;;
+        "quit"*)
+          printf "\nExiting kitty-control\n"
+          exit 0
+          ;;
+        *)
+          try_foreground "${choice}"
+          break
+          ;;
+      esac
+    }
+  else
+    while true; do
+      heading "Foreground Color" "Foreground"
+      PS3="${BOLD}Select Foreground Color (number, shortcut, or text, 'h' help): ${NORM}"
+      select subopt in "${fgopts[@]}"; do
+        case "$subopt,$REPLY" in
+        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+          show_help
+          break
+          ;;
+        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+          break 2
+          ;;
+        "Reset"*,* | *,"Reset"* | "reset"*,* | *,"reset"* | "r",* | *,"r")
+          set-foreground reset
+          break 2
+          ;;
+        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          printf "\nExiting kitty-control\n"
+          exit 0
+          ;;
+        *,*)
+          try_foreground "${subopt}"
+          break 2
+          ;;
+        esac
+      done
+    done
+  fi
+}
+
+menu_diff_file() {
+  FILE=
+  file1=
+  file2=
+  select_file
+  [ "${FILE}" ] && {
+    file1="${FILE}"
+    select_file
+    [ "${FILE}" ] && {
+      file2="${FILE}"
+    }
+  }
+  [ "${file1}" ] && [ "${file2}" ] && {
+    kitty +kitten diff "${file1}" "${file2}"
+  }
+}
+
+menu_diff_folder() {
+  FOLD=
+  fold1=
+  fold2=
+  select_folder
+  [ "${FOLD}" ] && {
+    fold1="${FOLD}"
+    select_folder
+    [ "${FOLD}" ] && {
+      fold2="${FOLD}"
+    }
+  }
+  [ "${fold1}" ] && [ "${fold2}" ] && {
+    kitty +kitten diff "${fold1}" "${fold2}"
+  }
+}
+
+menu_font_size() {
+  foopts=( "${fontsizes[@]}" )
+  foopts+=( "main menu" "quit" )
+  if [ "${use_fzf}" ]; then
+    heading "Font Size" "Font Size"
+    choice=$(printf "%s\n" "${foopts[@]}" | fzf --prompt="😺 Select Font Size Adjustment  " --height=18 --layout=reverse --border --exit-0)
+    [ "${choice}" ] && {
+      case "${choice}" in
+        "main"*)
+          break
+          ;;
+        "default"*)
+          kitty @ ${SOCKET} set-font-size ${OPTS} 0
+          break
+          ;;
+        "quit"*)
+          printf "\nExiting kitty-control\n"
+          exit 0
+          ;;
+        *)
+          kitty-fontsize "${choice}"
+          break
+          ;;
+      esac
+    }
+  else
+    while true; do
+      heading "Font Size" "Font Size"
+      PS3="${BOLD}Select Font Size Adjustment (number, shortcut, or text, 'h' help): ${NORM}"
+      select subopt in "${foopts[@]}"; do
+        case "$subopt,$REPLY" in
+        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+          show_help
+          break
+          ;;
+        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+          break 2
+          ;;
+        "Default"*,* | *,"Default"* | "default"*,* | *,"default"* | "d",* | *,"d")
+          kitty @ ${SOCKET} set-font-size ${OPTS} 0
+          break 2
+          ;;
+        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          printf "\nExiting kitty-control\n"
+          exit 0
+          ;;
+        *,*)
+          kitty-fontsize "${subopt}"
+          break 2
+          ;;
+        esac
+      done
+    done
+  fi
+}
+
+menu_load_config() {
+  cfopts=("$@")
+  cfopts+=( "main menu" "quit" )
+  if [ "${use_fzf}" ]; then
+    heading "Kitty Configuration" "Configuration"
+    choice=$(printf "%s\n" "${cfopts[@]}" | fzf --prompt="😺 Select Kitty Configuration  " --height=12 --layout=reverse --border --exit-0)
+    [ "${choice}" ] && {
+      case "${choice}" in
+        "main"*)
+          break
+          ;;
+        "default"*)
+          load-config "${choice}"
+          break
+          ;;
+        "quit"*)
+          printf "\nExiting kitty-control\n"
+          exit 0
+          ;;
+        *)
+          subdir=$(echo "${choice}" | awk -F '/' '{ printf $(NF - 1) }')
+          load-config "${subdir}"
+          ;;
+      esac
+    }
+  else
+    while true; do
+      heading "Kitty Configuration" "Configuration"
+      PS3="${BOLD}Select Kitty Configuration (number, shortcut, or text, 'h' help): ${NORM}"
+      select subopt in "${cfopts[@]}"; do
+        case "$subopt,$REPLY" in
+        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+          show_help
+          break
+          ;;
+        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+          break 2
+          ;;
+        "Default"*,* | *,"Default"* | "default"*,* | *,"default"* | "d",* | *,"d")
+          load-config "${subopt}"
+          break 2
+          ;;
+        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          printf "\nExiting kitty-control\n"
+          exit 0
+          ;;
+        *,*)
+          subdir=$(echo "${subopt}" | awk -F '/' '{ printf $(NF - 1) }')
+          load-config "${subdir}"
+          break 2
+          ;;
+        esac
+      done
+    done
+  fi
+}
+
+menu_set_trans() {
+  tropts=( "${translevels[@]}" )
+  tropts+=( "main menu" "quit" )
+  if [ "${use_fzf}" ]; then
+    heading "Transparency Opacity" "Transparency"
+    choice=$(printf "%s\n" "${tropts[@]}" | fzf --prompt="😺 Select Transparency Opacity  " --height=18 --layout=reverse --border --exit-0)
+    [ "${choice}" ] && {
+      case "${choice}" in
+        "default"*)
+          set-opacity "${OPACITY}"
+          ;;
+        "main"*)
+          break
+          ;;
+        "quit"*)
+          printf "\nExiting kitty-control\n"
+          exit 0
+          ;;
+        *)
+        set-opacity "${choice}"
+        ;;
+      esac
+    }
+  else
+    while true; do
+      heading "Transparency Opacity" "Transparency"
+      PS3="${BOLD}Select Transparency Opacity (number, shortcut, or text, 'h' help): ${NORM}"
+      select subopt in "${tropts[@]}"; do
+        case "$subopt,$REPLY" in
+        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+          show_help
+          break
+          ;;
+        "default"*,* | *,"default"*)
+          set-opacity "${OPACITY}"
+          break 2
+          ;;
+        [0-9].[0-9]*,* | *,[0-9].[0-9]*)
+          set-opacity "${subopt}"
+          break 2
+          ;;
+        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+          break 2
+          ;;
+        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          printf "\nExiting kitty-control\n"
+          exit 0
+          ;;
+        *,*)
+          printf "\nCould not match '${REPLY}' with a menu entry."
+          printf "\nPlease try again with an exact match.\n"
+          break
+          ;;
+        esac
+        REPLY=
+      done
+    done
+  fi
+}
+
+select_with_fzf() {
+  fzopts=("$@")
+  fzopts+=( "help" "main menu" "quit" )
+  while true; do
+    clear
+    heading "Kitty Control" "Kitty Control"
+    choice=$(printf "%s\n" "${fzopts[@]}" | fzf --prompt="😺 Select Menu Option  " --height=20 --layout=reverse --border --exit-0)
+    [ "${choice}" ] && {
+      case "${choice}" in
+        "help"*)
+          show_fzf_help
+          break
+          ;;
+        "main"*)
+          break
+          ;;
+        "reset"*)
+          set-foreground reset
+          break
+          ;;
+        "Background Color"* | "bg")
+          menu_background_color
+          break
+          ;;
+        "Foreground Color"* | "fg")
+          menu_foreground_color
+          break
+          ;;
+        "Background Image")
+          FILE=
+          select_file image
+          [ "${FILE}" ] && kitty @ ${SOCKET} set-background-image ${OPTS} "${FILE}"
+          break
+          ;;
+        "Clear"* | "clear"*)
+          kitty @ ${SOCKET} set-background-image ${OPTS} none
+          break
+          ;;
+        "Dark"* | "dark"* | "d" | "d")
+          set-opacity "1.0"
+          break
+          ;;
+        "Diff File"* | "diff file"*)
+          menu_diff_file
+          break
+          ;;
+        "Diff Fold"* | "diff fold"*)
+          menu_diff_folder
+          break
+          ;;
+        "Exam"* | "exam"*)
+          show_usage examples
+          break
+          ;;
+        "Font"* | "font"* | "f")
+          menu_font_size
+          break
+          ;;
+        "Install Figlet")
+          install_figlet
+          break
+          ;;
+        "Install Fzf")
+          install_fzf
+          break
+          ;;
+        "Install Ranger")
+          install_ranger
+          break
+          ;;
+        "List"* | "list"* | "L")
+          kitty @ ${SOCKET} ls ${OPTS} | less
+          break
+          ;;
+        "Load"* | "load"* | "l")
+          numconfs=1
+          configs=("default")
+          for kconf in ${CONFDIR}/*/kitty.conf
+          do
+            [ "${kconf}" == "${CONFDIR}/*/kitty.conf" ] && continue
+            ((numconfs++))
+            configs+=("${kconf}")
+          done
+          menu_load_config "${configs[@]}"
+          break
+          ;;
+        "View"* | "view"* | "v")
+          FILE=
+          select_file image
+          [ "${FILE}" ] && {
+            kitty +kitten icat ${FILE}
+            printf "\nTo view this image use: kitty +kitten icat ${FILE}\n"
+            prompt_continue
+          }
+          break
+          ;;
+        "Theme"* | "theme"* | "T")
+          kitty +kitten themes
+          break
+          ;;
+        "Term"* | "term"* | "info" | "i")
+          kitty +kitten query_terminal
+          prompt_continue
+          break
+          ;;
+        "Tran"* | "tran"* | "t")
+          menu_set_trans
+          break
+          ;;
+        "Toggle"* | "toggle"* | "full" | "F")
+          toggle-fullscreen
+          sleep 1
+          break
+          ;;
+        "Unicode"* | "unicode"*)
+          kitty +kitten unicode_input
+          break
+          ;;
+        "Show"* | "show"*)
+          show_usage usage
+          break
+          ;;
+        "Manual"* | "manual"*)
+          printf "\n"
+          man kitty-control
+          break
+          ;;
+        "Use Figlet"* | "use figlet"*)
+          if [ "${use_figlet}" ]; then
+            use_figlet=
+          else
+            use_figlet=1
+          fi
+          break
+          ;;
+        "Use Fzf"* | "use fzf"*)
+          if [ "${use_fzf}" ]; then
+            use_fzf=
+          else
+            use_fzf=1
+          fi
+          break
+          ;;
+        "Use Ranger"* | "use ranger"*)
+          if [ "${use_ranger}" ]; then
+            use_ranger=
+          else
+            use_ranger=1
+          fi
+          break
+          ;;
+        "Upgrade kitty-control"* | "upgrade kitty-control"*)
+          upgrade_kitty_control noexit
+          break
+          ;;
+        "Upgrade Kitty"* | "upgrade kitty"*)
+          install_kitty
+          break
+          ;;
+        "Quit"* | "quit"* | "Q" | "q")
+          printf "\nExiting kitty-control\n"
+          exit 0
+          ;;
+        *)
+          printf "\nCould not match '${choice}' with a menu entry."
+          printf "\nPlease try again with an exact match.\n"
+          break
+          ;;
+      esac
+    }
+  done
+}
+
 show_menu() {
   set_haves
   while true; do
@@ -951,11 +1456,18 @@ show_menu() {
       options+=("Upgrade kitty-control (${install_version} -> ${control_version})")
     }
     options+=("View an Image" "Quit (q)")
-    shortcuts="d/dark F/full f/font i/info L/list l/load T/theme t/tran v/view"
+    if [ "${have_fzf}" ]; then
+      shortcuts="bg/background d/dark F/full f/font fg/foreground fzf/fuzzy select"
+    else
+      shortcuts="bg/background d/dark F/full f/font fg/foreground"
+    fi
+    addtlcuts="h/help i/info L/list l/load q/quit T/theme t/tran v/view"
     if [ "${have_rich}" ]; then
       rich "[b cyan]Shortcuts:[/] [b yellow]${shortcuts}[/]" -p
+      rich "           [b yellow]${addtlcuts}[/]" -p
     else
-      printf "\nShortcuts: ${BOLD}${shortcuts}${NORM}\n"
+      printf "\nShortcuts: ${BOLD}${shortcuts}${NORM}"
+      printf "\n           ${BOLD}${addtlcuts}${NORM}\n"
     fi
     select opt in "${options[@]}"; do
       case "$opt,$REPLY" in
@@ -964,115 +1476,11 @@ show_menu() {
         break
         ;;
       "Background Color",* | *,"Background Color" | "bg",* | *,"bg")
-        bgopts=( "${colors[@]}" )
-        bgopts+=( "main menu" "quit" )
-        if [ "${use_fzf}" ]; then
-          heading "Background Color" "Background"
-          choice=$(printf "%s\n" "${bgopts[@]}" | fzf --prompt="😺 Select Background Color  " --height=15 --layout=reverse --border --exit-0)
-          [ "${choice}" ] && {
-            case "${choice}" in
-              "main"*)
-                break
-                ;;
-              "reset"*)
-                set-background reset
-                break
-                ;;
-              "quit"*)
-                printf "\nExiting kitty-control\n"
-                exit 0
-                ;;
-              *)
-                try_background "${choice}"
-                break
-                ;;
-            esac
-          }
-        else
-          while true; do
-            heading "Background Color" "Background"
-            PS3="${BOLD}Select Background Color (number, shortcut, or text, 'h' help): ${NORM}"
-            select opt in "${bgopts[@]}"; do
-              case "$opt,$REPLY" in
-              "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-                show_help
-                break
-                ;;
-              "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-                break 2
-                ;;
-              "Reset"*,* | *,"Reset"* | "reset"*,* | *,"reset"* | "r",* | *,"r")
-                set-background reset
-                break 2
-                ;;
-              "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-                printf "\nExiting kitty-control\n"
-                exit 0
-                ;;
-              *,*)
-                try_background "${opt}"
-                break 2
-                ;;
-              esac
-            done
-          done
-        fi
+        menu_background_color
         break
         ;;
       "Foreground Color",* | *,"Foreground Color" | "fg",* | *,"fg")
-        fgopts=( "${colors[@]}" )
-        fgopts+=( "main menu" "quit" )
-        if [ "${use_fzf}" ]; then
-          heading "Foreground Color" "Foreground"
-          choice=$(printf "%s\n" "${fgopts[@]}" | fzf --prompt="😺 Select Foreground Color  " --height=15 --layout=reverse --border --exit-0)
-          [ "${choice}" ] && {
-            case "${choice}" in
-              "main"*)
-                break
-                ;;
-              "reset"*)
-                set-foreground reset
-                break
-                ;;
-              "quit"*)
-                printf "\nExiting kitty-control\n"
-                exit 0
-                ;;
-              *)
-                try_foreground "${choice}"
-                break
-                ;;
-            esac
-          }
-        else
-          while true; do
-            heading "Foreground Color" "Foreground"
-            PS3="${BOLD}Select Foreground Color (number, shortcut, or text, 'h' help): ${NORM}"
-            select opt in "${fgopts[@]}"; do
-              case "$opt,$REPLY" in
-              "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-                show_help
-                break
-                ;;
-              "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-                break 2
-                ;;
-              "Reset"*,* | *,"Reset"* | "reset"*,* | *,"reset"* | "r",* | *,"r")
-                set-foreground reset
-                break 2
-                ;;
-              "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-                printf "\nExiting kitty-control\n"
-                exit 0
-                ;;
-              *,*)
-                try_foreground "${opt}"
-                break 2
-                ;;
-              esac
-            done
-          done
-        fi
+        menu_foreground_color
         break
         ;;
       "Background Image",* | *,"Background Image")
@@ -1090,37 +1498,11 @@ show_menu() {
         break
         ;;
       "Diff File"*,* | *,"Diff File"* | "diff file"*,* | *,"diff file"*)
-        FILE=
-        file1=
-        file2=
-        select_file
-        [ "${FILE}" ] && {
-          file1="${FILE}"
-          select_file
-          [ "${FILE}" ] && {
-            file2="${FILE}"
-          }
-        }
-        [ "${file1}" ] && [ "${file2}" ] && {
-          kitty +kitten diff "${file1}" "${file2}"
-        }
+        menu_diff_file
         break
         ;;
       "Diff Fold"*,* | *,"Diff Fold"* | "diff fold"*,* | *,"diff fold"*)
-        FOLD=
-        fold1=
-        fold2=
-        select_folder
-        [ "${FOLD}" ] && {
-          fold1="${FOLD}"
-          select_folder
-          [ "${FOLD}" ] && {
-            fold2="${FOLD}"
-          }
-        }
-        [ "${fold1}" ] && [ "${fold2}" ] && {
-          kitty +kitten diff "${fold1}" "${fold2}"
-        }
+        menu_diff_folder
         break
         ;;
       "Exam"*,* | *,"Exam"* | "exam"*,* | *,"exam"*)
@@ -1128,59 +1510,11 @@ show_menu() {
         break
         ;;
       "Font"*,* | *,"Font"* | "font"*,* | *,"font"* | "f",* | *,"f")
-        foopts=( "${fontsizes[@]}" )
-        foopts+=( "main menu" "quit" )
-        if [ "${use_fzf}" ]; then
-          heading "Font Size" "Font Size"
-          choice=$(printf "%s\n" "${foopts[@]}" | fzf --prompt="😺 Select Font Size Adjustment  " --height=18 --layout=reverse --border --exit-0)
-          [ "${choice}" ] && {
-            case "${choice}" in
-              "main"*)
-                break
-                ;;
-              "default"*)
-                kitty @ ${SOCKET} set-font-size ${OPTS} 0
-                break
-                ;;
-              "quit"*)
-                printf "\nExiting kitty-control\n"
-                exit 0
-                ;;
-              *)
-                kitty-fontsize "${choice}"
-                break
-                ;;
-            esac
-          }
-        else
-          while true; do
-            heading "Font Size" "Font Size"
-            PS3="${BOLD}Select Font Size Adjustment (number, shortcut, or text, 'h' help): ${NORM}"
-            select opt in "${foopts[@]}"; do
-              case "$opt,$REPLY" in
-              "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-                show_help
-                break
-                ;;
-              "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-                break 2
-                ;;
-              "Default"*,* | *,"Default"* | "default"*,* | *,"default"* | "d",* | *,"d")
-                kitty @ ${SOCKET} set-font-size ${OPTS} 0
-                break 2
-                ;;
-              "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-                printf "\nExiting kitty-control\n"
-                exit 0
-                ;;
-              *,*)
-                kitty-fontsize "${opt}"
-                break 2
-                ;;
-              esac
-            done
-          done
-        fi
+        menu_font_size
+        break
+        ;;
+      "Fzf",* | *,"Fzf" | "fzf",* | *,"fzf")
+        select_with_fzf "${options[@]}"
         break
         ;;
       "Install Figlet",* | *,"Install Figlet")
@@ -1200,60 +1534,7 @@ show_menu() {
         break
         ;;
       "Load"*,* | *,"Load"* | "load"*,* | *,"load"* | "l",* | *,"l")
-        cfopts=( "${configs[@]}" )
-        cfopts+=( "main menu" "quit" )
-        if [ "${use_fzf}" ]; then
-          heading "Kitty Configuration" "Configuration"
-          choice=$(printf "%s\n" "${cfopts[@]}" | fzf --prompt="😺 Select Kitty Configuration  " --height=12 --layout=reverse --border --exit-0)
-          [ "${choice}" ] && {
-            case "${choice}" in
-              "main"*)
-                break
-                ;;
-              "default"*)
-                load-config "${choice}"
-                break
-                ;;
-              "quit"*)
-                printf "\nExiting kitty-control\n"
-                exit 0
-                ;;
-              *)
-                subdir=$(echo "${choice}" | awk -F '/' '{ printf $(NF - 1) }')
-                load-config "${subdir}"
-                ;;
-            esac
-          }
-        else
-          while true; do
-            heading "Kitty Configuration" "Configuration"
-            PS3="${BOLD}Select Kitty Configuration (number, shortcut, or text, 'h' help): ${NORM}"
-            select opt in "${cfopts[@]}"; do
-              case "$opt,$REPLY" in
-              "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-                show_help
-                break
-                ;;
-              "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-                break 2
-                ;;
-              "Default"*,* | *,"Default"* | "default"*,* | *,"default"* | "d",* | *,"d")
-                load-config "${opt}"
-                break 2
-                ;;
-              "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-                printf "\nExiting kitty-control\n"
-                exit 0
-                ;;
-              *,*)
-                subdir=$(echo "${opt}" | awk -F '/' '{ printf $(NF - 1) }')
-                load-config "${subdir}"
-                break 2
-                ;;
-              esac
-            done
-          done
-        fi
+        menu_load_config "${configs[@]}"
         break
         ;;
       "View"*,* | *,"View"* | "view"*,* | *,"view"* | "v",* | *,"v")
@@ -1276,63 +1557,7 @@ show_menu() {
         break
         ;;
       "Tran"*,* | *,"Tran"* | "tran"*,* | *,"tran"* | "t",* | *,"t")
-        tropts=( "${translevels[@]}" )
-        tropts+=( "main menu" "quit" )
-        if [ "${use_fzf}" ]; then
-          heading "Transparency Opacity" "Transparency"
-          choice=$(printf "%s\n" "${tropts[@]}" | fzf --prompt="😺 Select Transparency Opacity  " --height=18 --layout=reverse --border --exit-0)
-          [ "${choice}" ] && {
-            case "${choice}" in
-              "default"*)
-                set-opacity "${OPACITY}"
-                ;;
-              "main"*)
-                break
-                ;;
-              "quit"*)
-                printf "\nExiting kitty-control\n"
-                exit 0
-                ;;
-              *)
-              set-opacity "${choice}"
-              ;;
-            esac
-          }
-        else
-          while true; do
-            heading "Transparency Opacity" "Transparency"
-            PS3="${BOLD}Select Transparency Opacity (number, shortcut, or text, 'h' help): ${NORM}"
-            select opt in "${tropts[@]}"; do
-              case "$opt,$REPLY" in
-              "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-                show_help
-                break
-                ;;
-              "default"*,* | *,"default"*)
-                set-opacity "${OPACITY}"
-                break 2
-                ;;
-              [0-9].[0-9]*,* | *,[0-9].[0-9]*)
-                set-opacity "${opt}"
-                break 2
-                ;;
-              "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-                break 2
-                ;;
-              "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-                printf "\nExiting kitty-control\n"
-                exit 0
-                ;;
-              *,*)
-                printf "\nCould not match '${REPLY}' with a menu entry."
-                printf "\nPlease try again with an exact match.\n"
-                break
-                ;;
-              esac
-              REPLY=
-            done
-          done
-        fi
+        menu_set_trans
         break
         ;;
       "Toggle"*,* | *,"Toggle"* | "toggle"*,* | *,"toggle"* | "full",* | *,"full" | "F",* | *,"F")
