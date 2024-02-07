@@ -44,6 +44,16 @@ fontsizes=("default" "+1" "+2" "+4" "+6" "+8" "+10" "+12" "-1" "-2" "-4" "-6" "-
 translevels=("default" "1.0" "0.95" "0.9" "0.85" "0.8" "0.75" "0.7" "0.65" "0.6" "0.55" "0.5" "0.45" "0.4" "0.35" "0.3" "0.25" "0.2" "0.15" "0.1" "0.05" "0.0")
 # Colors
 colors=("reset" "black" "white" "red" "green" "yellow" "blue" "magenta" "cyan")
+export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+  --color=fg:#d0d0d0,fg+:#d0d0d0,bg:#0b1a38,bg+:#120f3d
+  --color=hl:#5f87af,hl+:#5fd7ff,info:#afaf87,marker:#87ff00
+  --color=prompt:#cadf5d,spinner:#af5fff,pointer:#af5fff,header:#87afaf
+  --color=border:#5b5bab,label:#aeaeae,query:#d9d9d9
+  --border="rounded" --border-label=""
+  --preview-window="border-rounded"
+  --prompt="😺 Select option  "
+  --marker=">" --pointer="◆" --separator="─" --scrollbar="│"
+  --layout="reverse"'
 # Use tput to get the bold and normal text sequence
 BOLD=$(tput bold 2>/dev/null)
 NORM=$(tput sgr0 2>/dev/null)
@@ -794,7 +804,7 @@ show_usage() {
     show_versions
     options=("Examples" "Full Usage" "Main Menu" "Quit (q)")
     if [ "${use_fzf}" ]; then
-      choice=$(printf "%s\n" "${options[@]}" | fzf --prompt="😺 Select option  " --height=8 --layout=reverse --border --exit-0)
+      choice=$(printf "%s\n" "${options[@]}" | fzf --prompt="😺 Select option  " --height=8 --layout=reverse --exit-0)
       [ "${choice}" ] && {
         case "${choice}" in
           Example*)
@@ -898,7 +908,7 @@ menu_background_color() {
   bgopts+=( "main menu" "quit" )
   if [ "${use_fzf}" ]; then
     heading "Background Color" "Background"
-    choice=$(printf "%s\n" "${bgopts[@]}" | fzf --prompt="😺 Select Background Color  " --height=15 --layout=reverse --border --exit-0)
+    choice=$(printf "%s\n" "${bgopts[@]}" | fzf --prompt="😺 Select Background Color  " --height=15 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
         "main"*)
@@ -956,7 +966,7 @@ menu_foreground_color() {
   fgopts+=( "main menu" "quit" )
   if [ "${use_fzf}" ]; then
     heading "Foreground Color" "Foreground"
-    choice=$(printf "%s\n" "${fgopts[@]}" | fzf --prompt="😺 Select Foreground Color  " --height=15 --layout=reverse --border --exit-0)
+    choice=$(printf "%s\n" "${fgopts[@]}" | fzf --prompt="😺 Select Foreground Color  " --height=15 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
         "main"*)
@@ -1048,7 +1058,7 @@ menu_font_size() {
   foopts+=( "main menu" "quit" )
   if [ "${use_fzf}" ]; then
     heading "Font Size" "Font Size"
-    choice=$(printf "%s\n" "${foopts[@]}" | fzf --prompt="😺 Select Font Size Adjustment  " --height=18 --layout=reverse --border --exit-0)
+    choice=$(printf "%s\n" "${foopts[@]}" | fzf --prompt="😺 Select Font Size Adjustment  " --height=18 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
         "main"*)
@@ -1106,7 +1116,7 @@ menu_load_config() {
   cfopts+=( "main menu" "quit" )
   if [ "${use_fzf}" ]; then
     heading "Kitty Configuration" "Configuration"
-    choice=$(printf "%s\n" "${cfopts[@]}" | fzf --prompt="😺 Select Kitty Configuration  " --height=12 --layout=reverse --border --exit-0)
+    choice=$(printf "%s\n" "${cfopts[@]}" | fzf --prompt="😺 Select Kitty Configuration  " --height=12 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
         "main"*)
@@ -1165,7 +1175,7 @@ menu_set_trans() {
   tropts+=( "main menu" "quit" )
   if [ "${use_fzf}" ]; then
     heading "Transparency Opacity" "Transparency"
-    choice=$(printf "%s\n" "${tropts[@]}" | fzf --prompt="😺 Select Transparency Opacity  " --height=18 --layout=reverse --border --exit-0)
+    choice=$(printf "%s\n" "${tropts[@]}" | fzf --prompt="😺 Select Transparency Opacity  " --height=18 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
         "default"*)
@@ -1228,7 +1238,7 @@ select_with_fzf() {
   while true; do
     ${CLEAR_COMMAND}
     heading "Kitty Control" "Kitty Control"
-    choice=$(printf "%s\n" "${fzopts[@]}" | fzf -m --prompt="😺 Select Menu Option  " --height=18 --layout=reverse --border --exit-0)
+    choice=$(printf "%s\n" "${fzopts[@]}" | fzf -m --prompt="😺 Select Menu Option  " --height=18 --layout=reverse --exit-0)
     if [ "${choice}" ]; then
       case "${choice}" in
         "h" | "H" | "help"* | "Help"*)
