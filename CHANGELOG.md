@@ -4,7 +4,11 @@
 
 ### ⚡️ Added
 
+- Add toggle for `figlet`, `fzf`, `ranger` use in main menu
+
 ### 🐞 Fixed
+
+- Add `ENVIRONMENT` section to man page
 
 ## v1.0.2r4
 

@@ -2,13 +2,25 @@
 
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_PATH="$(realpath "$SCRIPT_PATH")"
+DIFFCONF="${HOME}/.config/kitty/diff.conf"
+DIRDCONF="${KITTY_CONFIG_DIRECTORY}/diff.conf"
 
 rm -f ${HOME}/.local/bin/kitty-control
 rm -f ${HOME}/.config/kitty/read_config.py
+[ -f ${DIFFCONF} ] && {
+  grep kitty-control ${DIFFCONF} | grep example >/dev/null && {
+    rm -f ${DIFFCONF}
+  }
+}
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
   [ "${KITTY_CONFIG_DIRECTORY}" == "${HOME}/.config/kitty" ] || {
     [ -d "${KITTY_CONFIG_DIRECTORY}" ] && {
       rm -f ${KITTY_CONFIG_DIRECTORY}/read_config.py
+      [ -f ${DIRDCONF} ] && {
+        grep kitty-control ${DIRDCONF} | grep example >/dev/null && {
+          rm -f ${DIRDCONF}
+        }
+      }
     }
   }
 }
