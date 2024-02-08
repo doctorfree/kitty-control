@@ -348,15 +348,12 @@ kitty-control diff /path/to/file1 /path/to/file2
 
 ### Example Kitty Configuration
 
-Included in this repository is a reference Kitty configuration:
+Included in this repository is a reference Kitty configuration
+[./config/kitty.conf](config/README.md)
 
-- [./config/](config/README.md)
-
-This includes two configuration subdirectories, `laptop` and
-`tv` with a `kitty.conf` in each.  Also included are `kitty` themes, Python
-scripts, example `kitty` sessions, and some advanced `kitty` configuration.
-The example sessions rely on some external facilities that may not be present
-like `btop` but the configuration should be close to usable out of the box.
+This includes two configuration subdirectories, `laptop` and `tv` with a
+`kitty.conf` in each.  Also included are Python scripts, example `kitty`
+sessions, and some advanced `kitty` configuration.
 
 The reference configuration is installed in `~/.config/kitty/kitty-control`
 and a Kitty session using this configuration can be started with:
