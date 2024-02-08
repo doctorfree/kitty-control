@@ -7,6 +7,7 @@ Control some aspects of the Kitty terminal emulator from the command line
 ## Table of Contents
 
 - [Overview](#overview)
+- [Requirements](#requirements)
 - [Install](#install)
 - [Usage](#usage)
 - [Screenshot](#screenshot)
@@ -45,6 +46,19 @@ use of the `read_config.py` custom `kitten` included with `kitty-control`.
 
 Thus we have `kitty-control`, a `bash` script that intends to
 simplify and ease those `kitty` customizations used fairly frequently.
+
+## Requirements
+
+The `kitty-control` installation requires [git](https://github.com/git-guides/install-git).
+
+The `bash` shell is required to install and run `kitty-control`.
+
+Some functionality requires [curl](https://curl.se).
+
+An abbreviated `kitty` window listing is enabled if the
+[jq JSON parser](https://jqlang.github.io/jq) is installed.
+
+`kitty-control` can be installed on `Linux` and `macOS` platforms.
 
 ## Install
 

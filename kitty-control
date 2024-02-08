@@ -962,7 +962,7 @@ prompt-match-input() {
     rich "Kitty remote control commands can be limited to matching tabs or windows" -p
     rich "by providing a specification that matches the tabs/windows you want to effect." -p
     printf "\n"
-    rich "You can use [red]kitty-control list[/] to get a list of tabs and windows" -p
+    rich "You can use [red]kitty-control list[/] to get a full list of tabs and windows" -p
     [ "${have_jq}" ] && {
       rich "Or [red]kitty-control ls[/] for an abbreviated list of windows" -p
     }
@@ -976,7 +976,7 @@ prompt-match-input() {
   else
     printf "\n\nKitty remote control commands can be limited to matching tabs or windows"
     printf "\nby providing a specification that matches the tabs/windows you want to effect."
-    printf "\n\nYou can use 'kitty-control list' to get a list of tabs and windows"
+    printf "\n\nYou can use 'kitty-control list' to get a full list of tabs and windows"
     [ "${have_jq}" ] && {
       printf "\nOr 'kitty-control ls' for an abbreviated list of windows"
     }
@@ -1701,7 +1701,7 @@ select_with_fzf() {
   while true; do
     ${CLEAR_COMMAND}
     heading "Kitty Control" "Kitty Control"
-    choice=$(printf "%s\n" "${fzopts[@]}" | fzf -m --prompt="😺 Select Menu Option  " --height=18 --layout=reverse --exit-0)
+    choice=$(printf "%s\n" "${fzopts[@]}" | fzf -m --prompt="😺 Select Menu Option ('Main Menu' or 'Esc' to return)  " --height=18 --layout=reverse --exit-0)
     if [ "${choice}" ]; then
       case "${choice}" in
         "h" | "H" | "help"* | "Help"*)
@@ -1712,65 +1712,50 @@ select_with_fzf() {
           ;;
         "reset"*)
           set-foreground reset
-          break
           ;;
         "Background Color"* | "bg" | "back")
           menu_background_color
-          break
           ;;
         "Foreground Color"* | "fg" | "fore")
           menu_foreground_color
-          break
           ;;
         "Background Image")
           FILE=
           select_file image
           [ "${FILE}" ] && kitty @ ${SOCKET} set-background-image ${OPTS} "${FILE}"
-          break
           ;;
         "Clear"* | "clear"* | "c")
           kitty @ ${SOCKET} set-background-image ${OPTS} none
-          break
           ;;
         "Dark"* | "dark"* | "d" | "d")
           set-opacity "1.0"
-          break
           ;;
         "Diff File"* | "diff file"*)
           menu_diff_file
-          break
           ;;
         "Diff Fold"* | "diff fold"*)
           menu_diff_folder
-          break
           ;;
         "Exam"* | "exam"*)
           show_usage examples
-          break
           ;;
         "Font"* | "font"* | "f")
           menu_font_size
-          break
           ;;
         "Install Figlet")
           install_figlet
-          break
           ;;
         "Install Fzf")
           install_fzf
-          break
           ;;
         "Install Ranger")
           install_ranger
-          break
           ;;
-        "List"*"Info" | "list"*"info" | "L")
+        "List"*"Full"* | "list"*"full"* | "L")
           kitty @ ${SOCKET} ls ${OPTS} | less
-          break
           ;;
-        "List"*"Windows" | "list"*"windows" | "w")
+        "List"*"Short"* | "list"*"short"* | "w")
           list_windows | less
-          break
           ;;
         "Load"* | "load"* | "l")
           numconfs=1
@@ -1783,7 +1768,6 @@ select_with_fzf() {
             configs+=("${kconf}")
           done
           menu_load_config "${configs[@]}"
-          break
           ;;
         "View"* | "view"* | "v")
           FILE=
@@ -1793,54 +1777,42 @@ select_with_fzf() {
             printf "\nTo view this image use: kitty +kitten icat ${FILE}\n"
             prompt_continue
           }
-          break
           ;;
         "Theme"* | "theme"* | "T")
           kitty +kitten themes
-          break
           ;;
         "Term"* | "term"* | "info" | "i")
           kitty +kitten query_terminal
           prompt_continue
-          break
           ;;
         "Tran"* | "tran"* | "t")
           menu_set_trans
-          break
           ;;
         "Toggle"* | "toggle"* | "full" | "F")
           toggle-fullscreen
           sleep 1
-          break
           ;;
         "Unicode"* | "unicode"*)
           kitty +kitten unicode_input
-          break
           ;;
         "Show"* | "show"*)
           show_usage usage
-          break
           ;;
         "Manual"* | "manual"*)
           printf "\n"
           man kitty-control
-          break
           ;;
         "Opt"* | "opt"* | "o")
           options_menu
-          break
           ;;
         "Upgrade kitty-control"* | "upgrade kitty-control"*)
           upgrade_kitty_control noexit
-          break
           ;;
         "Upgrade Kitty"* | "upgrade kitty"*)
           install_kitty
-          break
           ;;
         "Upgrade Fzf"* | "upgrade fzf"*)
           upgrade_fzf
-          break
           ;;
         "Quit"* | "quit"* | "Q" | "q")
           ${CLEAR_COMMAND}
@@ -1850,7 +1822,6 @@ select_with_fzf() {
         *)
           printf "\nCould not match '${choice}' with a menu entry."
           printf "\nPlease try again with an exact match.\n"
-          break
           ;;
       esac
     else
@@ -1886,8 +1857,8 @@ show_menu() {
     [ "${have_figlet}" ] || options+=("Install Figlet")
     [ "${have_fzf}" ] || options+=("Install Fzf")
     [ "${have_ranger}" ] || options+=("Install Ranger")
-    options+=("List Current Info")
-    [ "${have_jq}" ] && options+=("List Windows")
+    options+=("List Windows (Full)")
+    [ "${have_jq}" ] && options+=("List Windows (Short)")
     [ ${numconfs} -gt 1 ] && {
       options+=("Load Kitty Configuration")
     }
@@ -1973,11 +1944,11 @@ show_menu() {
         install_ranger
         break
         ;;
-      "List"*"Info",* | *,"List"*"Info" | "list"*"info",* | *,"list"*"info" | "L",* | *,"L")
+      "List"*"Full"*,* | *,"List"*"Full"* | "list"*"full"*,* | *,"list"*"full"* | "L",* | *,"L")
         kitty @ ${SOCKET} ls ${OPTS} | less
         break
         ;;
-      "List Win"*,* | *,"List Win"* | "list win"*,* | *,"list win"* | "w",* | *,"w")
+      "List"*"Short"*,* | *,"List"*"Short"* | "list"*"short"*,* | *,"list"*"short"* | "w",* | *,"w")
         list_windows | less
         break
         ;;
@@ -2058,7 +2029,7 @@ show_menu() {
   done
 }
 
-## Main
+## Main execution starts here
 #
 export PATH="${HOME}/.local/bin:${PATH}"
 have_kitty=$(type -p kitty)
