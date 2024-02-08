@@ -348,42 +348,37 @@ kitty-control diff /path/to/file1 /path/to/file2
 
 ### Example Kitty Configuration
 
-Included in this repository are reference Kitty configurations.
+Included in this repository is a reference Kitty configuration:
 
-* [Kitty configuration with config subdirs](config-example1/README.md):
-    in the `./config-example1/` subdirectory
-* [Kitty configuration for `tmux` users](config-example2/README.md):
-    in the `./config-example2/` subdirectory (from https://github.com/ttys3/my-kitty-config)
+- [./config/](config/README.md)
 
-These example configuration are provided for reference.
-
-`config-example1` includes two configuration subdirectories, `laptop` and
+This includes two configuration subdirectories, `laptop` and
 `tv` with a `kitty.conf` in each.  Also included are `kitty` themes, Python
 scripts, example `kitty` sessions, and some advanced `kitty` configuration.
 The example sessions rely on some external facilities that may not be present
 like `btop` but the configuration should be close to usable out of the box.
 
-To install an example configuration copy the `config-example?` directory to
-somewhere like `~/.config/kitty-example/`. For example:
+The reference configuration is installed in `~/.config/kitty/kitty-control`
+and a Kitty session using this configuration can be started with:
 
 ```bash
-cp -a config-example1 ~/.config/kitty-example
-kitty --config ~/.config/kitty-example/kitty.conf --session ~/.config/kitty-example/sessions/startup --title 'Example Kitty Terminal Session'
+kitty --config ~/.config/kitty/kitty-control/kitty.conf --session ~/.config/kitty/kitty-control/sessions/startup --title 'Reference Kitty Terminal Session'
 ```
 
 This uses `zsh`. To use `bash` invoke with:
 
 ```bash
-kitty --config ~/.config/kitty-example/kitty-bash.conf --session ~/.config/kitty-example/sessions/startup-bash --title 'Example Kitty Terminal Session'
+kitty --config ~/.config/kitty/kitty-control/kitty-bash.conf --session ~/.config/kitty/kitty-control/sessions/startup-bash --title 'Reference Kitty Terminal Session'
 ```
 
-The example `kitty` configurations provided here are not required for use with
-`kitty-control`. They are provided as reference with the hope that it will be
+The reference `kitty` configuration provided here is not required for use with
+`kitty-control`. It is provided as reference with the hope that it will be
 helpful in tailoring your own configuration.
 
 ## Update
 
-To update `kitty-control` execute the command `kitty-control upgrade`.
+To update `kitty-control` execute the command `kitty-control upgrade`. This will
+also upgrade `kitty` and `fzf` if updates are available.
 
 Alternately, an update can be performed with `curl`:
 
@@ -406,3 +401,17 @@ git pull
 cd /path/to/cloned/repository
 ./uninstall
 ```
+
+Uninstalling `kittyy-control` removes the `kitty-control` script,
+`read_config.py` kitten, the man page in
+`~/.local/share/man/man1/kitty-control.1`, and the reference `kitty`
+configuration in `~/.config/kitty/kitty-control/`.
+
+The `uninstall` script does not remove the cloned repository.
+To remove the cloned repository as well:
+
+```bash
+cd /path/to/cloned/kitty-control/..
+rm -rf kitty-control
+```
+

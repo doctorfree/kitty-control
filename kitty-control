@@ -341,7 +341,7 @@ show_versions() {
   install_version=$(get_install_version)
   if [ "${have_rich}" ]; then
     if [ "${install_version}" == "${control_version}" ]; then
-      rich "Installed [green]kitty-control[/] version: [yellow]${install_version}[/] (current)" -p
+      rich "Installed [green]kitty-control[/] version: [yellow]${install_version}[/] ( current)" -p
     else
       rich "Installed [green]kitty-control[/] version: [yellow]${install_version}[/]" -p
       rich "Available [green]kitty-control[/] version: [yellow]${control_version}[/]" -p
@@ -349,7 +349,7 @@ show_versions() {
   else
     printf "\nInstalled kitty-control version: ${install_version}"
     if [ "${install_version}" == "${control_version}" ]; then
-      printf " (current)"
+      printf " ( current)"
     else
       printf "\nAvailable kitty-control version: ${control_version}"
     fi
@@ -358,7 +358,7 @@ show_versions() {
   install_version=$(kitty --version | awk '{ print $2 }')
   if [ "${have_rich}" ]; then
     if [ "${install_version}" == "${release_version}" ]; then
-      rich "Installed [green]kitty[/] version: [yellow]${install_version}[/] (current)" -p
+      rich "Installed [green]kitty[/] version: [yellow]${install_version}[/] ( current)" -p
     else
       rich "Installed [green]kitty[/] version: [yellow]${install_version}[/]" -p
       rich "Available [green]kitty[/] version: [yellow]${release_version}[/]" -p
@@ -366,9 +366,26 @@ show_versions() {
   else
     printf "\nInstalled kitty version: ${install_version}"
     if [ "${install_version}" == "${release_version}" ]; then
-      printf " (current)\n\n"
+      printf " ( current)\n\n"
     else
       printf "\nAvailable kitty version: ${release_version}\n\n"
+    fi
+  fi
+  release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
+  install_version=$(fzf --version | awk '{ print $1 }')
+  if [ "${have_rich}" ]; then
+    if [ "${install_version}" == "${release_version}" ]; then
+      rich "Installed [green]fzf[/] version: [yellow]${install_version}[/] ( current)" -p
+    else
+      rich "Installed [green]fzf[/] version: [yellow]${install_version}[/]" -p
+      rich "Available [green]fzf[/] version: [yellow]${release_version}[/]" -p
+    fi
+  else
+    printf "\nInstalled fzf version: ${install_version}"
+    if [ "${install_version}" == "${release_version}" ]; then
+      printf " ( current)\n\n"
+    else
+      printf "\nAvailable fzf version: ${release_version}\n\n"
     fi
   fi
 }

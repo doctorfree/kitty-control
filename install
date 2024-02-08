@@ -11,6 +11,29 @@ have_git=$(type -p git)
   exit 1
 }
 
+install_config() {
+  # We use $HOME/.config/kitty/kitty-control for kitty-control
+  DEST="$1"
+  if [ -d ${DEST}/kitty-control ]; then
+    for ex in "${SCRIPT_PATH}"/config/*
+    do
+      [ "${ex}" == "${SCRIPT_PATH}/config/*" ] && continue
+      b=$(basename "${ex}")
+      if [ -d "${ex}" ]; then
+        if [ -d ${DEST}/kitty-control/$b ]; then
+          cp "${ex}"/* ${DEST}/kitty-control/$b
+        else
+          cp -a "${ex}" ${DEST}/kitty-control/$b
+        fi
+      else
+        cp "${ex}" ${DEST}/kitty-control/$b
+      fi
+    done
+  else
+    cp -a "${SCRIPT_PATH}"/config ${DEST}/kitty-control
+  fi
+}
+
 # If standalone install, clone the repository, run the install script, exit
 [ -f "${SCRIPT_PATH}"/kitty-control ] || {
   git clone ${REPO_URL} /tmp/kc$$ >/dev/null 2>&1
@@ -36,9 +59,10 @@ cp "${SCRIPT_PATH}"/kitten/read_config.py ${HOME}/.config/kitty
 chmod 644 ${HOME}/.config/kitty/read_config.py
 
 [ -f ${HOME}/.config/kitty/diff.conf ] || {
-  cp "${SCRIPT_PATH}"/config-example1/diff.conf ${HOME}/.config/kitty/diff.conf
+  cp "${SCRIPT_PATH}"/config/diff.conf ${HOME}/.config/kitty/diff.conf
   chmod 644 ${HOME}/.config/kitty/diff.conf
 }
+install_config "${HOME}/.config/kitty"
 
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
   [ "${KITTY_CONFIG_DIRECTORY}" == "${HOME}/.config/kitty" ] || {
@@ -46,10 +70,11 @@ chmod 644 ${HOME}/.config/kitty/read_config.py
       cp "${SCRIPT_PATH}"/kitten/read_config.py ${KITTY_CONFIG_DIRECTORY}
       chmod 644 ${KITTY_CONFIG_DIRECTORY}/read_config.py
       [ -f ${KITTY_CONFIG_DIRECTORY}/diff.conf ] || {
-        cp "${SCRIPT_PATH}"/config-example1/diff.conf \
+        cp "${SCRIPT_PATH}"/config/diff.conf \
             ${KITTY_CONFIG_DIRECTORY}/diff.conf
         chmod 644 ${KITTY_CONFIG_DIRECTORY}/diff.conf
       }
+      install_config "${KITTY_CONFIG_DIRECTORY}"
     }
   }
 }
