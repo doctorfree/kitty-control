@@ -40,6 +40,9 @@ CLEAR_COMMAND="tput clear"
 fonts=("Fire Font-k" "Graceful" "Script" "Shadow" "Slant" "Small" "Standard")
 # Font size choices for menu
 fontsizes=("default" "+1" "+2" "+4" "+6" "+8" "+10" "+12" "-1" "-2" "-4" "-6" "-8" "-10" "-12")
+# Fzf install script download
+fzf_url="https://raw.githubusercontent.com/junegunn/fzf/master/install"
+kitty_version_url="https://sw.kovidgoyal.net/kitty/current-version.txt"
 # Transparency opacity choices for menu
 translevels=("default" "1.0" "0.95" "0.9" "0.85" "0.8" "0.75" "0.7" "0.65" "0.6" "0.55" "0.5" "0.45" "0.4" "0.35" "0.3" "0.25" "0.2" "0.15" "0.1" "0.05" "0.0")
 # Colors
@@ -150,7 +153,7 @@ usage() {
   printf "\n           Specify a second argument to set a custom background opacity:"
   printf "\n           e.g. 'kitty-control transparent 0.9'"
   printf "\n    '${BOLD}unicode${NORM}' Displays the Unicode input kitten"
-  printf "\n    '${BOLD}upgrade${NORM}' Upgrades Kitty and kitty-control to the latest version"
+  printf "\n    '${BOLD}upgrade${NORM}' Upgrades Kitty, Fzf, and kitty-control to the latest version"
   printf "\n    '${BOLD}-a${NORM}'"
     printf " Indicates modify all windows rather than just the currently active OS window"
   printf "\n    '${BOLD}-c command${NORM}'"
@@ -260,8 +263,8 @@ get_install_version() {
   echo "v${kcver}r${kcrel}"
 }
 
-# check_kitty_version release_version install_version
-check_kitty_version() {
+# check_three_version release_version install_version
+check_three_version() {
   release_version="$1"
   install_version="$2"
 
@@ -336,19 +339,37 @@ check_control_version() {
 show_versions() {
   control_version=$(get_control_version)
   install_version=$(get_install_version)
-  printf "\nInstalled kitty-control version: ${install_version}"
-  if [ "${install_version}" == "${control_version}" ]; then
-    printf " (current)"
+  if [ "${have_rich}" ]; then
+    if [ "${install_version}" == "${control_version}" ]; then
+      rich "Installed [green]kitty-control[/] version: [yellow]${install_version}[/] (current)" -p
+    else
+      rich "Installed [green]kitty-control[/] version: [yellow]${install_version}[/]" -p
+      rich "Available [green]kitty-control[/] version: [yellow]${control_version}[/]" -p
+    fi
   else
-    printf "\nAvailable kitty-control version: ${control_version}"
+    printf "\nInstalled kitty-control version: ${install_version}"
+    if [ "${install_version}" == "${control_version}" ]; then
+      printf " (current)"
+    else
+      printf "\nAvailable kitty-control version: ${control_version}"
+    fi
   fi
-  release_version=$(curl -fsSL "https://sw.kovidgoyal.net/kitty/current-version.txt")
+  release_version=$(curl -fsSL "${kitty_version_url}")
   install_version=$(kitty --version | awk '{ print $2 }')
-  printf "\nInstalled kitty version: ${install_version}"
-  if [ "${install_version}" == "${release_version}" ]; then
-    printf " (current)\n\n"
+  if [ "${have_rich}" ]; then
+    if [ "${install_version}" == "${release_version}" ]; then
+      rich "Installed [green]kitty[/] version: [yellow]${install_version}[/] (current)" -p
+    else
+      rich "Installed [green]kitty[/] version: [yellow]${install_version}[/]" -p
+      rich "Available [green]kitty[/] version: [yellow]${release_version}[/]" -p
+    fi
   else
-    printf "\nAvailable kitty version: ${release_version}\n\n"
+    printf "\nInstalled kitty version: ${install_version}"
+    if [ "${install_version}" == "${release_version}" ]; then
+      printf " (current)\n\n"
+    else
+      printf "\nAvailable kitty version: ${release_version}\n\n"
+    fi
   fi
 }
 
@@ -502,12 +523,11 @@ install_kitty() {
     KSTERM="${LOCAL}/share/terminfo/x/xterm-kitty"
   fi
   printf "\n\tInstalling/Upgrading Kitty terminal emulator ..."
-  curl --silent --location \
-    https://sw.kovidgoyal.net/kitty/installer.sh >/tmp/kitty-$$.sh
+  installer_url="https://sw.kovidgoyal.net/kitty/installer.sh"
+  curl --silent --location ${installer_url} >/tmp/kitty-$$.sh
   [ $? -eq 0 ] || {
     rm -f /tmp/kitty-$$.sh
-    curl --insecure --silent --location \
-      https://sw.kovidgoyal.net/kitty/installer.sh >/tmp/kitty-$$.sh
+    curl --insecure --silent --location ${installer_url} >/tmp/kitty-$$.sh
     cat /tmp/kitty-$$.sh | sed -e "s/curl -/curl -k/" >/tmp/k$$
     cp /tmp/k$$ /tmp/kitty-$$.sh
     rm -f /tmp/k$$
@@ -612,6 +632,13 @@ install_kitty() {
         fi
       fi
     }
+  }
+}
+
+upgrade_fzf() {
+  [ -d ${HOME}/.fzf/.git ] && {
+    git -C ${HOME}/.fzf pull >/dev/null 2>&1
+    [ -x ${HOME}/.fzf/install ] && ${HOME}/.fzf/install --all >/dev/null 2>&1
   }
 }
 
@@ -1743,6 +1770,10 @@ select_with_fzf() {
           install_kitty
           break
           ;;
+        "Upgrade Fzf"* | "upgrade fzf"*)
+          upgrade_fzf
+          break
+          ;;
         "Quit"* | "quit"* | "Q" | "q")
           ${CLEAR_COMMAND}
           printf "\nExiting kitty-control\n"
@@ -1792,9 +1823,15 @@ show_menu() {
     }
     options+=("Manual Page" "Options" "Show Usage/Version" "Theme Selection")
     options+=("Terminal Info" "Toggle Fullscreen" "Transparent" "Unicode Input")
-    release_version=$(curl -fsSL "https://sw.kovidgoyal.net/kitty/current-version.txt")
+    fzf_release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
+    fzf_install_version=$(fzf --version | awk '{ print $1 }')
+    update_fzf=$(check_three_version "${fzf_release_version}" "${fzf_install_version}")
+    [ "${update_fzf}" ] && {
+      options+=("Upgrade Fzf (${fzf_install_version} -> ${fzf_release_version})")
+    }
+    release_version=$(curl -fsSL "${kitty_version_url}")
     install_version=$(kitty --version | awk '{ print $2 }')
-    update_kitty=$(check_kitty_version "${release_version}" "${install_version}")
+    update_kitty=$(check_three_version "${release_version}" "${install_version}")
     [ "${update_kitty}" ] && {
       options+=("Upgrade Kitty (${install_version} -> ${release_version})")
     }
@@ -1925,6 +1962,10 @@ show_menu() {
         ;;
       "Upgrade Kitty"*,* | *,"Upgrade Kitty"* | "upgrade kitty"*,* | *,"upgrade kitty"*)
         install_kitty
+        break
+        ;;
+      "Upgrade Fzf"*,* | *,"Upgrade Fzf"* | "upgrade fzf"*,* | *,"upgrade fzf"*)
+        upgrade_fzf
         break
         ;;
       "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
@@ -2192,9 +2233,17 @@ while [[ $1 ]]; do
       shift
       ;;
     upgrade|--upgrade)
-      release_version=$(curl -fsSL "https://sw.kovidgoyal.net/kitty/current-version.txt")
+      fzf_release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
+      fzf_install_version=$(fzf --version | awk '{ print $1 }')
+      update_fzf=$(check_three_version "${fzf_release_version}" "${fzf_install_version}")
+      if [ "${update_fzf}" ]; then
+        upgrade_fzf
+      else
+        printf "\nInstalled version of Fzf is current ✨ 🌟 ✨\n"
+      fi
+      release_version=$(curl -fsSL "${kitty_version_url}")
       install_version=$(kitty --version | awk '{ print $2 }')
-      update_kitty=$(check_kitty_version "${release_version}" "${install_version}")
+      update_kitty=$(check_three_version "${release_version}" "${install_version}")
       if [ "${update_kitty}" ]; then
         install_kitty
       else

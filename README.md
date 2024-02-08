@@ -176,7 +176,7 @@ Where:
            Specify a second argument to set a custom background opacity:
            e.g. 'kitty-control transparent 0.9'
     'unicode' Displays the Unicode input kitten
-    'upgrade' Upgrades Kitty and kitty-control to the latest version
+    'upgrade' Upgrades Kitty, Fzf, and kitty-control to the latest version
     '-a' Indicates modify all windows rather than just the currently active OS window
     '-c command' specifies a Kitty command to run (enclose command and arguments in quotes)
         Can be used to run arbitrary commands, e.g. 'kitty-control -c get-colors'
