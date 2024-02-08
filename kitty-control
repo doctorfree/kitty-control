@@ -486,13 +486,25 @@ load-config() {
     printf "\n\tkitty-control load default\n\n"
     exit 0
   else
-    if [ -f "${CONFDIR}/$1/kitty.conf" ]; then
-      kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/$1/kitty.conf"
-    else
-      if [ "$1" == "default" ]; then
-        kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/kitty.conf"
+    kcfg="$1/kitty.conf"
+    [ "$1" == "default" ] && kcfg="kitty.conf"
+    if [ -f "${CONFDIR}/${kcfg}" ]; then
+      if [ "${USE_LOAD_CONFIG}" ]; then
+        kitty @ ${SOCKET} load-config-file "${CONFDIR}/${kcfg}"
       else
-        printf "\n ${CONFDIR}/$1/kitty.conf does not exist\n"
+        kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/${kcfg}"
+      fi
+    else
+      if [ "$2" ] && [ -f "${CONFDIR}/$2/kitty.conf" ]; then
+        kcfg="$2/kitty.conf"
+        if [ "${USE_LOAD_CONFIG}" ]; then
+          kitty @ ${SOCKET} load-config-file "${CONFDIR}/${kcfg}"
+        else
+          kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/${kcfg}"
+        fi
+      else
+        printf "\n ${CONFDIR}/${kcfg} does not exist or is not a regular file\n"
+        prompt_continue
       fi
     fi
   fi
@@ -1322,30 +1334,39 @@ menu_font_size() {
 
 menu_load_config() {
   cfopts=("$@")
-  cfopts+=( "main menu" "quit" )
+  cfopts+=( "Help" "Main Menu" "Quit" )
   if [ "${use_fzf}" ]; then
-    heading "Kitty Configuration" "Configuration"
-    choice=$(printf "%s\n" "${cfopts[@]}" | fzf --prompt="😺 Select Kitty Configuration  " --height=12 --layout=reverse --exit-0)
-    [ "${choice}" ] && {
-      case "${choice}" in
-        "main"*)
-          break
-          ;;
-        "default"*)
-          load-config "${choice}"
-          break
-          ;;
-        "quit"*)
-          ${CLEAR_COMMAND}
-          printf "\nExiting kitty-control\n"
-          exit 0
-          ;;
-        *)
-          subdir=$(echo "${choice}" | awk -F '/' '{ printf $(NF - 1) }')
-          load-config "${subdir}"
-          ;;
-      esac
-    }
+    while true; do
+      heading "Kitty Configuration" "Configuration"
+      choice=$(printf "%s\n" "${cfopts[@]}" | fzf --prompt="😺 Select Kitty Configuration  " --height=12 --layout=reverse --exit-0)
+      if [ "${choice}" ]; then
+        case "${choice}" in
+          "h" | "H" | "help" | "Help")
+            show_help
+            ;;
+          "Main"* | "main"*)
+            break
+            ;;
+          "Default"* | "default"* | "d")
+            load-config "default"
+            break
+            ;;
+          "Quit"* | "quit"* | "q")
+            ${CLEAR_COMMAND}
+            printf "\nExiting kitty-control\n"
+            exit 0
+            ;;
+          *)
+            subdir=$(echo "${choice}" | awk -F '/' '{ printf $(NF - 1) }')
+            subsub=$(echo "${choice}" | awk -F '/' '{ printf $(NF - 2)"/"$(NF - 1) }')
+            load-config "${subdir}" "${subsub}"
+            break
+            ;;
+        esac
+      else
+        break
+      fi
+    done
   else
     while true; do
       heading "Kitty Configuration" "Configuration"
@@ -1360,7 +1381,7 @@ menu_load_config() {
           break 2
           ;;
         "Default"*,* | *,"Default"* | "default"*,* | *,"default"* | "d",* | *,"d")
-          load-config "${subopt}"
+          load-config "default"
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
@@ -1370,7 +1391,8 @@ menu_load_config() {
           ;;
         *,*)
           subdir=$(echo "${subopt}" | awk -F '/' '{ printf $(NF - 1) }')
-          load-config "${subdir}"
+          subsub=$(echo "${subopt}" | awk -F '/' '{ printf $(NF - 2)"/"$(NF - 1) }')
+          load-config "${subdir}" "${subsub}"
           break 2
           ;;
         esac
@@ -1725,9 +1747,10 @@ select_with_fzf() {
         "Load"* | "load"* | "l")
           numconfs=1
           configs=("default")
-          for kconf in ${CONFDIR}/*/kitty.conf
+          for kconf in ${CONFDIR}/*/kitty.conf ${CONFDIR}/*/*/kitty.conf
           do
             [ "${kconf}" == "${CONFDIR}/*/kitty.conf" ] && continue
+            [ "${kconf}" == "${CONFDIR}/*/*/kitty.conf" ] && continue
             ((numconfs++))
             configs+=("${kconf}")
           done
@@ -1822,9 +1845,10 @@ show_menu() {
     PS3="${BOLD}Enter a choice (number, shortcut, or text, 'h' help): ${NORM}"
     numconfs=1
     configs=("default")
-    for kconf in ${CONFDIR}/*/kitty.conf
+    for kconf in ${CONFDIR}/*/kitty.conf ${CONFDIR}/*/*/kitty.conf
     do
       [ "${kconf}" == "${CONFDIR}/*/kitty.conf" ] && continue
+      [ "${kconf}" == "${CONFDIR}/*/*/kitty.conf" ] && continue
       ((numconfs++))
       configs+=("${kconf}")
     done
@@ -2001,6 +2025,30 @@ show_menu() {
   done
 }
 
+## Main
+#
+export PATH="${HOME}/.local/bin:${PATH}"
+have_kitty=$(type -p kitty)
+[ "${have_kitty}" ] || {
+  install_kitty
+  have_kitty=$(type -p kitty)
+  [ "${have_kitty}" ] || {
+    printf "\n\nERROR: kitty not found"
+    printf "\nInstall kitty and re-run kitty-control. Exiting.\n"
+    exit 1
+  }
+}
+# Check for new load-config-file Kitty command
+USE_LOAD_CONFIG=1
+if [ "${KITTY_WINDOW_ID}" ]; then
+  # Running in a Kitty window
+  kitty @ ${SOCKET} load-config-file 2>/dev/null
+  [ $? -eq 0 ] || USE_LOAD_CONFIG=
+else
+  # Not sure how to check without a Kitty window so use read_config.py
+  USE_LOAD_CONFIG=
+fi
+
 # Menu tools
 use_figlet=1
 use_fzf=1
@@ -2161,7 +2209,7 @@ while [[ $1 ]]; do
         load-config "$2"
         shift 2
       else
-        kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/kitty.conf"
+        load-config "${CONFDIR}/kitty.conf"
         shift
       fi
       ;;

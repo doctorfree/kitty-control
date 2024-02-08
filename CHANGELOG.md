@@ -4,6 +4,8 @@
 
 ### ⚡️ Added
 
+- Support 2 levels deep Kitty configs in `~/.config/kitty/.../.../kitty.conf`
+
 ### 🐞 Fixed
 
 - Deleted unused Kitty themes
