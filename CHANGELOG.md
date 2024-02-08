@@ -10,6 +10,8 @@
 
 ### 🐞 Fixed
 
+- Preserve any previously set options and use as defaults in Options menu
+- Fix argument processing so options can be set and interactive menu still comes up
 - Catch all `fzf` escape keystrokes
 
 ## v1.0.3r1

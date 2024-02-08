@@ -922,9 +922,15 @@ prompt-match-input() {
 }
 
 get_tabopts() {
-  tabop_return=
+  if [ "$1" ]; then
+    tabop_return="$1"
+  else
+    tabop_return=
+  fi
   while true; do
-    read -r -p "Enter tab matching specification ('q' to exit): " tabmatch
+    read -r -p \
+      "Enter tab matching specification ('q' to exit): " \
+      -i "${tabop_return}" -e tabmatch
     [ "${tabmatch}" == "q" ] && break
     case ${tabmatch} in
       "-t "*)
@@ -934,10 +940,6 @@ get_tabopts() {
       "--match-tab "*)
         tabop_return=$(echo "${tabmatch}" | sed -e "s/--match-tab //")
         break
-        ;;
-      "")
-        printf "\nEmpty specification. Enter a tab matching spec or 'q'\n"
-        prompt_continue
         ;;
       *)
         tabop_return="${tabmatch}"
@@ -949,9 +951,15 @@ get_tabopts() {
 }
 
 get_winopts() {
-  winop_return=
+  if [ "$1" ]; then
+    winop_return="$1"
+  else
+    winop_return=
+  fi
   while true; do
-    read -r -p "Enter window matching specification ('q' to exit): " winmatch
+    read -r -p \
+      "Enter window matching specification ('q' to exit): " \
+      -i "${winop_return}" -e winmatch
     [ "${winmatch}" == "q" ] && break
     case ${winmatch} in
       "-t "*)
@@ -961,10 +969,6 @@ get_winopts() {
       "--match "*)
         winop_return=$(echo "${winmatch}" | sed -e "s/--match //")
         break
-        ;;
-      "")
-        printf "\nEmpty specification. Enter a window matching spec or 'q'\n"
-        prompt_continue
         ;;
       *)
         winop_return="${winmatch}"
@@ -1455,7 +1459,9 @@ options_menu() {
           "Tab"* | "tab"*)
             if [ "${tabopts}" ]; then
               OPTS=$(echo "${OPTS}" | sed -e "s/ -t ${tabopts}//")
-              tabopts=
+              prompt-match-input
+              tabopts=$(get_tabopts "${tabopts}")
+              [ "${tabopts}" ] && OPTS="${OPTS} -t ${tabopts}"
             else
               prompt-match-input
               tabopts=$(get_tabopts)
@@ -1465,7 +1471,9 @@ options_menu() {
           "Window"* | "window"*)
             if [ "${winopts}" ]; then
               OPTS=$(echo "${OPTS}" | sed -e "s/ -m ${winopts}//")
-              winopts=
+              prompt-match-input
+              winopts=$(get_winopts "${winopts}")
+              [ "${winopts}" ] && OPTS="${OPTS} -m ${winopts}"
             else
               prompt-match-input
               winopts=$(get_winopts)
@@ -1530,7 +1538,9 @@ options_menu() {
         "Tab"*,* | *,"Tab"* | "tab"*,* | *,"tab"*)
           if [ "${tabopts}" ]; then
             OPTS=$(echo "${OPTS}" | sed -e "s/ -t ${tabopts}//")
-            tabopts=
+            prompt-match-input
+            tabopts=$(get_tabopts "${tabopts}")
+            [ "${tabopts}" ] && OPTS="${OPTS} -t ${tabopts}"
           else
             prompt-match-input
             tabopts=$(get_tabopts)
@@ -1541,7 +1551,9 @@ options_menu() {
         "Win"*,* | *,"Win"* | "win"*,* | *,"win"*)
           if [ "${winopts}" ]; then
             OPTS=$(echo "${OPTS}" | sed -e "s/ -m ${winopts}//")
-            winopts=
+            prompt-match-input
+            winopts=$(get_winopts "${winopts}")
+            [ "${winopts}" ] && OPTS="${OPTS} -m ${winopts}"
           else
             prompt-match-input
             winopts=$(get_winopts)
@@ -1954,6 +1966,7 @@ install_version=
 release_version=
 kittycmd=
 setopcty=
+set_menu=
 tabopts=
 winopts=
 while [[ $1 ]]; do
@@ -1980,8 +1993,8 @@ while [[ $1 ]]; do
         printf "\nSee https://sw.kovidgoyal.net/kitty/remote-control/#matching-windows-and-tabs\n\n"
         exit 0
       else
-        winopts="-m $2"
-        OPTS="${OPTS} ${winopts}"
+        winopts="$2"
+        OPTS="${OPTS} -m ${winopts}"
       fi
       shift 2
       ;;
@@ -2012,8 +2025,8 @@ while [[ $1 ]]; do
         printf "\nSee https://sw.kovidgoyal.net/kitty/remote-control/#matching-windows-and-tabs\n\n"
         exit 0
       else
-        tabopts="-t $2"
-        OPTS="${OPTS} ${tabopts}"
+        tabopts="$2"
+        OPTS="${OPTS} -t ${tabopts}"
       fi
       shift 2
       ;;
@@ -2130,7 +2143,7 @@ while [[ $1 ]]; do
       shift
       ;;
     menu|--menu)
-      show_menu
+      set_menu=1
       shift
       ;;
     title|--title)
@@ -2224,3 +2237,4 @@ done
   fi
 }
 [ "${kittycmd}" ] && kitty @ ${SOCKET} ${kittycmd} ${OPTS}
+[ "${set_menu}" ] && show_menu
