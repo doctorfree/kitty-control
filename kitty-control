@@ -66,7 +66,7 @@ brief_usage() {
   printf "${BOLD}Usage: kitty-control [-a] [back <color>] [-c command] [dark]"
   printf "\n    [diff [opts] <path1> <path2>] [-e] [-f] [font [num]] [fore <color>]"
   printf "\n    [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]"
-  printf "\n    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list] [man]"
+  printf "\n    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list|ls] [man]"
   printf "\n    [menu] [title <title>] [transparent [opacity]] [unicode] [upgrade]${NORM}"
   [ "$1" == "noexit" ] || {
     printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
@@ -131,7 +131,10 @@ usage() {
   printf "\n           To remove all images currently displayed on the screen:"
   printf "\n               kitty-control icat --clear"
   printf "\n           See https://sw.kovidgoyal.net/kitty/kittens/icat/#options"
-  printf "\n    '${BOLD}list${NORM}' Displays information on Kitty windows"
+  printf "\n    '${BOLD}list${NORM}' Displays full information on Kitty windows"
+  [ "${have_jq}" ] && {
+    printf "\n    '${BOLD}ls${NORM}' Displays the id, title, pid, and state of Kitty windows"
+  }
   printf "\n    '${BOLD}load [subdir]${NORM}'"
     printf " Reloads the Kitty configuration in ~/.config/kitty/kitty.conf"
   printf "\n           Can use 'load' or 'reload'"
@@ -197,11 +200,12 @@ prompt_continue() {
 
 set_show_shortcuts() {
   if [ "${have_fzf}" ]; then
-    shortcuts="bg/back c/clear d/dark F/full f/font fg/fore fzf/fuzzy"
+    shortcuts="bg/back c/clear d/dark F/full f/font fg/fore fzf/fuzzy h/help"
   else
-    shortcuts="bg/back c/clear d/dark F/full f/font fg/fore"
+    shortcuts="bg/back c/clear d/dark F/full f/font fg/fore h/help"
   fi
-  addtlcuts="h/help i/info L/list l/load o/opts q/quit T/theme t/tran v/view"
+  addtlcuts="i/info L/list l/load o/opts q/quit T/theme t/tran v/view"
+  [ "${have_jq}" ] && addtlcuts="${addtlcuts} w/windows"
   if [ "${have_rich}" ]; then
     rich "[b cyan]Shortcuts:[/] [b yellow]${shortcuts}[/]" -p
     rich "           [b yellow]${addtlcuts}[/]" -p
@@ -815,11 +819,11 @@ select_folder() {
   fi
 }
 
-
 set_haves() {
   have_gcc=$(type -p gcc)
   have_fzf=$(type -p fzf)
   have_figlet=$(type -p figlet)
+  have_jq=$(type -p jq)
   have_lolcat=$(type -p lolcat)
   have_make=$(type -p make)
   have_ranger=$(type -p ranger)
@@ -959,6 +963,9 @@ prompt-match-input() {
     rich "by providing a specification that matches the tabs/windows you want to effect." -p
     printf "\n"
     rich "You can use [red]kitty-control list[/] to get a list of tabs and windows" -p
+    [ "${have_jq}" ] && {
+      rich "Or [red]kitty-control ls[/] for an abbreviated list of windows" -p
+    }
     printf "\n"
     rich "Match specifications are of the form: [red]field:query[/] where field can be one of:" -p
     rich "  [green]id index title window_id window_title pid cwd var state recent[/]" -p
@@ -970,6 +977,9 @@ prompt-match-input() {
     printf "\n\nKitty remote control commands can be limited to matching tabs or windows"
     printf "\nby providing a specification that matches the tabs/windows you want to effect."
     printf "\n\nYou can use 'kitty-control list' to get a list of tabs and windows"
+    [ "${have_jq}" ] && {
+      printf "\nOr 'kitty-control ls' for an abbreviated list of windows"
+    }
     printf "\n\nMatch specifications are of the form: 'field:query' where field can be one of:"
     printf "\n  id, index, title, window_id, window_title, pid, cwd, var, state and recent"
     printf "\n'query' is the expression to match. Expressions can be either a number or a"
@@ -1063,6 +1073,18 @@ get-color-input() {
     esac
   done
   echo "${color_return}"
+}
+
+list_windows() {
+  printf -v newline %b "\n"
+  kitty @ ${SOCKET} ls ${OPTS} | jq -r '.[]?.tabs | .[]?.windows' | \
+          jq -r '.[]' | \
+          jq -r --arg idpre "ID: " \
+                --arg actpre "ACTIVE: " \
+                --arg pidpre "PID: " \
+                --arg titpre "TITLE: " \
+                --arg tipost "$newline" \
+                '$idpre + (.id|tostring), $actpre + (.is_active|tostring), $pidpre + (.pid|tostring), $titpre + .title + $tipost'
 }
 
 try_background() {
@@ -1742,8 +1764,12 @@ select_with_fzf() {
           install_ranger
           break
           ;;
-        "List"* | "list"* | "L")
+        "List"*"Info" | "list"*"info" | "L")
           kitty @ ${SOCKET} ls ${OPTS} | less
+          break
+          ;;
+        "List"*"Windows" | "list"*"windows" | "w")
+          list_windows | less
           break
           ;;
         "Load"* | "load"* | "l")
@@ -1861,6 +1887,7 @@ show_menu() {
     [ "${have_fzf}" ] || options+=("Install Fzf")
     [ "${have_ranger}" ] || options+=("Install Ranger")
     options+=("List Current Info")
+    [ "${have_jq}" ] && options+=("List Windows")
     [ ${numconfs} -gt 1 ] && {
       options+=("Load Kitty Configuration")
     }
@@ -1946,8 +1973,12 @@ show_menu() {
         install_ranger
         break
         ;;
-      "List"*,* | *,"List"* | "list"*,* | *,"list"* | "L",* | *,"L")
+      "List"*"Info",* | *,"List"*"Info" | "list"*"info",* | *,"list"*"info" | "L",* | *,"L")
         kitty @ ${SOCKET} ls ${OPTS} | less
+        break
+        ;;
+      "List Win"*,* | *,"List Win"* | "list win"*,* | *,"list win"* | "w",* | *,"w")
+        list_windows | less
         break
         ;;
       "Load"*,* | *,"Load"* | "load"*,* | *,"load"* | "l",* | *,"l")
@@ -2202,8 +2233,16 @@ while [[ $1 ]]; do
         brief_usage
       fi
       ;;
-    list|ls|--list|--ls)
+    list|--list)
       kitty @ ${SOCKET} ls ${OPTS}
+      shift
+      ;;
+    ls|--ls)
+      if [ "${have_jq}" ]; then
+        list_windows
+      else
+        kitty @ ${SOCKET} ls ${OPTS}
+      fi
       shift
       ;;
     load|reload|--load|--reload)
