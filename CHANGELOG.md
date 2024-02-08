@@ -4,11 +4,23 @@
 
 ### ⚡️ Added
 
-- Support 2 levels deep Kitty configs in `~/.config/kitty/.../.../kitty.conf`
+### 🐞 Fixed
+
+## v1.0.4r1
+
+### ⚡️ Added
+
+- Add `Requirements` section to `README`
+- Install `kitty` if not installed
+- Add windows listing with `jq` if installed
+- Link to `read_config.py` in reference config
+- Support 2 levels deep `Kitty` configs in `~/.config/kitty/.../.../kitty.conf`
 
 ### 🐞 Fixed
 
-- Deleted unused Kitty themes
+- Remain in `fzf` selection menu until `Main Menu` is selected or `Esc`
+- Deleted unused `Kitty` themes
+- Cleanup versions message
 
 ## v1.0.3r2
 
