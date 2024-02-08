@@ -6,6 +6,8 @@
 
 ### 🐞 Fixed
 
+- Deleted unused Kitty themes
+
 ## v1.0.3r2
 
 ### ⚡️ Added
