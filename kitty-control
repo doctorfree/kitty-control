@@ -337,6 +337,7 @@ check_control_version() {
 }
 
 show_versions() {
+  printf "\n"
   control_version=$(get_control_version)
   install_version=$(get_install_version)
   if [ "${have_rich}" ]; then
@@ -383,11 +384,12 @@ show_versions() {
   else
     printf "\nInstalled fzf version: ${install_version}"
     if [ "${install_version}" == "${release_version}" ]; then
-      printf " ( current)\n\n"
+      printf " ( current)\n"
     else
-      printf "\nAvailable fzf version: ${release_version}\n\n"
+      printf "\nAvailable fzf version: ${release_version}\n"
     fi
   fi
+  printf "\n"
 }
 
 install_figlet() {
