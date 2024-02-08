@@ -4,12 +4,23 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.3r2
+
+### ⚡️ Added
+
+- Install reference config as `~/.config/kitty/kitty-control/`
+- Check for `fzf` updates and add `fzf` upgrade options
 - Set `fzf` colors and theme in `FZF_DEFAULT_OPTS`
 - Add `custom` to `colors` array to allow entry of custom foreground/background colors
 - Add `Options` menu to set some remote control options and toggle tools use
 
 ### 🐞 Fixed
 
+- Remove `example2` config
+- Rename reference config dir to `config`
+- Use Folke `tokyonight` themes in reference configs
 - Preserve any previously set options and use as defaults in Options menu
 - Fix argument processing so options can be set and interactive menu still comes up
 - Catch all `fzf` escape keystrokes
