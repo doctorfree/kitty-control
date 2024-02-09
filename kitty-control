@@ -63,7 +63,7 @@ BOLD=$(tput bold 2>/dev/null)
 NORM=$(tput sgr0 2>/dev/null)
 
 brief_usage() {
-  printf "${BOLD}Usage: kitty-control [-a] [back <color>] [-c command] [dark]"
+  printf "${BOLD}Usage: kitty-control [-a] [back <color>] [-c command] [dark] [-d]"
   printf "\n    [diff [opts] <path1> <path2>] [-e] [-f] [font [num]] [fore <color>]"
   printf "\n    [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]"
   printf "\n    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list|ls] [man]"
@@ -162,6 +162,7 @@ usage() {
   printf "\n    '${BOLD}-c command${NORM}'"
     printf " specifies a Kitty command to run (enclose command and arguments in quotes)"
   printf "\n        Can be used to run arbitrary commands, e.g. 'kitty-control -c get-colors'"
+  printf "\n    '${BOLD}-d${NORM}' Debug mode - display commands when executed"
   printf "\n    '${BOLD}-e${NORM}' Displays several example invocations and exits"
   printf "\n    '${BOLD}-f${NORM}' Indicates toggle fullscreen"
   printf "\n    '${BOLD}-h${NORM}' Displays a full usage message and exits"
@@ -187,6 +188,10 @@ usage() {
   printf "\nSee https://sw.kovidgoyal.net/kitty/remote-control/#control-kitty-from-scripts\n"
   [ "$1" == "examples" ] && show_examples
   [ "$1" == "noexit" ] || exit 1
+}
+
+clear_screen() {
+  [ "${debug}" ] || ${CLEAR_COMMAND}
 }
 
 pathadd() {
@@ -219,7 +224,7 @@ set_show_shortcuts() {
 }
 
 show_help() {
-  ${CLEAR_COMMAND}
+  clear_screen
   if [ "${have_rich}" ]; then
     rich "[cyan]Kitty Control Menu Help[/cyan]" -p -a rounded -c -C
     rich "[green]Control kitty from a menu system[/green]" -p -c
@@ -455,8 +460,16 @@ kitty-fontminus() {
   first_size=${size::1}
   if [[ "${first_size}" == "-" ]]; then
     kitty @ ${SOCKET} set-font-size ${OPTS} -- $size
+    [ "${debug}" ] && {
+      printf "\nDEBUG: kitty @ ${SOCKET} set-font-size ${OPTS} -- $size\n"
+      prompt_continue
+    }
   else
     kitty @ ${SOCKET} set-font-size ${OPTS} -- -$size
+    [ "${debug}" ] && {
+      printf "\nDEBUG: kitty @ ${SOCKET} set-font-size ${OPTS} -- -$size\n"
+      prompt_continue
+    }
   fi
 }
 
@@ -465,8 +478,16 @@ kitty-fontplus() {
   first_size=${size::1}
   if [[ "${first_size}" == "+" ]]; then
     kitty @ ${SOCKET} set-font-size ${OPTS} $size
+    [ "${debug}" ] && {
+      printf "\nDEBUG: kitty @ ${SOCKET} set-font-size ${OPTS} $size\n"
+      prompt_continue
+    }
   else
     kitty @ ${SOCKET} set-font-size ${OPTS} +$size
+    [ "${debug}" ] && {
+      printf "\nDEBUG: kitty @ ${SOCKET} set-font-size ${OPTS} +$size\n"
+      prompt_continue
+    }
   fi
 }
 
@@ -475,8 +496,16 @@ kitty-fontsize() {
   first_size=${size::1}
   if [[ "${first_size}" == "-" ]]; then
     kitty @ ${SOCKET} set-font-size ${OPTS} -- $size
+    [ "${debug}" ] && {
+      printf "\nDEBUG: kitty @ ${SOCKET} set-font-size ${OPTS} -- $size\n"
+      prompt_continue
+    }
   else
     kitty @ ${SOCKET} set-font-size ${OPTS} $size
+    [ "${debug}" ] && {
+      printf "\nDEBUG: kitty @ ${SOCKET} set-font-size ${OPTS} $size\n"
+      prompt_continue
+    }
   fi
 }
 
@@ -504,16 +533,32 @@ load-config() {
     if [ -f "${CONFDIR}/${kcfg}" ]; then
       if [ "${USE_LOAD_CONFIG}" ]; then
         kitty @ ${SOCKET} load-config-file "${CONFDIR}/${kcfg}"
+        [ "${debug}" ] && {
+          printf "\nDEBUG: kitty @ ${SOCKET} load-config-file ${CONFDIR}/${kcfg}"
+          prompt_continue
+        }
       else
         kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/${kcfg}"
+        [ "${debug}" ] && {
+          printf "\nDEBUG: kitty @ ${SOCKET} kitten read_config.py ${CONFDIR}/${kcfg}"
+          prompt_continue
+        }
       fi
     else
       if [ "$2" ] && [ -f "${CONFDIR}/$2/kitty.conf" ]; then
         kcfg="$2/kitty.conf"
         if [ "${USE_LOAD_CONFIG}" ]; then
           kitty @ ${SOCKET} load-config-file "${CONFDIR}/${kcfg}"
+          [ "${debug}" ] && {
+            printf "\nDEBUG: kitty @ ${SOCKET} load-config-file ${CONFDIR}/${kcfg}"
+            prompt_continue
+          }
         else
           kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/${kcfg}"
+          [ "${debug}" ] && {
+            printf "\nDEBUG: kitty @ ${SOCKET} kitten read_config.py ${CONFDIR}/${kcfg}"
+            prompt_continue
+          }
         fi
       else
         printf "\n ${CONFDIR}/${kcfg} does not exist or is not a regular file\n"
@@ -523,28 +568,74 @@ load-config() {
   fi
 }
 
+set-bg-image() {
+  image="$1"
+  if [ "${image}" == "none" ]; then
+    kitty @ ${SOCKET} set-background-image --no-response ${OPTS} none
+    [ "${debug}" ] && {
+      printf "\nDEBUG: kitty @ ${SOCKET} set-background-image --no-response ${OPTS} none\n"
+      prompt_continue
+    }
+  else
+    if [ -f "${image}" ]; then
+      kitty @ ${SOCKET} set-background-image ${OPTS} "${image}"
+    [ "${debug}" ] && {
+        printf "\nDEBUG: kitty @ ${SOCKET} set-background-image ${OPTS} ${image}"
+      prompt_continue
+    }
+    else
+      printf "\nSpecified Kitty background image ${image} not found\n"
+      prompt_continue
+    fi
+  fi
+}
+
 set-background() {
   if [ "$1" == "reset" ]; then
     kitty @ ${SOCKET} set-colors ${OPTS} --reset
+    [ "${debug}" ] && {
+      printf "\nDEBUG: kitty @ ${SOCKET} set-colors ${OPTS} --reset\n"
+      prompt_continue
+    }
   else
     kitty @ ${SOCKET} set-colors ${OPTS} background=$1 tab_bar_background=$1
+    [ "${debug}" ] && {
+      printf "\nDEBUG: kitty @ ${SOCKET} set-colors ${OPTS} background=$1 tab_bar_background=$1\n"
+      prompt_continue
+    }
   fi
 }
 
 set-foreground() {
   if [ "$1" == "reset" ]; then
     kitty @ ${SOCKET} set-colors ${OPTS} --reset
+    [ "${debug}" ] && {
+      printf "\nDEBUG: kitty @ ${SOCKET} set-colors ${OPTS} --reset\n"
+      prompt_continue
+    }
   else
     kitty @ ${SOCKET} set-colors ${OPTS} foreground=$1
+    [ "${debug}" ] && {
+      printf "\nDEBUG: kitty @ ${SOCKET} set-colors ${OPTS} foreground=$1\n"
+      prompt_continue
+    }
   fi
 }
 
 set-opacity() {
   kitty @ ${SOCKET} set-background-opacity ${OPTS} $1
+    [ "${debug}" ] && {
+    printf "\nDEBUG: kitty @ ${SOCKET} set-background-opacity ${OPTS} $1\n"
+      prompt_continue
+    }
 }
 
 toggle-fullscreen() {
   kitty @ ${SOCKET} resize-os-window --action toggle-fullscreen ${OPTS}
+    [ "${debug}" ] && {
+    printf "\nDEBUG: kitty @ ${SOCKET} resize-os-window --action toggle-fullscreen ${OPTS}\n"
+      prompt_continue
+    }
 }
 
 install_kitty() {
@@ -714,7 +805,7 @@ upgrade_kitty_control() {
 }
 
 heading() {
-  ${CLEAR_COMMAND}
+  clear_screen
   if [ "${have_rich}" ]; then
     rich "[cyan]$1[/cyan]" -p -a rounded -c -C
   else
@@ -869,7 +960,7 @@ show_usage() {
   figlet_text="Usage"
   [ "${use_type}" == "examples" ] && figlet_text="Examples"
   while true; do
-    ${CLEAR_COMMAND}
+    clear_screen
     if [ "${use_figlet}" ]; then
       show_figlet "${figlet_text}"
     else
@@ -899,7 +990,7 @@ show_usage() {
             break 2
             ;;
           Quit*)
-            ${CLEAR_COMMAND}
+            clear_screen
             printf "\nExiting kitty-control\n"
             exit 0
             ;;
@@ -932,7 +1023,7 @@ show_usage() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          ${CLEAR_COMMAND}
+          clear_screen
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -949,7 +1040,7 @@ show_usage() {
 }
 
 prompt-color-input() {
-  ${CLEAR_COMMAND}
+  clear_screen
   if [ "${have_rich}" ]; then
     rich "Enter a supported color name or hex color code" -p
     rich "Supported color names:" -p
@@ -964,7 +1055,7 @@ prompt-color-input() {
 }
 
 prompt-match-input() {
-  ${CLEAR_COMMAND}
+  clear_screen
   if [ "${have_rich}" ]; then
     rich "[cyan]Tab/Window Matching Specification[/cyan]" -p -a rounded -c -C
   else
@@ -1163,7 +1254,7 @@ menu_background_color() {
           break
           ;;
         "quit"*)
-          ${CLEAR_COMMAND}
+          clear_screen
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1197,7 +1288,7 @@ menu_background_color() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          ${CLEAR_COMMAND}
+          clear_screen
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1233,7 +1324,7 @@ menu_foreground_color() {
           break
           ;;
         "quit"*)
-          ${CLEAR_COMMAND}
+          clear_screen
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1267,7 +1358,7 @@ menu_foreground_color() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          ${CLEAR_COMMAND}
+          clear_screen
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1331,7 +1422,7 @@ menu_font_size() {
           break
           ;;
         "quit"*)
-          ${CLEAR_COMMAND}
+          clear_screen
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1359,7 +1450,7 @@ menu_font_size() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          ${CLEAR_COMMAND}
+          clear_screen
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1393,7 +1484,7 @@ menu_load_config() {
             break
             ;;
           "Quit"* | "quit"* | "q")
-            ${CLEAR_COMMAND}
+            clear_screen
             printf "\nExiting kitty-control\n"
             exit 0
             ;;
@@ -1426,7 +1517,7 @@ menu_load_config() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          ${CLEAR_COMMAND}
+          clear_screen
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1457,7 +1548,7 @@ menu_set_trans() {
           break
           ;;
         "quit"*)
-          ${CLEAR_COMMAND}
+          clear_screen
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1488,7 +1579,7 @@ menu_set_trans() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          ${CLEAR_COMMAND}
+          clear_screen
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1506,7 +1597,7 @@ menu_set_trans() {
 
 options_menu() {
   while true; do
-    ${CLEAR_COMMAND}
+    clear_screen
     if [ "${have_rich}" ]; then
       rich "[cyan]Kitty Control Options Menu[/cyan]" -p -a rounded -c -C
     else
@@ -1525,6 +1616,11 @@ options_menu() {
     fi
     kc_options+=("Tab Match Spec    [${tabopts}]")
     kc_options+=("Window Match Spec [${winopts}]")
+    if [ "${debug}" ]; then
+      kc_options+=("Debug Mode        [yes]")
+    else
+      kc_options+=("Debug Mode        [no]")
+    fi
     [ "${have_figlet}" ] && {
       if [ "${use_figlet}" ]; then
         kc_options+=("Use Figlet        [yes]")
@@ -1561,6 +1657,13 @@ options_menu() {
             else
               OPTS="${OPTS} -a"
               allopts=1
+            fi
+            ;;
+          "Debug"* | "debug"*)
+            if [ "${debug}" ]; then
+              debug=
+            else
+              debug=1
             fi
             ;;
           "Tab"* | "tab"*)
@@ -1612,7 +1715,7 @@ options_menu() {
             break
             ;;
           Quit*)
-            ${CLEAR_COMMAND}
+            clear_screen
             printf "\nExiting kitty-control\n"
             exit 0
             ;;
@@ -1639,6 +1742,14 @@ options_menu() {
           else
             OPTS="${OPTS} -a"
             allopts=1
+          fi
+          break
+          ;;
+        "Debug"*,* | *,"Debug"* | "debug"*,* | *,"debug"*)
+          if [ "${debug}" ]; then
+            debug=
+          else
+            debug=1
           fi
           break
           ;;
@@ -1696,7 +1807,7 @@ options_menu() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          ${CLEAR_COMMAND}
+          clear_screen
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1716,7 +1827,7 @@ select_with_fzf() {
   fzopts=("$@")
   fzopts+=( "Help" "Main Menu" )
   while true; do
-    ${CLEAR_COMMAND}
+    clear_screen
     heading "Kitty Control" "Kitty Control"
     choice=$(printf "%s\n" "${fzopts[@]}" | fzf -m --prompt="😺 Select Menu Option ('Main Menu' or 'Esc' to return)  " --height=18 --layout=reverse --exit-0)
     if [ "${choice}" ]; then
@@ -1739,10 +1850,10 @@ select_with_fzf() {
         "Background Image")
           FILE=
           select_file image
-          [ "${FILE}" ] && kitty @ ${SOCKET} set-background-image ${OPTS} "${FILE}"
+          [ "${FILE}" ] && set-bg-image "${FILE}"
           ;;
         "Clear"* | "clear"* | "c")
-          kitty @ ${SOCKET} set-background-image --no-response true ${OPTS} none
+          set-bg-image none
           ;;
         "Dark"* | "dark"* | "d" | "d")
           set-opacity "1.0"
@@ -1833,7 +1944,7 @@ select_with_fzf() {
           upgrade_fzf
           ;;
         "Quit"* | "quit"* | "Q" | "q")
-          ${CLEAR_COMMAND}
+          clear_screen
           printf "\nExiting kitty-control\n"
           exit 0
           ;;
@@ -1851,7 +1962,7 @@ select_with_fzf() {
 show_menu() {
   set_haves
   while true; do
-    ${CLEAR_COMMAND}
+    clear_screen
     if [ "${use_figlet}" ]; then
       show_figlet
     else
@@ -1921,11 +2032,11 @@ show_menu() {
       "Background Image",* | *,"Background Image")
         FILE=
         select_file image
-        [ "${FILE}" ] && kitty @ ${SOCKET} set-background-image ${OPTS} "${FILE}"
+        [ "${FILE}" ] && set-bg-image "${FILE}"
         break
         ;;
       "Clear"*,* | *,"Clear"* | "clear"*,* | *,"clear"* | "c",* | *,"c")
-        kitty @ ${SOCKET} set-background-image --no-response true ${OPTS} none
+        set-bg-image none
         break
         ;;
       "Dark"*,* | *,"Dark"* | "dark"*,* | *,"dark"* | "d",* | *,"d")
@@ -2035,7 +2146,7 @@ show_menu() {
         break
         ;;
       "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-        ${CLEAR_COMMAND}
+        clear_screen
         printf "\nExiting kitty-control\n"
         exit 0
         ;;
@@ -2087,6 +2198,7 @@ set_haves
 allopt=
 bg_image=
 backgrnd=
+debug=
 foregrnd=
 fontplus=
 fontdown=
@@ -2159,6 +2271,10 @@ while [[ $1 ]]; do
         OPTS="${OPTS} -t ${tabopts}"
       fi
       shift 2
+      ;;
+    -d | --debug)
+      debug=1
+      shift
       ;;
     -e | --examples)
       show_examples
@@ -2375,16 +2491,6 @@ done
 [ "${foregrnd}" ] && set-foreground "${foregrnd}"
 [ "${fullscrn}" ] && toggle-fullscreen
 [ "${setopcty}" ] && set-opacity "${setopcty}"
-[ "${bg_image}" ] && {
-  if [ "${bg_image}" == "none" ]; then
-    kitty @ ${SOCKET} set-background-image --no-response true ${OPTS} none
-  else
-    if [ -f "${bg_image}" ]; then
-      kitty @ ${SOCKET} set-background-image ${OPTS} "${bg_image}"
-    else
-      printf "\nSpecified Kitty background image ${bg_image} not found\n"
-    fi
-  fi
-}
+[ "${bg_image}" ] && set-bg-image "${bg_image}"
 [ "${kittycmd}" ] && kitty @ ${SOCKET} ${kittycmd} ${OPTS}
 [ "${set_menu}" ] && show_menu

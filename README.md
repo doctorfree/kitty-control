@@ -144,7 +144,7 @@ To display a usage message use `kitty-control -u`. To see several examples,
 `kitty-control -e`. To display the full usage message run `kitty-control -h`.
 
 ```
-Usage: kitty-control [-a] [back <color>] [-c command] [dark]
+Usage: kitty-control [-a] [back <color>] [-c command] [dark] [-d]
     [diff [opts] <path1> <path2>] [-e] [-f] [font [num]] [fore <color>]
     [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]
     [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list|ls] [man]
@@ -195,6 +195,7 @@ Where:
     '-a' Indicates modify all windows rather than just the currently active OS window
     '-c command' specifies a Kitty command to run (enclose command and arguments in quotes)
         Can be used to run arbitrary commands, e.g. 'kitty-control -c get-colors'
+    '-d' Debug mode - display commands when executed
     '-e' Displays several example invocations and exits
     '-f' Indicates toggle fullscreen
     '-h' Displays a full usage message and exits

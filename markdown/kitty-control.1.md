@@ -9,7 +9,7 @@ date: February 06, 2024
 **kitty-control** - Control the Kitty terminal emulator from the command line
 
 # SYNOPSIS
-**kitty-control** [**-a**] [**back** color] [**-c** command] [**dark**] [**diff** [opts] path1 path2] [**-e**] [**-f**] [**font** [num]] [**fore** color] [**-i** /path/to/image] [**load** [subdir]] [**-m|t** match] [**-s** /path/to/socket] [**-u|h|v**] [**term**] [**theme**] [**tools**] [**icat** [opts] image] [**list|ls**] [**man**] [**menu**] [**title** title] [**transparent** [opacity]] [**unicode**] [**upgrade**]
+**kitty-control** [**-a**] [**back** color] [**-c** command] [-d] [**dark**] [**diff** [opts] path1 path2] [**-e**] [**-f**] [**font** [num]] [**fore** color] [**-i** /path/to/image] [**load** [subdir]] [**-m|t** match] [**-s** /path/to/socket] [**-u|h|v**] [**term**] [**theme**] [**tools**] [**icat** [opts] image] [**list|ls**] [**man**] [**menu**] [**title** title] [**transparent** [opacity]] [**unicode**] [**upgrade**]
 
 # DESCRIPTION
 **kitty-control** acts as a wrapper for the `Kitty` terminal emulator remote
@@ -104,6 +104,9 @@ use of the `read_config.py` custom `kitten` included with `kitty-control`.
 **-c command**
 : Specifies a Kitty command to run (enclose command and arguments in quotes).
         Can be used to run arbitrary commands, e.g. `kitty-control -c get-colors`.
+
+**-d**
+: Debug mode - displays `kitty-control` commands when they execute
 
 **-e**
 : Displays several example invocations and exits

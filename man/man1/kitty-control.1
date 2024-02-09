@@ -23,8 +23,8 @@ command line
 .SH SYNOPSIS
 .PP
 \f[B]kitty-control\f[R] [\f[B]-a\f[R]] [\f[B]back\f[R] color]
-[\f[B]-c\f[R] command] [\f[B]dark\f[R]] [\f[B]diff\f[R] [opts] path1
-path2] [\f[B]-e\f[R]] [\f[B]-f\f[R]] [\f[B]font\f[R] [num]]
+[\f[B]-c\f[R] command] [-d] [\f[B]dark\f[R]] [\f[B]diff\f[R] [opts]
+path1 path2] [\f[B]-e\f[R]] [\f[B]-f\f[R]] [\f[B]font\f[R] [num]]
 [\f[B]fore\f[R] color] [\f[B]-i\f[R] /path/to/image] [\f[B]load\f[R]
 [subdir]] [\f[B]-m|t\f[R] match] [\f[B]-s\f[R] /path/to/socket]
 [\f[B]-u|h|v\f[R]] [\f[B]term\f[R]] [\f[B]theme\f[R]] [\f[B]tools\f[R]]
@@ -150,6 +150,9 @@ Specifies a Kitty command to run (enclose command and arguments in
 quotes).
 Can be used to run arbitrary commands, e.g.
 \f[V]kitty-control -c get-colors\f[R].
+.TP
+\f[B]-d\f[R]
+Debug mode - displays \f[V]kitty-control\f[R] commands when they execute
 .TP
 \f[B]-e\f[R]
 Displays several example invocations and exits

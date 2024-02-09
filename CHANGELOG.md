@@ -4,6 +4,7 @@
 
 ### ⚡️ Added
 
+- Add debug mode switch `-d` and Options menu entry to toggle
 - Add `pathadd` function to add to `PATH`
 
 ### 🐞 Fixed
