@@ -6,6 +6,8 @@
 
 ### 🐞 Fixed
 
+- Adjust `Options` menu size and prompt
+
 ## v1.0.4r1
 
 ### ⚡️ Added
