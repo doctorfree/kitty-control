@@ -9,6 +9,7 @@
 
 ### 🐞 Fixed
 
+- Use `file -L ...` to follow symlinks in file type check
 - Make sure `~/.local/bin` and `~/.fzf/bin` are in `PATH`
 - Improve `fzf` upgrade on `macOS`
 - Adjust `Options` menu size and prompt

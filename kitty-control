@@ -862,7 +862,7 @@ select_file() {
   if [ "${selectedFile}" ]; then
     if [ "${keyword}" ]; then
       thisfile=
-      file "${selectedFile}" | grep -i "${keyword}" >/dev/null && thisfile=1
+      file -L "${selectedFile}" | grep -i "${keyword}" >/dev/null && thisfile=1
     else
       thisfile=1
     fi
