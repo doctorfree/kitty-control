@@ -4,24 +4,24 @@
 
 ### ⚡️ Added
 
-- Install nicer `Kitty` icons
-
 ### 🐞 Fixed
-
-- `Info/Help` formatting
 
 ## v1.0.4r1
 
 ### ⚡️ Added
 
+- Simplify test for load-config-file
+- Install nicer `Kitty` icons
 - Add `Requirements` section to `README`
 - Install `kitty` if not installed
 - Add windows listing with `jq` if installed
 - Link to `read_config.py` in reference config
 - Support 2 levels deep `Kitty` configs in `~/.config/kitty/.../.../kitty.conf`
+- Add 'ls' to man page
 
 ### 🐞 Fixed
 
+- `Info/Help` and man page formatting
 - Remain in `fzf` selection menu until `Main Menu` is selected or `Esc`
 - Deleted unused `Kitty` themes
 - Cleanup versions message

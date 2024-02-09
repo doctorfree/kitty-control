@@ -2041,7 +2041,9 @@ have_kitty=$(type -p kitty)
 }
 # Check for new load-config-file Kitty command
 USE_LOAD_CONFIG=
-if kitty @ ${SOCKET} load-config-file 2>/dev/null; then USE_LOAD_CONFIG=1
+if kitty @ ${SOCKET} load-config-file 2>/dev/null; then
+  USE_LOAD_CONFIG=1
+fi
 
 # Menu tools
 use_figlet=1
