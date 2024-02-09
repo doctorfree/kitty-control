@@ -666,10 +666,19 @@ install_kitty() {
 }
 
 upgrade_fzf() {
-  [ -d ${HOME}/.fzf/.git ] && {
-    git -C ${HOME}/.fzf pull >/dev/null 2>&1
-    [ -x ${HOME}/.fzf/install ] && ${HOME}/.fzf/install --all >/dev/null 2>&1
-  }
+  [ -d ${HOME}/.fzf/.git ] && git -C ${HOME}/.fzf pull >/dev/null 2>&1
+  if [ -d ${HOME}/.fzf ]; then
+    if [ -f ${HOME}/.fzf/install ]; then
+      chmod 755 ${HOME}/.fzf/install
+      ${HOME}/.fzf/install --all >/dev/null 2>&1
+    else
+      install_fzf
+    fi
+  else
+    have_brew=$(type -p brew)
+    [ "${have_brew}" ] && brew uninstall fzf >/dev/null 2>&1
+    install_fzf
+  fi
 }
 
 upgrade_kitty_control() {
