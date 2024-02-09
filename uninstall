@@ -47,4 +47,20 @@ do
 done
 [ "${empty}" ] && rmdir "${FDEST}"
 
+# Restore ugly Kitty icons
+APP="${HOME}/.local/kitty.app"
+for icon in ${APP}/lib/kitty/logo/kitty.png \
+            ${APP}/share/icons/hicolor/256x256/apps/kitty.png
+do
+  [ -f ${icon}.bak ] && {
+    cp ${icon}.bak ${icon}
+    rm -f ${icon}.bak
+  }
+done
+icon="${APP}/lib/kitty/logo/kitty-128.png"
+[ -f ${icon}.bak ] && {
+  cp ${icon}.bak ${icon}
+  rm -f ${icon}.bak
+}
+
 printf "Removal of kitty-control complete\n\n"

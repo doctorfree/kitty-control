@@ -249,5 +249,35 @@ have_fzf=$(type -p fzf)
   [ -x ${HOME}/.fzf/install ] && ${HOME}/.fzf/install --all >/dev/null 2>&1
 }
 
+# Use a nicer Kitty icon
+APP="${HOME}/.local/kitty.app"
+for icon in ${APP}/lib/kitty/logo/kitty.png \
+            ${APP}/share/icons/hicolor/256x256/apps/kitty.png
+do
+  [ -f "${SCRIPT_PATH}"/icons/kitty-256.png ] && {
+    if [ -f ${icon} ]; then
+      diff "${icon}" "${SCRIPT_PATH}"/icons/kitty-256.png >/dev/null || {
+        cp "${icon}" "${icon}.bak"
+        cp "${SCRIPT_PATH}"/icons/kitty-256.png "${icon}"
+      }
+    else
+      APPDIR=$(dirname "${icon}")
+      [ -d ${APPDIR} ] && cp "${SCRIPT_PATH}"/icons/kitty-256.png "${icon}"
+    fi
+  }
+done
+icon="${APP}/lib/kitty/logo/kitty-128.png"
+[ -f "${SCRIPT_PATH}"/icons/kitty-128.png ] && {
+  if [ -f ${icon} ]; then
+    diff "${icon}" "${SCRIPT_PATH}"/icons/kitty-128.png >/dev/null || {
+      cp "${icon}" "${icon}.bak"
+      cp "${SCRIPT_PATH}"/icons/kitty-128.png "${icon}"
+    }
+  else
+    APPDIR=$(dirname "${icon}")
+    [ -d ${APPDIR} ] && cp "${SCRIPT_PATH}"/icons/kitty-128.png "${icon}"
+  fi
+}
+
 printf "Installation of kitty-control complete ✨ 🌟 ✨\n"
 printf "\nSee ${REPO_URL}#readme\n\n"
