@@ -4,8 +4,12 @@
 
 ### ⚡️ Added
 
+- Add `pathadd` function to add to `PATH`
+
 ### 🐞 Fixed
 
+- Make sure `~/.local/bin` and `~/.fzf/bin` are in `PATH`
+- Improve `fzf` upgrade on `macOS`
 - Adjust `Options` menu size and prompt
 
 ## v1.0.4r1

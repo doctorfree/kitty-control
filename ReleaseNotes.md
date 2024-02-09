@@ -6,6 +6,12 @@ The `kitty-control` command is a wrapper to simplify customizing the `kitty` ter
 
 The `kitty-control` command can be installed on `Linux` or `macOS`. It is a command line utility requiring a terminal or console and the `Bash` shell. It is intended to be run in a `kitty` terminal window or via `ssh`.
 
+The `kitty-control` installation requires [git](https://github.com/git-guides/install-git).
+
+Some functionality requires [curl](https://curl.se).
+
+An abbreviated `kitty` window listing is enabled if the [jq JSON parser](https://jqlang.github.io/jq) is installed.
+
 ## Installation
 
 ### With curl
