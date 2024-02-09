@@ -1742,7 +1742,7 @@ select_with_fzf() {
           [ "${FILE}" ] && kitty @ ${SOCKET} set-background-image ${OPTS} "${FILE}"
           ;;
         "Clear"* | "clear"* | "c")
-          kitty @ ${SOCKET} set-background-image ${OPTS} none
+          kitty @ ${SOCKET} set-background-image --no-response true ${OPTS} none
           ;;
         "Dark"* | "dark"* | "d" | "d")
           set-opacity "1.0"
@@ -1869,7 +1869,7 @@ show_menu() {
       ((numconfs++))
       configs+=("${kconf}")
     done
-    options+=("Background Color" "Background Image" "Clear Background Image")
+    options+=("Background Color" "Background Image" "Clear Background")
     options+=("Dark/Opaque" "Diff Files" "Diff Folders" "Examples" "Font Size")
     options+=("Foreground Color")
     [ "${have_figlet}" ] || options+=("Install Figlet")
@@ -1878,7 +1878,7 @@ show_menu() {
     options+=("List Windows (Full)")
     [ "${have_jq}" ] && options+=("List Windows (Short)")
     [ ${numconfs} -gt 1 ] && {
-      options+=("Load Kitty Configuration")
+      options+=("Load Configuration")
     }
     options+=("Manual Page" "Options" "Show Usage/Version" "Theme Selection")
     options+=("Terminal Info" "Toggle Fullscreen" "Transparent" "Unicode Input")
@@ -1925,7 +1925,7 @@ show_menu() {
         break
         ;;
       "Clear"*,* | *,"Clear"* | "clear"*,* | *,"clear"* | "c",* | *,"c")
-        kitty @ ${SOCKET} set-background-image ${OPTS} none
+        kitty @ ${SOCKET} set-background-image --no-response true ${OPTS} none
         break
         ;;
       "Dark"*,* | *,"Dark"* | "dark"*,* | *,"dark"* | "d",* | *,"d")
@@ -2377,7 +2377,7 @@ done
 [ "${setopcty}" ] && set-opacity "${setopcty}"
 [ "${bg_image}" ] && {
   if [ "${bg_image}" == "none" ]; then
-    kitty @ ${SOCKET} set-background-image ${OPTS} none
+    kitty @ ${SOCKET} set-background-image --no-response true ${OPTS} none
   else
     if [ -f "${bg_image}" ]; then
       kitty @ ${SOCKET} set-background-image ${OPTS} "${bg_image}"
