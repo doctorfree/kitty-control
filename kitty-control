@@ -413,9 +413,9 @@ install_figlet() {
     HERE=$(pwd)
     git clone https://github.com/cmatsuoka/figlet /tmp/figlet$$ >/dev/null 2>&1
     cd /tmp/figlet$$
-    sudo make install
+    ${SUDO} make install >/dev/null 2>&1
     cd "${HERE}"
-    rm -rf /tmp/figlet$$
+    ${SUDO} rm -rf /tmp/figlet$$
     have_figlet=$(type -p figlet)
     [ "${have_figlet}" ] && use_figlet=1
   else
@@ -442,12 +442,39 @@ install_ranger() {
     HERE=$(pwd)
     git clone https://github.com/ranger/ranger /tmp/ranger$$ >/dev/null 2>&1
     cd /tmp/ranger$$
-    git checkout stable
-    sudo make install
+    git checkout stable >/dev/null 2>&1
+    ${SUDO} make install >/dev/null 2>&1
     cd "${HERE}"
-    rm -rf /tmp/ranger$$
+    ${SUDO} rm -rf /tmp/ranger$$
     have_ranger=$(type -p ranger)
     [ "${have_ranger}" ] && use_ranger=1
+    [ -d ${HOME}/.config ] || mkdir -p ${HOME}/.config
+    [ -d ${HOME}/.config/ranger ] && {
+      mv ${HOME}/.config/ranger ${HOME}/.config/ranger.bak$$
+    }
+    git clone https://github.com/doctorfree/ranger \
+              ${HOME}/.config/ranger >/dev/null 2>&1
+    rm -rf ${HOME}/.config/ranger/.git
+    [ -f ${HOME}/.config/ranger/scope.sh ] && {
+      chmod 755 ${HOME}/.config/ranger/scope.sh
+    }
+    [ -d ${HOME}/.config/ranger.bak$$ ] && {
+      diff -srq ${HOME}/.config/ranger.bak$$ \
+                ${HOME}/.config/ranger \
+        | grep identical | grep ^File \
+        | while read dupline
+          do
+            dup=$(echo "${dupline}" | awk '{ print $2 }')
+            rm -f "${dup}"
+          done
+      for plugindir in ${HOME}/.config/ranger.bak$$/plugins/*
+      do
+        [ "${plugindir}" == "${HOME}/.config/ranger.bak$$/plugins/*" ] && continue
+        rmdir --ignore-fail-on-non-empty "${plugindir}"
+      done
+      rmdir --ignore-fail-on-non-empty ${HOME}/.config/ranger.bak$$/plugins
+      rmdir --ignore-fail-on-non-empty ${HOME}/.config/ranger.bak$$
+    }
   else
     printf "\nInstallation of ranger requires 'make' but 'make' not found."
     printf "\nInstall 'make' and try again. Skipping installation of ranger.\n"
@@ -2164,6 +2191,14 @@ show_menu() {
 
 ## Main execution starts here
 #
+uid=$(id -u)
+gid=$(id -g)
+SUDO="sudo -E"
+if [ "${EUID}" ]; then
+  [ ${EUID} -eq 0 ] && SUDO=
+else
+  [ ${uid} -eq 0 ] && SUDO=
+fi
 [ -d ${HOME}/.local/bin ] && pathadd "${HOME}/.local/bin"
 [ -d ${HOME}/.fzf/bin ] && pathadd "${HOME}/.fzf/bin"
 have_kitty=$(type -p kitty)

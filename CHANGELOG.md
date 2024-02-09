@@ -7,6 +7,7 @@
 - Add debug mode switch `-d` and Options menu entry to toggle
 - Add `pathadd` function to add to `PATH`
 - Install custom Kitty icons on `macOS` as well
+- Install custom `ranger` configuration when `ranger` is installed
 
 ### 🐞 Fixed
 
@@ -16,6 +17,7 @@
 - Adjust `Options` menu size and prompt
 - Shorten some main menu option entries
 - Cleanup cloned `kitty-control` repository if download fails
+- Redirect `git` and `make` output to `/dev/null` in builds
 
 ## v1.0.4r1
 
