@@ -4,7 +4,11 @@
 
 ### ⚡️ Added
 
+- Install nicer `Kitty` icons
+
 ### 🐞 Fixed
+
+- `Info/Help` formatting
 
 ## v1.0.4r1
 
