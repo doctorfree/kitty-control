@@ -4,6 +4,12 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.4r2
+
+### ⚡️ Added
+
 - Add debug mode switch `-d` and Options menu entry to toggle
 - Add `pathadd` function to add to `PATH`
 - Install custom Kitty icons on `macOS` as well
