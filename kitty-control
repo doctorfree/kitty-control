@@ -1526,7 +1526,7 @@ options_menu() {
     }
     kc_options+=("Help" "Main Menu" "Quit (q)")
     if [ "${use_fzf}" ]; then
-      choice=$(printf "%s\n" "${kc_options[@]}" | fzf --prompt="😺 Toggle options  " --height=12 --layout=reverse --exit-0)
+      choice=$(printf "%s\n" "${kc_options[@]}" | fzf --prompt="😺 Set/Toggle Options  " --height=16 --layout=reverse --exit-0)
       if [ "${choice}" ]; then
         case "${choice}" in
           "h" | "H" | "help" | "Help")
@@ -1586,7 +1586,7 @@ options_menu() {
               use_ranger=1
             fi
             ;;
-          Main* | "")
+          Main*)
             break
             ;;
           Quit*)
