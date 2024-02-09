@@ -11,6 +11,7 @@
 - Make sure `~/.local/bin` and `~/.fzf/bin` are in `PATH`
 - Improve `fzf` upgrade on `macOS`
 - Adjust `Options` menu size and prompt
+- Shorten some main menu option entries
 
 ## v1.0.4r1
 
