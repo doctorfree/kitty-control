@@ -160,6 +160,16 @@ install_config() {
   }
 }
 
+pathadd() {
+  if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+    PATH="$1${PATH:+":$PATH"}"
+  fi
+}
+
+pathadd "${HOME}/.local/bin"
+pathadd "${HOME}/.fzf/bin"
+export PATH
+
 have_git=$(type -p git)
 [ "${have_git}" ] || {
   printf "\nERROR: cannot locate required git command"
@@ -167,7 +177,6 @@ have_git=$(type -p git)
   exit 1
 }
 
-export PATH="${HOME}/.local/bin:${PATH}"
 darwin=
 platform=$(uname -s)
 [ "${platform}" == "Darwin" ] && darwin=1

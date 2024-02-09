@@ -189,6 +189,13 @@ usage() {
   [ "$1" == "noexit" ] || exit 1
 }
 
+pathadd() {
+  if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+    PATH="$1${PATH:+":$PATH"}"
+    export PATH
+  fi
+}
+
 prompt_continue() {
   printf "\nPress <Enter> to continue ... "
   read -r yn
@@ -372,7 +379,11 @@ show_versions() {
     fi
   fi
   release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
-  install_version=$(fzf --version | awk '{ print $1 }')
+  if [ "${have_fzf}" ]; then
+    install_version=$(fzf --version | awk '{ print $1 }')
+  else
+    install_version="uninstalled"
+  fi
   if [ "${have_rich}" ]; then
     if [ "${install_version}" == "${release_version}" ]; then
       rich "Installed [green]fzf[/] version: [yellow]${install_version}[/] ( current)" -p
@@ -415,6 +426,7 @@ install_fzf() {
     ${HOME}/.fzf >/dev/null 2>&1
   [ -f ${HOME}/.fzf/install ] && chmod 755 ${HOME}/.fzf/install
   [ -x ${HOME}/.fzf/install ] && ${HOME}/.fzf/install --all >/dev/null 2>&1
+  [ -d ${HOME}/.fzf/bin ] && pathadd "${HOME}/.fzf/bin"
   have_fzf=$(type -p fzf)
   [ "${have_fzf}" ] && use_fzf=1
 }
@@ -679,6 +691,7 @@ upgrade_fzf() {
     [ "${have_brew}" ] && brew uninstall fzf >/dev/null 2>&1
     install_fzf
   fi
+  [ -d ${HOME}/.fzf/bin ] && pathadd "${HOME}/.fzf/bin"
 }
 
 upgrade_kitty_control() {
@@ -1869,11 +1882,13 @@ show_menu() {
     }
     options+=("Manual Page" "Options" "Show Usage/Version" "Theme Selection")
     options+=("Terminal Info" "Toggle Fullscreen" "Transparent" "Unicode Input")
-    fzf_release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
-    fzf_install_version=$(fzf --version | awk '{ print $1 }')
-    update_fzf=$(check_three_version "${fzf_release_version}" "${fzf_install_version}")
-    [ "${update_fzf}" ] && {
-      options+=("Upgrade Fzf (${fzf_install_version} -> ${fzf_release_version})")
+    [ "${have_fzf}" ] && {
+      fzf_release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
+      fzf_install_version=$(fzf --version | awk '{ print $1 }')
+      update_fzf=$(check_three_version "${fzf_release_version}" "${fzf_install_version}")
+      [ "${update_fzf}" ] && {
+        options+=("Upgrade Fzf (${fzf_install_version} -> ${fzf_release_version})")
+      }
     }
     release_version=$(curl -fsSL "${kitty_version_url}")
     install_version=$(kitty --version | awk '{ print $2 }')
@@ -1934,7 +1949,7 @@ show_menu() {
         break
         ;;
       "Fzf",* | *,"Fzf" | "fzf",* | *,"fzf" | "Fuzzy",* | *,"Fuzzy" | "fuzzy",* | *,"fuzzy")
-        select_with_fzf "${options[@]}"
+        [ "${have_fzf}" ] && select_with_fzf "${options[@]}"
         break
         ;;
       "Install Figlet",* | *,"Install Figlet")
@@ -2037,7 +2052,8 @@ show_menu() {
 
 ## Main execution starts here
 #
-export PATH="${HOME}/.local/bin:${PATH}"
+[ -d ${HOME}/.local/bin ] && pathadd "${HOME}/.local/bin"
+[ -d ${HOME}/.fzf/bin ] && pathadd "${HOME}/.fzf/bin"
 have_kitty=$(type -p kitty)
 [ "${have_kitty}" ] || {
   install_kitty
@@ -2048,6 +2064,9 @@ have_kitty=$(type -p kitty)
     exit 1
   }
 }
+have_fzf=$(type -p fzf)
+[ "${have_fzf}" ] || install_fzf
+
 # Check for new load-config-file Kitty command
 USE_LOAD_CONFIG=
 if kitty @ ${SOCKET} load-config-file 2>/dev/null; then
@@ -2311,13 +2330,17 @@ while [[ $1 ]]; do
       shift
       ;;
     upgrade|--upgrade)
-      fzf_release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
-      fzf_install_version=$(fzf --version | awk '{ print $1 }')
-      update_fzf=$(check_three_version "${fzf_release_version}" "${fzf_install_version}")
-      if [ "${update_fzf}" ]; then
-        upgrade_fzf
+      if [ "${have_fzf}" ]; then
+        fzf_release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
+        fzf_install_version=$(fzf --version | awk '{ print $1 }')
+        update_fzf=$(check_three_version "${fzf_release_version}" "${fzf_install_version}")
+        if [ "${update_fzf}" ]; then
+          upgrade_fzf
+        else
+          printf "\nInstalled version of Fzf is current ✨ 🌟 ✨\n"
+        fi
       else
-        printf "\nInstalled version of Fzf is current ✨ 🌟 ✨\n"
+        install_fzf
       fi
       release_version=$(curl -fsSL "${kitty_version_url}")
       install_version=$(kitty --version | awk '{ print $2 }')
