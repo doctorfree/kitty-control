@@ -190,11 +190,7 @@ usage() {
 }
 
 prompt_continue() {
-  if [ "${have_rich}" ]; then
-    rich "Press [magenta]<Enter>[/] to continue" -p
-  else
-    printf "\nPress <Enter> to continue ... "
-  fi
+  printf "\nPress <Enter> to continue ... "
   read -r yn
 }
 
@@ -241,7 +237,6 @@ show_help() {
   else
     printf "${BOLD}${LINE}See:${NORM} ${BOLD}kitty-control -h${NORM} for full usage details\n"
   fi
-  printf "\n"
   prompt_continue
 }
 
@@ -1782,6 +1777,7 @@ select_with_fzf() {
           kitty +kitten themes
           ;;
         "Term"* | "term"* | "info" | "i")
+          printf "\n"
           kitty +kitten query_terminal
           prompt_continue
           ;;
@@ -1971,6 +1967,7 @@ show_menu() {
         break
         ;;
       "Term"*,* | *,"Term"* | "term"*,* | *,"term"* | "info",* | *,"info" | "i",* | *,"i")
+        printf "\n"
         kitty +kitten query_terminal
         prompt_continue
         break
