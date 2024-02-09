@@ -789,6 +789,7 @@ upgrade_kitty_control() {
   KC_REPO="https://github.com/doctorfree/kitty-control"
   git clone ${KC_REPO} /tmp/kctmp$$ >/dev/null 2>&1
   [ -f /tmp/kctmp$$/install ] || {
+    rm -rf /tmp/kctmp$$
     printf "\nERROR: unable to download kitty-control repository\n"
     if [ "$1" == "noexit" ]; then
       prompt_continue

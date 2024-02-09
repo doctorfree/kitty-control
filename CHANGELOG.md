@@ -15,6 +15,7 @@
 - Improve `fzf` upgrade on `macOS`
 - Adjust `Options` menu size and prompt
 - Shorten some main menu option entries
+- Cleanup cloned `kitty-control` repository if download fails
 
 ## v1.0.4r1
 
