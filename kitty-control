@@ -2040,15 +2040,8 @@ have_kitty=$(type -p kitty)
   }
 }
 # Check for new load-config-file Kitty command
-USE_LOAD_CONFIG=1
-if [ "${KITTY_WINDOW_ID}" ]; then
-  # Running in a Kitty window
-  kitty @ ${SOCKET} load-config-file 2>/dev/null
-  [ $? -eq 0 ] || USE_LOAD_CONFIG=
-else
-  # Not sure how to check without a Kitty window so use read_config.py
-  USE_LOAD_CONFIG=
-fi
+USE_LOAD_CONFIG=
+if kitty @ ${SOCKET} load-config-file 2>/dev/null; then USE_LOAD_CONFIG=1
 
 # Menu tools
 use_figlet=1
