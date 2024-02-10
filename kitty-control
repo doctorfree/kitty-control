@@ -1355,7 +1355,7 @@ menu_background_color() {
   bgopts+=( "main menu" "quit" )
   if [ "${use_fzf}" ]; then
     heading "Background Color" "Background"
-    choice=$(printf "%s\n" "${bgopts[@]}" | fzf --prompt="😺 Select Background Color  " --height=15 --layout=reverse --exit-0)
+    choice=$(printf "%s\n" "${bgopts[@]}" | fzf --prompt="😺 Select Background Color  " --height=18 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
         "custom"*)
@@ -1425,7 +1425,7 @@ menu_foreground_color() {
   fgopts+=( "main menu" "quit" )
   if [ "${use_fzf}" ]; then
     heading "Foreground Color" "Foreground"
-    choice=$(printf "%s\n" "${fgopts[@]}" | fzf --prompt="😺 Select Foreground Color  " --height=15 --layout=reverse --exit-0)
+    choice=$(printf "%s\n" "${fgopts[@]}" | fzf --prompt="😺 Select Foreground Color  " --height=18 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
         "custom"*)
@@ -1588,7 +1588,7 @@ menu_load_config() {
   if [ "${use_fzf}" ]; then
     while true; do
       heading "Kitty Configuration" "Configuration"
-      choice=$(printf "%s\n" "${cfopts[@]}" | fzf --prompt="😺 Select Kitty Configuration  " --height=12 --layout=reverse --exit-0)
+      choice=$(printf "%s\n" "${cfopts[@]}" | fzf --prompt="😺 Select Kitty Configuration  " --height=16 --layout=reverse --exit-0)
       if [ "${choice}" ]; then
         case "${choice}" in
           "h" | "H" | "help" | "Help")
@@ -1762,7 +1762,7 @@ options_menu() {
     }
     kc_options+=("Help" "Main Menu" "Quit (q)")
     if [ "${use_fzf}" ]; then
-      choice=$(printf "%s\n" "${kc_options[@]}" | fzf --prompt="😺 Set/Toggle Options  " --height=16 --layout=reverse --exit-0)
+      choice=$(printf "%s\n" "${kc_options[@]}" | fzf --prompt="😺 Set/Toggle Options  " --height=18 --layout=reverse --exit-0)
       if [ "${choice}" ]; then
         case "${choice}" in
           "h" | "H" | "help" | "Help")

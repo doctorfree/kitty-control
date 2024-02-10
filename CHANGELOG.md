@@ -9,6 +9,7 @@
 ### 🐞 Fixed
 
 - Fix selection of window for info if `fzf` not available
+- Adjust some `fzf` window heights
 
 ## v1.0.4r2
 
