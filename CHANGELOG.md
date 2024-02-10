@@ -8,6 +8,8 @@
 
 ### 🐞 Fixed
 
+- Fix selection of window for info if `fzf` not available
+
 ## v1.0.4r2
 
 ### ⚡️ Added

@@ -1256,13 +1256,16 @@ windows_menu() {
                    --arg tipost "$newline" \
                    '$idpre + (.id|tostring), $titpre + .title + $tipost')
 
-    win_array+=( "Main Menu" "Quit" )
+    win_array+=( "Help" "Main Menu" "Quit" )
     if [ "${use_fzf}" ]; then
       while true; do
         heading "Kitty Windows List" "Kitty Windows"
-        choice=$(printf "%s\n" "${win_array[@]}" | fzf --prompt="😺 Select Window   " --height=15 --layout=reverse --exit-0)
+        choice=$(printf "%s\n" "${win_array[@]}" | fzf --prompt="😺 Select Window   " --height=18 --layout=reverse --exit-0)
         if [ "${choice}" ]; then
           case "${choice}" in
+            "Help")
+              show_help
+              ;;
             "Main"*)
               break
               ;;
@@ -1298,7 +1301,7 @@ windows_menu() {
             exit 0
             ;;
           *,*)
-            show_window_info "${choice}"
+            show_window_info "${subopt}"
             break
             ;;
           esac
