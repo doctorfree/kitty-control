@@ -66,8 +66,8 @@ brief_usage() {
   printf "${BOLD}Usage: kitty-control [-a] [back <color>] [-c command] [dark] [-d]"
   printf "\n    [diff [opts] <path1> <path2>] [-e] [-f] [font [num]] [fore <color>]"
   printf "\n    [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]"
-  printf "\n    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list|ls] [man]"
-  printf "\n    [menu] [title <title>] [transparent [opacity]] [unicode] [upgrade]${NORM}"
+  printf "\n    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list|ls [self]]"
+  printf "\n    [man] [menu] [title <title>] [transparent [opacity]] [unicode] [upgrade]${NORM}"
   [ "$1" == "noexit" ] || {
     printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
       printf " displays an interactive menu system"
@@ -131,9 +131,9 @@ usage() {
   printf "\n           To remove all images currently displayed on the screen:"
   printf "\n               kitty-control icat --clear"
   printf "\n           See https://sw.kovidgoyal.net/kitty/kittens/icat/#options"
-  printf "\n    '${BOLD}list${NORM}' Displays full information on Kitty windows"
+  printf "\n    '${BOLD}list [self]${NORM}' Displays full information on Kitty windows"
   [ "${have_jq}" ] && {
-    printf "\n    '${BOLD}ls${NORM}' Displays the id, title, pid, and state of Kitty windows"
+    printf "\n    '${BOLD}ls [self]${NORM}' Displays the id, title, pid, and state of Kitty windows"
   }
   printf "\n    '${BOLD}load [subdir]${NORM}'"
     printf " Reloads the Kitty configuration in ~/.config/kitty/kitty.conf"
@@ -1235,6 +1235,19 @@ get-color-input() {
   echo "${color_return}"
 }
 
+list_tabs() {
+  printf -v newline %b "\n"
+  kitty @ ${SOCKET} ls ${OPTS} | jq -r '.[]?.tabs' | \
+          jq -r '.[]' | \
+          jq -r --color-output \
+                --arg idpre "ID: " \
+                --arg actpre "ACTIVE: " \
+                --arg pidpre "PID: " \
+                --arg titpre "TITLE: " \
+                --arg tipost "$newline" \
+                '$idpre + (.id|tostring), $actpre + (.is_active|tostring), $pidpre + (.pid|tostring), $titpre + .title + $tipost'
+}
+
 list_windows() {
   printf -v newline %b "\n"
   kitty @ ${SOCKET} ls ${OPTS} | jq -r '.[]?.tabs | .[]?.windows' | \
@@ -1246,6 +1259,25 @@ list_windows() {
                 --arg titpre "TITLE: " \
                 --arg tipost "$newline" \
                 '$idpre + (.id|tostring), $actpre + (.is_active|tostring), $pidpre + (.pid|tostring), $titpre + .title + $tipost'
+}
+
+show_tab_info() {
+  tab_id=$(echo "$1" | awk '{ print $2 }')
+  [ "${tab_id}" ] && {
+    [ "${debug}" ] && {
+      printf "\nSelected Tab ID: ${tab_id}\n"
+      printf "\nCommand: kitty @ ls | jq -r '.[]?.tabs | jq -r --arg tabid \"$tab_id\" '.[] | select((.id|tostring) == \$tabid)'\n"
+      prompt_continue
+    }
+    if [ "${tab_id}" == "__all__" ]; then
+      kitty @ ls | jq -r '.[]?.tabs' \
+                 | jq -r --color-output '.[]' | less
+    else
+      kitty @ ls | jq -r '.[]?.tabs' \
+                 | jq -r --color-output --arg tabid "$tab_id" '
+                     .[] | select((.id|tostring) == $tabid)' | less
+    fi
+  }
 }
 
 show_window_info() {
@@ -1265,6 +1297,88 @@ show_window_info() {
                      .[] | select((.id|tostring) == $winid)' | less
     fi
   }
+}
+
+tab_menu() {
+  if [ "${have_jq}" ]; then
+    tab_array=()
+    printf -v newline %b "\n"
+    while read id_title; do
+      [ "${id_title}" ] || continue
+      echo "${id_title}" | grep ID: >/dev/null && {
+        entry="${id_title}"
+      }
+      echo "${id_title}" | grep TITLE: >/dev/null && {
+        entry="${entry} ${id_title}"
+        tab_array+=( "${entry}" )
+      }
+    done < <(kitty @ ls | jq -r '.[]?.tabs' | jq -r '.[]' | \
+             jq -r --arg idpre "ID: " \
+                   --arg titpre "TITLE: " \
+                   --arg tipost "$newline" \
+                   '$idpre + (.id|tostring), $titpre + .title + $tipost')
+
+    tab_array+=( "All Tabs" "Help" "Main Menu" "Quit" )
+    if [ "${use_fzf}" ]; then
+      while true; do
+        heading "Kitty Tabs List" "Kitty Tabs"
+        choice=$(printf "%s\n" "${tab_array[@]}" | fzf --prompt="😺 Select Tab   " --height=18 --layout=reverse --exit-0)
+        if [ "${choice}" ]; then
+          case "${choice}" in
+            "Help")
+              show_help
+              ;;
+            "Main"*)
+              break
+              ;;
+            "Quit"*)
+              clear_screen
+              printf "\nExiting kitty-control\n"
+              exit 0
+              ;;
+            "All Tabs"*)
+              show_tab_info "ID: __all__"
+              ;;
+            *)
+              show_tab_info "${choice}"
+              ;;
+          esac
+        else
+          break
+        fi
+      done
+    else
+      while true; do
+        heading "Kitty Tabs List" "Kitty Tabs"
+        PS3="${BOLD}Select Tab (number, shortcut, or text, 'h' help): ${NORM}"
+        select subopt in "${tab_array[@]}"; do
+          case "$subopt,$REPLY" in
+          "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+            show_help
+            break
+            ;;
+          "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+            break 2
+            ;;
+          "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+            clear_screen
+            printf "\nExiting kitty-control\n"
+            exit 0
+            ;;
+          "All Tabs"*,* | *,"All Tabs"* | "all tabs"*,* | *,"all tabs"*)
+              show_tab_info "ID: __all__"
+              ;;
+          *,*)
+            show_tab_info "${subopt}"
+            break
+            ;;
+          esac
+        done
+      done
+    fi
+  else
+    kitty @ ${SOCKET} ls ${OPTS} | less
+  fi
 }
 
 windows_menu() {
@@ -2033,7 +2147,10 @@ select_with_fzf() {
         "Install Ranger")
           install_ranger
           ;;
-        "List"* | "list"* | "L")
+        "List Tab"* | "list tab"* | "K")
+          tab_menu
+          ;;
+        "List Win"* | "list win"* | "L")
           windows_menu
           ;;
         "Load"* | "load"* | "l")
@@ -2137,6 +2254,7 @@ show_menu() {
     [ "${have_figlet}" ] || options+=("Install Figlet")
     [ "${have_fzf}" ] || options+=("Install Fzf")
     [ "${have_ranger}" ] || options+=("Install Ranger")
+    options+=("List Tabs")
     options+=("List Windows")
     [ ${numconfs} -gt 1 ] && {
       options+=("Load Configuration")
@@ -2225,7 +2343,11 @@ show_menu() {
         install_ranger
         break
         ;;
-      "List"*,* | *,"List"* | "list"*,* | *,"list"* | "L",* | *,"L")
+      "List Tab"*,* | *,"List Tab"* | "list tab"*,* | *,"list tab"* | "K",* | *,"K")
+        tab_menu
+        break
+        ;;
+      "List Win"*,* | *,"List Win"* | "list win"*,* | *,"list win"* | "L",* | *,"L")
         windows_menu
         break
         ;;
@@ -2495,6 +2617,10 @@ while [[ $1 ]]; do
       fi
       ;;
     list|--list)
+      [ "$2" == "self" ] && {
+        OPTS="--self ${OPTS}"
+        shift
+      }
       if [ "${have_jq}" ]; then
         kitty @ ${SOCKET} ls ${OPTS} | jq --color-output '.[]'
       else
@@ -2503,6 +2629,10 @@ while [[ $1 ]]; do
       shift
       ;;
     ls|--ls)
+      [ "$2" == "self" ] && {
+        OPTS="--self ${OPTS}"
+        shift
+      }
       if [ "${have_jq}" ]; then
         list_windows
       else
