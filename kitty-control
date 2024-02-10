@@ -213,7 +213,6 @@ set_show_shortcuts() {
     shortcuts="bg/back c/clear d/dark F/full f/font fg/fore h/help i/info"
   fi
   addtlcuts="K/list tabs L/list windows l/load o/opts q/quit T/theme t/tran v/view"
-  [ "${have_jq}" ] && addtlcuts="${addtlcuts} w/windows"
   if [ "${have_rich}" ]; then
     rich "[b cyan]Shortcuts:[/] [b yellow]${shortcuts}[/]" -p
     rich "           [b yellow]${addtlcuts}[/]" -p
