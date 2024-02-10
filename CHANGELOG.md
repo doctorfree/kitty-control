@@ -11,6 +11,8 @@
 ### 🐞 Fixed
 
 - Scale background image
+- Improve `fzf` prompts
+- Do not enter usage menu after display of examples
 
 ## v1.0.4r3
 

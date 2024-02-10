@@ -55,7 +55,7 @@ export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
   --color=border:#5b5bab,label:#aeaeae,query:#d9d9d9
   --border="rounded" --border-label=""
   --preview-window="border-rounded"
-  --prompt="😺 Select option  "
+  --prompt="😺 Select option ("Esc" to return)  "
   --marker=">" --pointer="◆" --separator="─" --scrollbar="│"
   --layout="reverse"'
 # Use tput to get the bold and normal text sequence
@@ -79,7 +79,16 @@ brief_usage() {
 }
 
 show_examples() {
-  printf "\nExample invocations of kitty-control\n"
+  clear_screen
+  if [ "${have_rich}" ]; then
+    rich "[cyan]Kitty Control Examples[/cyan]" -p -a rounded -c -C
+  else
+    if [ "${use_figlet}" ]; then
+      show_figlet "Examples"
+    else
+      printf "\nExample invocations of kitty-control\n"
+    fi
+  fi
   printf "\nTo set a transparent Kitty background with 0.9 opacity:"
   printf "\n\t${BOLD}kitty-control transparent 0.9${NORM}"
   printf "\nTo set the Kitty background to fully opaque (no transparency):"
@@ -1007,9 +1016,7 @@ show_figlet() {
 }
 
 show_usage() {
-  use_type="$1"
   figlet_text="Usage"
-  [ "${use_type}" == "examples" ] && figlet_text="Examples"
   while true; do
     clear_screen
     if [ "${use_figlet}" ]; then
@@ -1017,16 +1024,11 @@ show_usage() {
     else
       [ "${have_rich}" ] && rich "[cyan]${figlet_text}[/cyan]" -p -a rounded -c -C
     fi
-    printf "\n"
-    if [ "${use_type}" == "examples" ]; then
-      show_examples noexit | less
-    else
-      brief_usage noexit
-    fi
+    brief_usage noexit
     show_versions
     options=("Examples" "Full Usage" "Main Menu" "Quit (q)")
     if [ "${use_fzf}" ]; then
-      choice=$(printf "%s\n" "${options[@]}" | fzf --prompt="😺 Select option  " --height=8 --layout=reverse --exit-0)
+      choice=$(printf "%s\n" "${options[@]}" | fzf --prompt="😺 Select option ('Esc' or 'Main Menu' to return)  " --height=8 --layout=reverse --exit-0)
       if [ "${choice}" ]; then
         case "${choice}" in
           Example*)
@@ -1321,7 +1323,7 @@ tab_menu() {
     if [ "${use_fzf}" ]; then
       while true; do
         heading "Kitty Tabs List" "Kitty Tabs"
-        choice=$(printf "%s\n" "${tab_array[@]}" | fzf --prompt="😺 Select Tab   " --height=18 --layout=reverse --exit-0)
+        choice=$(printf "%s\n" "${tab_array[@]}" | fzf --prompt="😺 Select Tab ('Esc' or 'Main Menu' to return)   " --height=18 --layout=reverse --exit-0)
         if [ "${choice}" ]; then
           case "${choice}" in
             "Help")
@@ -1403,7 +1405,7 @@ windows_menu() {
     if [ "${use_fzf}" ]; then
       while true; do
         heading "Kitty Windows List" "Kitty Windows"
-        choice=$(printf "%s\n" "${win_array[@]}" | fzf --prompt="😺 Select Window   " --height=18 --layout=reverse --exit-0)
+        choice=$(printf "%s\n" "${win_array[@]}" | fzf --prompt="😺 Select Window ('Esc' or 'Main Menu' to return)   " --height=18 --layout=reverse --exit-0)
         if [ "${choice}" ]; then
           case "${choice}" in
             "Help")
@@ -1504,7 +1506,7 @@ menu_background_color() {
   bgopts+=( "main menu" "quit" )
   if [ "${use_fzf}" ]; then
     heading "Background Color" "Background"
-    choice=$(printf "%s\n" "${bgopts[@]}" | fzf --prompt="😺 Select Background Color  " --height=18 --layout=reverse --exit-0)
+    choice=$(printf "%s\n" "${bgopts[@]}" | fzf --prompt="😺 Select Background Color ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
         "custom"*)
@@ -1574,7 +1576,7 @@ menu_foreground_color() {
   fgopts+=( "main menu" "quit" )
   if [ "${use_fzf}" ]; then
     heading "Foreground Color" "Foreground"
-    choice=$(printf "%s\n" "${fgopts[@]}" | fzf --prompt="😺 Select Foreground Color  " --height=18 --layout=reverse --exit-0)
+    choice=$(printf "%s\n" "${fgopts[@]}" | fzf --prompt="😺 Select Foreground Color ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
         "custom"*)
@@ -1678,7 +1680,7 @@ menu_font_size() {
   fnopts+=( "main menu" "quit" )
   if [ "${use_fzf}" ]; then
     heading "Font Size" "Font Size"
-    choice=$(printf "%s\n" "${fnopts[@]}" | fzf --prompt="😺 Select Font Size Adjustment  " --height=18 --layout=reverse --exit-0)
+    choice=$(printf "%s\n" "${fnopts[@]}" | fzf --prompt="😺 Select Font Size Adjustment ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
         "main"*)
@@ -1737,7 +1739,7 @@ menu_load_config() {
   if [ "${use_fzf}" ]; then
     while true; do
       heading "Kitty Configuration" "Configuration"
-      choice=$(printf "%s\n" "${cfopts[@]}" | fzf --prompt="😺 Select Kitty Configuration  " --height=16 --layout=reverse --exit-0)
+      choice=$(printf "%s\n" "${cfopts[@]}" | fzf --prompt="😺 Select Kitty Configuration ('Esc' or 'Main Menu' to return)  " --height=16 --layout=reverse --exit-0)
       if [ "${choice}" ]; then
         case "${choice}" in
           "h" | "H" | "help" | "Help")
@@ -1805,7 +1807,7 @@ menu_set_trans() {
   tropts+=( "main menu" "quit" )
   if [ "${use_fzf}" ]; then
     heading "Transparency Opacity" "Transparency"
-    choice=$(printf "%s\n" "${tropts[@]}" | fzf --prompt="😺 Select Transparency Opacity  " --height=18 --layout=reverse --exit-0)
+    choice=$(printf "%s\n" "${tropts[@]}" | fzf --prompt="😺 Select Transparency Opacity ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
         "default"*)
@@ -1911,7 +1913,7 @@ options_menu() {
     }
     kc_options+=("Help" "Main Menu" "Quit (q)")
     if [ "${use_fzf}" ]; then
-      choice=$(printf "%s\n" "${kc_options[@]}" | fzf --prompt="😺 Set/Toggle Options  " --height=18 --layout=reverse --exit-0)
+      choice=$(printf "%s\n" "${kc_options[@]}" | fzf --prompt="😺 Set/Toggle Options ('Esc' or 'Main Menu' to return)  " --height=18 --layout=reverse --exit-0)
       if [ "${choice}" ]; then
         case "${choice}" in
           "h" | "H" | "help" | "Help")
@@ -2132,7 +2134,7 @@ select_with_fzf() {
           menu_diff_folder
           ;;
         "Exam"* | "exam"*)
-          show_usage examples
+          show_examples noexit | less
           ;;
         "Font"* | "font"* | "f")
           menu_font_size
@@ -2319,7 +2321,7 @@ show_menu() {
         break
         ;;
       "Exam"*,* | *,"Exam"* | "exam"*,* | *,"exam"*)
-        show_usage examples
+        show_examples noexit | less
         break
         ;;
       "Font"*,* | *,"Font"* | "font"*,* | *,"font"* | "f",* | *,"f")
