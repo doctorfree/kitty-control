@@ -4,7 +4,15 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.4r3
+
+### ⚡️ Added
+
 - If `jq` available present menu of `kitty` windows, select window for info
+- Add `All Windows` to window info menu
+- Use color output for window info list if `jq` available
 
 ### 🐞 Fixed
 

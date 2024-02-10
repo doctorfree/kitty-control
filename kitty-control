@@ -9,7 +9,7 @@
 # Written Feb 1, 2024 by Ronald Joe Record <ronaldrecord@gmail.com>
 #
 VERSION=1.0.4
-RELEASE=2
+RELEASE=3
 # The Kitty configuration directory
 CONFDIR="${HOME}/.config/kitty"
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
@@ -1215,7 +1215,8 @@ list_windows() {
   printf -v newline %b "\n"
   kitty @ ${SOCKET} ls ${OPTS} | jq -r '.[]?.tabs | .[]?.windows' | \
           jq -r '.[]' | \
-          jq -r --arg idpre "ID: " \
+          jq -r --color-output \
+                --arg idpre "ID: " \
                 --arg actpre "ACTIVE: " \
                 --arg pidpre "PID: " \
                 --arg titpre "TITLE: " \
@@ -1231,9 +1232,14 @@ show_window_info() {
       printf "\nCommand: kitty @ ls | jq -r '.[]?.tabs | .[]?.windows' | jq -r --arg winid \"$window_id\" '.[] | select((.id|tostring) == \$winid)'\n"
       prompt_continue
     }
-    kitty @ ls | jq -r '.[]?.tabs | .[]?.windows' \
-               | jq -r --arg winid "$window_id" '
-                   .[] | select((.id|tostring) == $winid)' | less
+    if [ "${window_id}" == "__all__" ]; then
+      kitty @ ls | jq -r '.[]?.tabs | .[]?.windows' \
+                 | jq -r --color-output '.[]' | less
+    else
+      kitty @ ls | jq -r '.[]?.tabs | .[]?.windows' \
+                 | jq -r --color-output --arg winid "$window_id" '
+                     .[] | select((.id|tostring) == $winid)' | less
+    fi
   }
 }
 
@@ -1256,7 +1262,7 @@ windows_menu() {
                    --arg tipost "$newline" \
                    '$idpre + (.id|tostring), $titpre + .title + $tipost')
 
-    win_array+=( "Help" "Main Menu" "Quit" )
+    win_array+=( "All Windows" "Help" "Main Menu" "Quit" )
     if [ "${use_fzf}" ]; then
       while true; do
         heading "Kitty Windows List" "Kitty Windows"
@@ -1273,6 +1279,9 @@ windows_menu() {
               clear_screen
               printf "\nExiting kitty-control\n"
               exit 0
+              ;;
+            "All Windows"*)
+              show_window_info "ID: __all__"
               ;;
             *)
               show_window_info "${choice}"
@@ -1300,6 +1309,9 @@ windows_menu() {
             printf "\nExiting kitty-control\n"
             exit 0
             ;;
+          "All Windows"*,* | *,"All Windows"* | "all windows"*,* | *,"all windows"*)
+              show_window_info "ID: __all__"
+              ;;
           *,*)
             show_window_info "${subopt}"
             break
@@ -2459,7 +2471,11 @@ while [[ $1 ]]; do
       fi
       ;;
     list|--list)
-      kitty @ ${SOCKET} ls ${OPTS}
+      if [ "${have_jq}" ]; then
+        kitty @ ${SOCKET} ls ${OPTS} | jq --color-output '.[]'
+      else
+        kitty @ ${SOCKET} ls ${OPTS}
+      fi
       shift
       ;;
     ls|--ls)
