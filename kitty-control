@@ -208,11 +208,11 @@ prompt_continue() {
 
 set_show_shortcuts() {
   if [ "${have_fzf}" ]; then
-    shortcuts="bg/back c/clear d/dark F/full f/font fg/fore fzf/fuzzy h/help"
+    shortcuts="bg/back c/clear d/dark F/full f/font fg/fore fzf/fuzzy h/help i/info"
   else
-    shortcuts="bg/back c/clear d/dark F/full f/font fg/fore h/help"
+    shortcuts="bg/back c/clear d/dark F/full f/font fg/fore h/help i/info"
   fi
-  addtlcuts="i/info L/list l/load o/opts q/quit T/theme t/tran v/view"
+  addtlcuts="K/list tabs L/list windows l/load o/opts q/quit T/theme t/tran v/view"
   [ "${have_jq}" ] && addtlcuts="${addtlcuts} w/windows"
   if [ "${have_rich}" ]; then
     rich "[b cyan]Shortcuts:[/] [b yellow]${shortcuts}[/]" -p
