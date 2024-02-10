@@ -4,6 +4,8 @@
 
 ### ⚡️ Added
 
+- If `jq` available present menu of `kitty` windows, select window for info
+
 ### 🐞 Fixed
 
 ## v1.0.4r2
