@@ -4,6 +4,12 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.5r1
+
+### ⚡️ Added
+
 - Add menu option to list `kitty` tabs as well as windows
 - Colorize man page display with `tput` and `LESS_TERMCAP_*` settings
 - Add section on menu system to `README` and man page
