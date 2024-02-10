@@ -10,7 +10,8 @@ Control some aspects of the Kitty terminal emulator from the command line
 - [Requirements](#requirements)
 - [Install](#install)
 - [Usage](#usage)
-- [Screenshot](#screenshot)
+  - [Menus](#menus)
+- [Screenshots](#screenshots)
 - [Environment](#environment)
 - [Examples](#examples)
     - [Example Kitty Configuration](#example-kitty-configuration)
@@ -92,7 +93,7 @@ rm -f /tmp/ins$$
 
 ### Tools
 
-The `kitty-control` menu system uses `ranger` and `figlet` if installed.
+The `kitty-control` menu system uses `fzf`, `ranger` and `figlet` if installed.
 
 Neither the [Ranger file manager](https://github.com/ranger/ranger) nor
 the [FIGlet font text display](http://www.figlet.org) programs are
@@ -147,8 +148,8 @@ To display a usage message use `kitty-control -u`. To see several examples,
 Usage: kitty-control [-a] [back <color>] [-c command] [dark] [-d]
     [diff [opts] <path1> <path2>] [-e] [-f] [font [num]] [fore <color>]
     [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]
-    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list|ls] [man]
-    [menu] [title <title>] [transparent [opacity]] [unicode] [upgrade]
+    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list|ls [self]]
+    [man] [menu] [title <title>] [transparent [opacity]] [unicode] [upgrade]
 Where:
     'back color' Sets the background color to 'color'
            If 'color' is 'reset' restores foreground and background to startup value
@@ -170,8 +171,8 @@ Where:
            To remove all images currently displayed on the screen:
                kitty-control icat --clear
            See https://sw.kovidgoyal.net/kitty/kittens/icat/#options
-    'list' Displays full information on Kitty windows
-    'ls' Displays the id, title, pid, and state of Kitty windows
+    'list [self]' Displays full information on Kitty windows
+    'ls [self]' Displays the id, title, pid, and state of Kitty windows
     'load [subdir]' Reloads the Kitty configuration in ~/.config/kitty/kitty.conf
            Can use 'load' or 'reload'
            Specify a second argument to load ~/.config/kitty/<subdir>/kitty.conf
@@ -253,7 +254,44 @@ Either form can be used:
 |                 |                 |    |  `tran`     |  `--tran`       |
 |                 |                 |    |  `unicode`  |  `--unicode`    |
 
-## Screenshot
+### Menus
+
+The `kitty-control` interactive menu system can be displayed with the command
+`kitty-control menu` or by invoking `kitty-control` without arguments. The
+main `kitty-control` menu can be used to perform many tasks including:
+
+Set the background color, display examples, display the manual page, set the
+window opacity, set the background image, set the font size, set options,
+open the unicode input kitten, clear the background image, set the foreground
+color, show usage and version, select and view an image, list tabs or windows,
+select a `kitty` theme, diff files or directories, list windows, show terminal
+info, load an alternate `kitty` configuration, toggle fullscreen, and more.
+
+Shortcuts exist to quickly select a menu option:
+
+```
+bg/back c/clear d/dark F/full f/font fg/fore fzf/fuzzy h/help i/info
+K/list tabs L/list windows l/load o/opts q/quit T/theme t/tran v/view w/windows
+```
+
+Enter a menu option number or shortcut to select an option.
+
+In the fuzzy selection dialogs, enter a few letters to fuzzy select from the options
+or use the *Up-Arrow* and *Down-Arrow* keys to move through the options.
+Press *Enter* to select the highlighted option.
+
+Some of the main menu options bring up a submenu from which to further select.
+For example, to view detailed information on a `kitty` window, select `L` or
+`List Windows` from the main menu. This brings up a submenu that lists the
+`kitty` windows along with a fuzzy selection dialog using `fzf`. Select a
+window and detailed information on that window will be displayed. A similar
+menu option exists to select a `kitty` tab for information display.
+
+Note that the `kitty` window and tab information display via the menu interface
+requires the `jq` JSON parsing utility. Without `jq` all window and tab info
+is displayed.
+
+## Screenshots
 
 The main `kitty-control` interactive menu provides dynamically generated
 menu entries. For example, if either `kitty` or `kitty-control` have an

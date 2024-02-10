@@ -19,7 +19,7 @@ support for automation and provides an additional layer of convenience.
 In particular, scripted *kitty* actions enables quick and easy switching between
 preconfigured *kitty* configuration files without losing state or having to quit
 *kitty* and restart with another configuration. This is accomplished through the
-use of the ***read_config.py*** custom *kitten* included with *kitty-control*
+use of the **read_config.py** custom *kitten* included with *kitty-control*
 
 # COMMAND LINE OPTIONS
 **-u**
@@ -73,7 +73,7 @@ use of the ***read_config.py*** custom *kitten* included with *kitty-control*
 : Displays the kitty-control interactive menu system
 
 **term**
-: Displays information about the terminal using the query_terminal kitten
+: Displays information about the terminal using the *query_terminal* kitten
 
 **theme**
 : Displays the interactive theme selection kitten
@@ -152,26 +152,61 @@ that was used for this instance of Kitty to have enabled the following:
 
 See ***https://sw.kovidgoyal.net/kitty/remote-control/#control-kitty-from-scripts***
 
+# MENU SYSTEM
+The *kitty-control* interactive menu system can be displayed with the command
+***kitty-control menu*** or by invoking ***kitty-control*** without arguments. The
+main *kitty-control* menu can be used to perform many tasks including:
+
+Set the background color, display examples, display the manual page, set the
+window opacity, set the background image, set the font size, set options,
+open the unicode input kitten, clear the background image, set the foreground
+color, show usage and version, select and view an image, list tabs or windows,
+select a *kitty* theme, diff files or directories, list windows, show terminal
+info, load an alternate *kitty* configuration, toggle fullscreen, and more.
+
+Shortcuts exist to quickly select a menu option:
+
+**bg**/*back* **c**/*clear* **d**/*dark* **F**/*full* **f**/*font* **fg**/*fore*
+**fzf**/*fuzzy* **h**/*help* **i**/*info* **K**/*list tabs* **L**/*list windows*
+**l**/*load* **o**/*opts* **q**/*quit* **T**/*theme* **t**/*tran* **v**/*view* **w**/*windows*
+
+Enter a menu option number or shortcut to select an option.
+
+In the fuzzy selection dialogs, enter a few letters to fuzzy select from the options
+or use the *Up-Arrow* and *Down-Arrow* keys to move through the options.
+Press *Enter* to select the highlighted option.
+
+Some of the main menu options bring up a submenu from which to further select.
+For example, to view detailed information on a *kitty* window, select ***L*** or
+***List Windows*** from the main menu. This brings up a submenu that lists the
+*kitty* windows along with a fuzzy selection dialog using *fzf*. Select a
+window and detailed information on that window will be displayed. A similar
+menu option exists to select a *kitty* tab for information display.
+
+Note that the *kitty* window and tab information display via the menu interface
+requires the *jq* JSON parsing utility. Without *jq* all window and tab info
+is displayed.
+
 # ENVIRONMENT
 Environment variables can be used to influence *kitty* behavior. See
 ***https://sw.kovidgoyal.net/kitty/glossary/#environment-variables*** for
 details on environment variables *kitty* uses. The *kitty-control*
-command behavior depends on the ***KITTY_LISTEN_ON*** and
-***KITTY_CONFIG_DIRECTORY*** environment variables.
+command behavior depends on the **KITTY_LISTEN_ON** and
+**KITTY_CONFIG_DIRECTORY** environment variables.
 
-***KITTY_LISTEN_ON*** is set automatically by *kitty* and specifies the
+**KITTY_LISTEN_ON** is set automatically by *kitty* and specifies the
 path to the socket *kitty* is listening on if one is configured.
 
-***KITTY_CONFIG_DIRECTORY*** can be set by the user to specify the directory
+**KITTY_CONFIG_DIRECTORY** can be set by the user to specify the directory
 *kitty* and *kitty-control* search for configuration files and kittens.
-Setting ***KITTY_CONFIG_DIRECTORY*** instructs *kitty* and *kitty-control*
+Setting **KITTY_CONFIG_DIRECTORY** instructs *kitty* and *kitty-control*
 to ignore files in *~/.config/kitty*.
 
 For example, if *kitty* was started with the command:
 
 ***kitty --override allow_remote_control=yes --listen-on unix:/tmp/mykitty***
 
-then ***KITTY_LISTEN_ON*** would be set to *unix:/tmp/mykitty* and *kitty-control*
+then **KITTY_LISTEN_ON** would be set to *unix:/tmp/mykitty* and *kitty-control*
 would use that socket to communicate with *kitty*. The socket that
 *kitty-control* uses can be overridden with the *-s /path/to/socket* command
 line arguments. This can be used to tell *kitty-control* to communicate with
