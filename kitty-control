@@ -1223,6 +1223,96 @@ list_windows() {
                 '$idpre + (.id|tostring), $actpre + (.is_active|tostring), $pidpre + (.pid|tostring), $titpre + .title + $tipost'
 }
 
+show_window_info() {
+  window_id=$(echo "$1" | awk '{ print $2 }')
+  [ "${window_id}" ] && {
+    [ "${debug}" ] && {
+      printf "\nSelected Window ID: ${window_id}\n"
+      printf "\nCommand: kitty @ ls | jq -r '.[]?.tabs | .[]?.windows' | jq -r --arg winid \"$window_id\" '.[] | select((.id|tostring) == \$winid)'\n"
+      prompt_continue
+    }
+    kitty @ ls | jq -r '.[]?.tabs | .[]?.windows' \
+               | jq -r --arg winid "$window_id" '
+                   .[] | select((.id|tostring) == $winid)' | less
+  }
+}
+
+windows_menu() {
+  if [ "${have_jq}" ]; then
+    win_array=()
+    printf -v newline %b "\n"
+    while read id_title; do
+      [ "${id_title}" ] || continue
+      echo "${id_title}" | grep ID: >/dev/null && {
+        entry="${id_title}"
+      }
+      echo "${id_title}" | grep TITLE: >/dev/null && {
+        entry="${entry} ${id_title}"
+        win_array+=( "${entry}" )
+      }
+    done < <(kitty @ ls | jq -r '.[]?.tabs | .[]?.windows' | jq -r '.[]' | \
+             jq -r --arg idpre "ID: " \
+                   --arg titpre "TITLE: " \
+                   --arg tipost "$newline" \
+                   '$idpre + (.id|tostring), $titpre + .title + $tipost')
+
+    win_array+=( "Help" "Main Menu" "Quit" )
+    if [ "${use_fzf}" ]; then
+      while true; do
+        heading "Kitty Windows List" "Kitty Windows"
+        choice=$(printf "%s\n" "${win_array[@]}" | fzf --prompt="😺 Select Window   " --height=18 --layout=reverse --exit-0)
+        if [ "${choice}" ]; then
+          case "${choice}" in
+            "Help")
+              show_help
+              ;;
+            "Main"*)
+              break
+              ;;
+            "Quit"*)
+              clear_screen
+              printf "\nExiting kitty-control\n"
+              exit 0
+              ;;
+            *)
+              show_window_info "${choice}"
+              ;;
+          esac
+        else
+          break
+        fi
+      done
+    else
+      while true; do
+        heading "Kitty Windows List" "Kitty Windows"
+        PS3="${BOLD}Select Window (number, shortcut, or text, 'h' help): ${NORM}"
+        select subopt in "${win_array[@]}"; do
+          case "$subopt,$REPLY" in
+          "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+            show_help
+            break
+            ;;
+          "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+            break 2
+            ;;
+          "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+            clear_screen
+            printf "\nExiting kitty-control\n"
+            exit 0
+            ;;
+          *,*)
+            show_window_info "${subopt}"
+            break
+            ;;
+          esac
+        done
+      done
+    fi
+  else
+    kitty @ ${SOCKET} ls ${OPTS} | less
+  fi
+}
+
 try_background() {
   color_choice="$1"
   forepre=$(kitty @ get-colors | grep "^foreground" | awk '{ print $2 }')
@@ -1435,11 +1525,11 @@ menu_diff_folder() {
 }
 
 menu_font_size() {
-  foopts=( "${fontsizes[@]}" )
-  foopts+=( "main menu" "quit" )
+  fnopts=( "${fontsizes[@]}" )
+  fnopts+=( "main menu" "quit" )
   if [ "${use_fzf}" ]; then
     heading "Font Size" "Font Size"
-    choice=$(printf "%s\n" "${foopts[@]}" | fzf --prompt="😺 Select Font Size Adjustment  " --height=18 --layout=reverse --exit-0)
+    choice=$(printf "%s\n" "${fnopts[@]}" | fzf --prompt="😺 Select Font Size Adjustment  " --height=18 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
         "main"*)
@@ -1464,7 +1554,7 @@ menu_font_size() {
     while true; do
       heading "Font Size" "Font Size"
       PS3="${BOLD}Select Font Size Adjustment (number, shortcut, or text, 'h' help): ${NORM}"
-      select subopt in "${foopts[@]}"; do
+      select subopt in "${fnopts[@]}"; do
         case "$subopt,$REPLY" in
         "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
           show_help
@@ -1907,11 +1997,8 @@ select_with_fzf() {
         "Install Ranger")
           install_ranger
           ;;
-        "List"*"Full"* | "list"*"full"* | "L")
-          kitty @ ${SOCKET} ls ${OPTS} | less
-          ;;
-        "List"*"Short"* | "list"*"short"* | "w")
-          list_windows | less
+        "List"* | "list"* | "L")
+          windows_menu
           ;;
         "Load"* | "load"* | "l")
           numconfs=1
@@ -2014,8 +2101,7 @@ show_menu() {
     [ "${have_figlet}" ] || options+=("Install Figlet")
     [ "${have_fzf}" ] || options+=("Install Fzf")
     [ "${have_ranger}" ] || options+=("Install Ranger")
-    options+=("List Windows (Full)")
-    [ "${have_jq}" ] && options+=("List Windows (Short)")
+    options+=("List Windows")
     [ ${numconfs} -gt 1 ] && {
       options+=("Load Configuration")
     }
@@ -2103,12 +2189,8 @@ show_menu() {
         install_ranger
         break
         ;;
-      "List"*"Full"*,* | *,"List"*"Full"* | "list"*"full"*,* | *,"list"*"full"* | "L",* | *,"L")
-        kitty @ ${SOCKET} ls ${OPTS} | less
-        break
-        ;;
-      "List"*"Short"*,* | *,"List"*"Short"* | "list"*"short"*,* | *,"list"*"short"* | "w",* | *,"w")
-        list_windows | less
+      "List"*,* | *,"List"* | "list"*,* | *,"list"* | "L",* | *,"L")
+        windows_menu
         break
         ;;
       "Load"*,* | *,"Load"* | "load"*,* | *,"load"* | "l",* | *,"l")

@@ -4,7 +4,11 @@
 
 ### ⚡️ Added
 
+- If `jq` available present menu of `kitty` windows, select window for info
+
 ### 🐞 Fixed
+
+- Fix selection of window for info if `fzf` not available
 
 ## v1.0.4r2
 
