@@ -10,7 +10,7 @@ The `kitty-control` installation requires [git](https://github.com/git-guides/in
 
 Some functionality requires [curl](https://curl.se).
 
-An abbreviated `kitty` window listing is enabled if the [jq JSON parser](https://jqlang.github.io/jq) is installed.
+Additional `kitty` window info listing features are enabled if the [jq JSON parser](https://jqlang.github.io/jq) is installed.
 
 ## Installation
 

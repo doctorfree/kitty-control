@@ -55,7 +55,7 @@ The `bash` shell is required to install and run `kitty-control`.
 
 Some functionality requires [curl](https://curl.se).
 
-An abbreviated `kitty` window listing is enabled if the
+Additional `kitty` window info listing features are enabled if the
 [jq JSON parser](https://jqlang.github.io/jq) is installed.
 
 `kitty-control` can be installed on `Linux` and `macOS` platforms.
@@ -353,13 +353,13 @@ kitty-control diff /path/to/file1 /path/to/file2
 #### To set the tab title of the tab currently titled '~/src/borg' to 'Borg Backup'
 
 ```bash
-`kitty-control -m "title:borg" title "Borg Backup"
+kitty-control -m "title:borg" title "Borg Backup"
 ```
 
 #### To restore the original Kitty configuration
 
 ```bash
-`kitty-control load default  # Or just 'kitty-control load'
+kitty-control load default  # Or just 'kitty-control load'
 ```
 
 ### Example Kitty Configuration
