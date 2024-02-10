@@ -4,7 +4,11 @@
 
 ### ⚡️ Added
 
+- Colorize man page display with `tput` and `LESS_TERMCAP_*` settings
+
 ### 🐞 Fixed
+
+- Scale background image
 
 ## v1.0.4r3
 

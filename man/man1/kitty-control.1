@@ -33,59 +33,62 @@ path1 path2] [\f[B]-e\f[R]] [\f[B]-f\f[R]] [\f[B]font\f[R] [num]]
 [opacity]] [\f[B]unicode\f[R]] [\f[B]upgrade\f[R]]
 .SH DESCRIPTION
 .PP
-\f[B]kitty-control\f[R] acts as a wrapper for the \f[V]Kitty\f[R]
-terminal emulator remote control facility and \f[V]kittens\f[R].
-Scripting some \f[V]kitty\f[R] customization enables support for
+\f[B]kitty-control\f[R] acts as a wrapper for the \f[I]Kitty\f[R]
+terminal emulator remote control facility and \f[I]kittens\f[R]
+Scripting some \f[I]kitty\f[R] customization enables support for
 automation and provides an additional layer of convenience.
 .PP
-In particular, scripted \f[V]kitty\f[R] actions enables quick and easy
-switching between preconfigured \f[V]kitty\f[R] configuration files
-without losing state or having to quit \f[V]kitty\f[R] and restart with
+In particular, scripted \f[I]kitty\f[R] actions enables quick and easy
+switching between preconfigured \f[I]kitty\f[R] configuration files
+without losing state or having to quit \f[I]kitty\f[R] and restart with
 another configuration.
-This is accomplished through the use of the \f[V]read_config.py\f[R]
-custom \f[V]kitten\f[R] included with \f[V]kitty-control\f[R].
+This is accomplished through the use of the
+\f[I]\f[BI]read_config.py\f[I]\f[R] custom \f[I]kitten\f[R] included
+with \f[I]kitty-control\f[R]
 .SH COMMAND LINE OPTIONS
 .TP
 \f[B]-u\f[R]
 display usage message
 .TP
 \f[B]back color\f[R]
-Sets the background color to \f[V]color\f[R].
-If \f[V]color\f[R] is \f[V]reset\f[R] restores foreground and background
-to startup value
+Sets the background color to \f[I]color\f[R] If \f[I]color\f[R] is
+\f[I]reset\f[R] restores foreground and background to startup value
 .TP
 \f[B]dark\f[R]
 Sets the Kitty background opacity to 1.0 (fully opaque).
-Can use \f[V]dark\f[R] or \f[V]opaque\f[R]
+Can use \f[B]dark\f[R] or \f[B]opaque\f[R]
 .TP
 \f[B]diff [opts] \[aq]file1|dir1\[aq] \[aq]file2|dir2\[aq]\f[R]
-Displays differences using the \f[V]diff\f[R] kitten.
-Enclose [opts] and \f[V]file1/dir1\f[R] in quotes if [opts] are
+Displays differences using the \f[I]diff\f[R] kitten.
+Enclose [opts] and \f[I]file1/dir1\f[R] in quotes if [opts] are
 provided.
-See <https://sw.kovidgoyal.net/kitty/kittens/diff/#options>
+See
+\f[I]\f[BI]<https://sw.kovidgoyal.net/kitty/kittens/diff/#options>\f[I]\f[R]
 .TP
 \f[B]font num\f[R]
-Sets the font pointsize to \f[V]num\f[R].
-Can use \f[V]font\f[R], \f[V]fontsize\f[R], \f[V]fontminus\f[R], or
-\f[V]fontplus\f[R].
+Sets the font pointsize to \f[I]num\f[R].
+Can use \f[B]font\f[R], \f[B]fontsize\f[R], \f[B]fontminus\f[R], or
+\f[B]fontplus\f[R].
 The second argument specifies the font size, either absolute, +, or -
 e.g.
-\f[V]kitty-control fontsize 24\f[R] would set the font size to 24
-points, \f[V]kitty-control font +2\f[R] would increase the font size by
-2 points, \f[V]kitty-control font\f[R] without argument resets the font
-size to default.
+\f[I]\f[BI]kitty-control font 24\f[I]\f[R] would set the font size to 24
+points, \f[I]\f[BI]kitty-control font +2\f[I]\f[R] would increase the
+font size by 2 points, \f[I]\f[BI]kitty-control font\f[I]\f[R] without
+argument resets the font size to default.
 .TP
 \f[B]fore color\f[R]
-Sets the foreground color to \f[V]color\f[R].
-If \f[V]color\f[R] is \f[V]reset\f[R] restores foreground and background
+Sets the foreground color to \f[I]color\f[R].
+If \f[I]color\f[R] is \f[I]reset\f[R] restores foreground and background
 to startup value
 .TP
 \f[B]icat [opts] \[aq]image\[aq]\f[R]
-Displays \f[V]image\f[R] using the Kitty \f[V]icat\f[R] kitten.
-Enclose [opts] and \f[V]image\f[R] in quotes if [opts] are provided.
+Displays \f[I]image\f[R] using the Kitty \f[I]icat\f[R] kitten.
+Enclose \f[I][opts]\f[R] and \f[I]image\f[R] in quotes if
+\f[I][opts]\f[R] are provided.
 To remove all images currently displayed on the screen: kitty-control
 icat --clear.
-See <https://sw.kovidgoyal.net/kitty/kittens/icat/#options>
+See
+\f[I]\f[BI]<https://sw.kovidgoyal.net/kitty/kittens/icat/#options>\f[I]\f[R]
 .TP
 \f[B]list\f[R]
 Displays full information on Kitty windows.
@@ -95,16 +98,15 @@ Displays abbreviated information on Kitty windows.
 .TP
 \f[B]load [subdir]\f[R]
 Reloads the Kitty configuration in
-\f[V]\[ti]/.config/kitty/kitty.conf\f[R].
-Can use \f[V]load\f[R] or \f[V]reload\f[R].
+\f[I]\[ti]/.config/kitty/kitty.conf\f[R].
+Can use \f[B]load\f[R] or \f[B]reload\f[R].
 Specify a second argument to load
-\f[V]\[ti]/.config/kitty/\f[R]subdir\f[V]/kitty.conf\f[R], e.g.
-\f[V]kitty-control load tv\f[R] would load
-\f[V]\[ti]/.config/kitty/tv/kitty.conf\f[R],
-\f[V]kitty-control load default\f[R] loads the
-\f[V]\[ti]/.config/kitty/kitty.conf config\f[R],
-\f[V]kitty-control load --help\f[R] displays a help message for the load
-command.
+\f[I]\[ti]/.config/kitty/[subdir]/kitty.conf\f[R], e.g.
+\f[I]\f[BI]kitty-control load tv\f[I]\f[R] would load
+\f[I]\[ti]/.config/kitty/tv/kitty.conf\f[R], \f[I]\f[BI]kitty-control
+load default\f[I]\f[R] loads the \f[I]\[ti]/.config/kitty/kitty.conf
+config\f[R], \f[I]\f[BI]kitty-control load --help\f[I]\f[R] displays a
+help message for the load command.
 .TP
 \f[B]man\f[R]
 Displays the kitty-control manual
@@ -119,21 +121,21 @@ Displays information about the terminal using the query_terminal kitten
 Displays the interactive theme selection kitten
 .TP
 \f[B]title \[aq]tab title\[aq]\f[R]
-Sets the Kitty tab title to \[dq]tab title\[dq].
+Sets the Kitty tab title to \f[I]tab title\f[R].
 Quote tab titles which contain spaces, e.g.
 \[dq]This Is My Tab Title\[dq].
-Use \f[V]-m match\f[R] to specify the tab to match.
+Use \f[B]-m match\f[R] to specify the tab to match.
 .TP
 \f[B]tools\f[R]
-Installs \f[V]figlet\f[R] and \f[V]ranger\f[R] if not already present
+Installs \f[I]figlet\f[R] and \f[I]ranger\f[R] if not already present
 (administrative privilege required)
 .TP
 \f[B]tran [opacity]\f[R]
 Sets the Kitty background opacity to 0.8.
-Can use \f[V]tran\f[R], \f[V]opacity\f[R], \f[V]trans\f[R] or
-\f[V]transparent\f[R].
+Can use \f[B]tran\f[R], \f[B]opacity\f[R], \f[B]trans\f[R] or
+\f[B]transparent\f[R].
 Specify a second argument to set a custom background opacity: e.g.
-\f[V]kitty-control transparent 0.9\f[R].
+\f[I]\f[BI]kitty-control transparent 0.9\f[I]\f[R].
 .TP
 \f[B]unicode\f[R]
 Displays the Unicode input kitten
@@ -149,10 +151,10 @@ window
 Specifies a Kitty command to run (enclose command and arguments in
 quotes).
 Can be used to run arbitrary commands, e.g.
-\f[V]kitty-control -c get-colors\f[R].
+\f[I]\f[BI]kitty-control -c get-colors\f[I]\f[R].
 .TP
 \f[B]-d\f[R]
-Debug mode - displays \f[V]kitty-control\f[R] commands when they execute
+Debug mode - displays \f[I]kitty-control\f[R] commands when they execute
 .TP
 \f[B]-e\f[R]
 Displays several example invocations and exits
@@ -168,24 +170,24 @@ Displays a full usage message and exits
 .TP
 \f[B]-i /path/to/image\f[R]
 Sets the background image for the specified Kitty windows.
-If /path/to/image is \f[V]none\f[R] then any existing image will be
-removed.
+If \f[I]/path/to/image\f[R] is \f[I]none\f[R] then any existing image
+will be removed.
 .TP
-\f[B]-m \f[VB]match\f[B]\f[R]
+\f[B]-m match\f[R]
 Specifies the window to match
 .TP
-\f[B]-t \f[VB]match\f[B]\f[R]
+\f[B]-t match\f[R]
 Specifies the tab to match.
 Window/Tab matching can be used in conjunction with most kitty-control
 commands.
-If \f[V]match\f[R] is \f[V]--help\f[R] the Kitty documentation URL for
+If \f[I]match\f[R] is \f[I]--help\f[R] the Kitty documentation URL for
 matching will be displayed.
 .TP
 \f[B]-s /path/to/socket\f[R]
 Specifies the socket Kitty is listening on if enabled.
-If /path/to/socket is \f[V]--help\f[R] some help on configuring a Kitty
-socket is provided.
-\f[V]-s /path/...\f[R] can be used to send commands to Kitty from
+If \f[I]/path/to/socket\f[R] is \f[I]--help\f[R] some help on
+configuring a Kitty socket is provided.
+\f[I]-s /path/...\f[R] can be used to send commands to Kitty from
 another terminal.
 .TP
 \f[B]-u\f[R]
@@ -194,109 +196,106 @@ Displays a brief usage message and exits
 \f[B]-v\f[R]
 Displays the kitty-control and kitty versions then exits
 .PP
-Without any arguments \f[V]kitty-control\f[R] displays an interactive
+Without any arguments \f[I]kitty-control\f[R] displays an interactive
 menu system
 .PP
 Adjusting the background opacity or font size requires the original
 kitty.conf that was used for this instance of Kitty to have enabled the
 following:
-.IP
-.nf
-\f[C]
-\[ga]dynamic_background_opacity yes\[ga] and \[ga]allow_remote_control yes\[ga]
-\f[R]
-.fi
+.PP
+\f[I]dynamic_background_opacity yes\f[R] and \f[I]allow_remote_control
+yes\f[R]
 .PP
 See
-<https://sw.kovidgoyal.net/kitty/remote-control/#control-kitty-from-scripts>
+\f[I]\f[BI]<https://sw.kovidgoyal.net/kitty/remote-control/#control-kitty-from-scripts>\f[I]\f[R]
 .SH ENVIRONMENT
 .PP
-Environment variables can be used to influence \f[V]kitty\f[R] behavior.
-See <https://sw.kovidgoyal.net/kitty/glossary/#environment-variables>
-for details on environment variables \f[V]kitty\f[R] uses.
-The \f[V]kitty-control\f[R] command behavior depends on the
-\f[V]KITTY_LISTEN_ON\f[R] and \f[V]KITTY_CONFIG_DIRECTORY\f[R]
-environment variables.
+Environment variables can be used to influence \f[I]kitty\f[R] behavior.
+See
+\f[I]\f[BI]<https://sw.kovidgoyal.net/kitty/glossary/#environment-variables>\f[I]\f[R]
+for details on environment variables \f[I]kitty\f[R] uses.
+The \f[I]kitty-control\f[R] command behavior depends on the
+\f[I]\f[BI]KITTY_LISTEN_ON\f[I]\f[R] and
+\f[I]\f[BI]KITTY_CONFIG_DIRECTORY\f[I]\f[R] environment variables.
 .PP
-\f[V]KITTY_LISTEN_ON\f[R] is set automatically by \f[V]kitty\f[R] and
-specifies the path to the socket \f[V]kitty\f[R] is listening on if one
-is configured.
+\f[I]\f[BI]KITTY_LISTEN_ON\f[I]\f[R] is set automatically by
+\f[I]kitty\f[R] and specifies the path to the socket \f[I]kitty\f[R] is
+listening on if one is configured.
 .PP
-\f[V]KITTY_CONFIG_DIRECTORY\f[R] can be set by the user to specify the
-directory \f[V]kitty\f[R] and \f[V]kitty-control\f[R] search for
-configuration files and kittens.
-Setting \f[V]KITTY_CONFIG_DIRECTORY\f[R] instructs \f[V]kitty\f[R] and
-\f[V]kitty-control\f[R] to ignore files in
-\f[V]\[ti]/.config/kitty\f[R].
+\f[I]\f[BI]KITTY_CONFIG_DIRECTORY\f[I]\f[R] can be set by the user to
+specify the directory \f[I]kitty\f[R] and \f[I]kitty-control\f[R] search
+for configuration files and kittens.
+Setting \f[I]\f[BI]KITTY_CONFIG_DIRECTORY\f[I]\f[R] instructs
+\f[I]kitty\f[R] and \f[I]kitty-control\f[R] to ignore files in
+\f[I]\[ti]/.config/kitty\f[R].
 .PP
-For example, if \f[V]kitty\f[R] was started with the command:
-.IP
-.nf
-\f[C]
-kitty --override allow_remote_control=yes --listen-on unix:/tmp/mykitty
-\f[R]
-.fi
+For example, if \f[I]kitty\f[R] was started with the command:
 .PP
-then \f[V]KITTY_LISTEN_ON\f[R] would be set to
-\f[V]unix:/tmp/mykitty\f[R] and \f[V]kitty-control\f[R] would use that
-socket to communicate with \f[V]kitty\f[R].
-The socket that \f[V]kitty-control\f[R] uses can be overridden with the
-\f[V]-s /path/to/socket\f[R] command line arguments.
-This can be used to tell \f[V]kitty-control\f[R] to communicate with
-another instance of \f[V]kitty\f[R] or used when running
-\f[V]kitty-control\f[R] from a non-kitty terminal or console.
+\f[I]\f[BI]kitty --override allow_remote_control=yes --listen-on
+unix:/tmp/mykitty\f[I]\f[R]
+.PP
+then \f[I]\f[BI]KITTY_LISTEN_ON\f[I]\f[R] would be set to
+\f[I]unix:/tmp/mykitty\f[R] and \f[I]kitty-control\f[R] would use that
+socket to communicate with \f[I]kitty\f[R].
+The socket that \f[I]kitty-control\f[R] uses can be overridden with the
+\f[I]-s /path/to/socket\f[R] command line arguments.
+This can be used to tell \f[I]kitty-control\f[R] to communicate with
+another instance of \f[I]kitty\f[R] or used when running
+\f[I]kitty-control\f[R] from a non-kitty terminal or console.
 .SH EXAMPLES
 .TP
-\f[B]kitty-control\f[R]
-Without any arguments \f[V]kitty-control\f[R] displays an interactive
+\f[I]\f[BI]kitty-control\f[I]\f[R]
+Without any arguments \f[I]kitty-control\f[R] displays an interactive
 menu system
 .TP
-\f[B]kitty-control transparent 0.9\f[R]
+\f[I]\f[BI]kitty-control transparent 0.9\f[I]\f[R]
 Set a transparent Kitty background with 0.9 opacity
 .TP
-\f[B]kitty-control dark\f[R]
+\f[I]\f[BI]kitty-control dark\f[I]\f[R]
 Set the Kitty background to fully opaque (no transparency)
 .TP
-\f[B]kitty-control back black fore white\f[R]
+\f[I]\f[BI]kitty-control back black fore white\f[I]\f[R]
 Set the Kitty background color to black and foreground color to white
 .TP
-\f[B]kitty-control load laptop\f[R]
-Load the Kitty config in \[ti]/.config/kitty/laptop/kitty.conf
+\f[I]\f[BI]kitty-control load laptop\f[I]\f[R]
+Load the Kitty config in \f[I]\[ti]/.config/kitty/laptop/kitty.conf\f[R]
 .TP
-\f[B]kitty-control font +2\f[R]
+\f[I]\f[BI]kitty-control font +2\f[I]\f[R]
 Increase the font size by 2 points
 .TP
-\f[B]kitty-control -i \[ti]/Pictures/groovy.png\f[R]
-Set the background image to \[ti]/Pictures/groovy.png
+\f[I]\f[BI]kitty-control -i \[ti]/Pictures/groovy.png\f[I]\f[R]
+Set the background image to \f[I]\[ti]/Pictures/groovy.png\f[R]
 .TP
-\f[B]kitty-control -i \[ti]/Pictures/groovy.png fore cyan font 24\f[R]
+\f[I]\f[BI]kitty-control -i \[ti]/Pictures/groovy.png fore cyan font 24\f[I]\f[R]
 Actions can be combined on the same command line
 .TP
-\f[B]kitty-control icat \[ti]/Pictures/cats.png\f[R]
-View the image \[ti]/Pictures/cats.png
+\f[I]\f[BI]kitty-control icat \[ti]/Pictures/cats.png\f[I]\f[R]
+View the image \f[I]\[ti]/Pictures/cats.png\f[R]
 .TP
-\f[B]kitty-control diff /path/to/file1 /path/to/file2\f[R]
-View differences between /path/to/file1 and /path/to/file2
+\f[I]\f[BI]kitty-control diff /path/to/file1 /path/to/file2\f[I]\f[R]
+View differences between \f[I]/path/to/file1\f[R] and
+\f[I]/path/to/file2\f[R]
 .TP
-\f[B]kitty-control -m \[dq]title:borg\[dq] title \[dq]Borg Backup\[dq]\f[R]
-Set the tab title of the tab currently titled \f[V]\[ti]/src/borg\f[R]
-to \f[V]Borg Backup\f[R]
+\f[I]\f[BI]kitty-control -m \[dq]title:borg\[dq] title \[dq]Borg Backup\[dq]\f[I]\f[R]
+Set the tab title of the tab currently titled \f[I]\[ti]/src/borg\f[R]
+to \f[I]Borg Backup\f[R]
 .TP
-\f[B]kitty-control load default\f[R]
+\f[I]\f[BI]kitty-control load default\f[I]\f[R]
 Restore the original Kitty configuration
 .SH AUTHORS
 .PP
-Written by Ronald Record <<github@ronrecord.com>>
+Written by Ronald Record <github@ronrecord.com>
 .SH LICENSE
 .PP
-KITTY-CONTROL is distributed under an Open Source license.
-See the file LICENSE in the KITTY-CONTROL source distribution for
-information on terms & conditions for accessing and otherwise using
-KITTY-CONTROL and for a DISCLAIMER OF ALL WARRANTIES.
+\f[B]KITTY-CONTROL\f[R] is distributed under an Open Source license.
+See the file \f[I]LICENSE\f[R] in the \f[B]KITTY-CONTROL\f[R] source
+distribution for information on terms & conditions for accessing and
+otherwise using \f[B]KITTY-CONTROL\f[R] and for a \f[I]DISCLAIMER OF ALL
+WARRANTIES\f[R].
 .SH BUGS
 .PP
 Submit bug reports online at:
-<<https://gitlab.com/doctorfree/kitty-control/issues>>
+\f[I]\f[BI]<https://gitlab.com/doctorfree/kitty-control/issues>\f[I]\f[R]
 .PP
 Full documentation and sources at:
-<<https://gitlab.com/doctorfree/kitty-control>>
+\f[I]\f[BI]<https://gitlab.com/doctorfree/kitty-control>\f[I]\f[R]

@@ -595,6 +595,30 @@ load-config() {
   fi
 }
 
+# colorize man pages
+# man() {
+#   LESS_TERMCAP_mb=$'\e[01;31m' \
+#     LESS_TERMCAP_md=$'\e[01;35m' \
+#     LESS_TERMCAP_me=$'\e[0m' \
+#     LESS_TERMCAP_se=$'\e[0m' \
+#     LESS_TERMCAP_so=$'\e[01;33m' \
+#     LESS_TERMCAP_ue=$'\e[0m' \
+#     LESS_TERMCAP_us=$'\e[04;36m' \
+#     command man "$@"
+# }
+# Using tput
+man() {
+  LESS_TERMCAP_md=$(tput bold; tput setaf 6) \
+    LESS_TERMCAP_me=$(tput sgr0) \
+    LESS_TERMCAP_so=$(tput bold; tput setaf 3; tput setab 57) \
+    LESS_TERMCAP_se=$(tput rmso; tput sgr0) \
+    LESS_TERMCAP_us=$(tput smul; tput bold; tput setaf 4) \
+    LESS_TERMCAP_ue=$(tput rmul; tput sgr0) \
+    LESS_TERMCAP_mr=$(tput rev) \
+    LESS_TERMCAP_mh=$(tput dim) \
+    command man "$@"
+}
+
 set-bg-image() {
   image="$1"
   if [ "${image}" == "none" ]; then
@@ -605,9 +629,9 @@ set-bg-image() {
     }
   else
     if [ -f "${image}" ]; then
-      kitty @ ${SOCKET} set-background-image ${OPTS} "${image}"
+      kitty @ ${SOCKET} set-background-image --layout scaled ${OPTS} "${image}"
     [ "${debug}" ] && {
-        printf "\nDEBUG: kitty @ ${SOCKET} set-background-image ${OPTS} ${image}"
+        printf "\nDEBUG: kitty @ ${SOCKET} set-background-image --layout scaled ${OPTS} ${image}"
       prompt_continue
     }
     else
