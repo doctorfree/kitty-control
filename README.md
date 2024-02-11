@@ -303,6 +303,10 @@ The `kitty-control` main menu:
 
 ![Main Menu](https://raw.githubusercontent.com/wiki/doctorfree/kitty-control/control-menu.png)
 
+The `kitty` configuration selection `fzf` dialog:
+
+![Window Info](https://raw.githubusercontent.com/wiki/doctorfree/kitty-control/select-config.png)
+
 The `kitty` window information selection menu:
 
 ![Window Info](https://raw.githubusercontent.com/wiki/doctorfree/kitty-control/list-windows.png)
