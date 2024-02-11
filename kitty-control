@@ -145,11 +145,12 @@ usage() {
   [ "${have_jq}" ] && {
     printf "\n    '${BOLD}ls [self]${NORM}' Displays the id, title, pid, and state of Kitty windows"
   }
-  printf "\n    '${BOLD}load [subdir]${NORM}'"
+  printf "\n    '${BOLD}load [subdir|file]${NORM}'"
     printf " Reloads the Kitty configuration in ~/.config/kitty/kitty.conf"
   printf "\n           Can use 'load' or 'reload'"
   printf "\n           Specify a second argument to load ~/.config/kitty/<subdir>/kitty.conf"
   printf "\n           e.g. 'kitty-control load tv' would load ~/.config/kitty/tv/kitty.conf"
+  printf "\n           This argument can also be the path to a Kitty configuration file to load"
   printf "\n           'kitty-control load default' loads the ~/.config/kitty/kitty.conf config"
   printf "\n           'kitty-control load --help' displays a help message for the load command"
   printf "\n    '${BOLD}man${NORM}' Displays the kitty-control manual"
@@ -545,6 +546,23 @@ kitty-fontsize() {
   fi
 }
 
+load_config_file() {
+  cfgfile="$1"
+  if [ "${USE_LOAD_CONFIG}" ]; then
+    kitty @ ${SOCKET} load-config-file "${cfgfile}"
+    [ "${debug}" ] && {
+      printf "\nDEBUG: kitty @ ${SOCKET} load-config-file ${cfgfile}"
+      prompt_continue
+    }
+  else
+    kitty @ ${SOCKET} kitten read_config.py "${cfgfile}"
+    [ "${debug}" ] && {
+      printf "\nDEBUG: kitty @ ${SOCKET} kitten read_config.py ${cfgfile}"
+      prompt_continue
+    }
+  fi
+}
+
 load-config() {
   if [ "$1" == "--help" ]; then
     printf "\nThe 'kitty-control load <subdir>' command loads the Kitty configuration"
@@ -564,41 +582,22 @@ load-config() {
     printf "\n\tkitty-control load default\n\n"
     exit 0
   else
-    kcfg="$1/kitty.conf"
-    [ "$1" == "default" ] && kcfg="kitty.conf"
-    if [ -f "${CONFDIR}/${kcfg}" ]; then
-      if [ "${USE_LOAD_CONFIG}" ]; then
-        kitty @ ${SOCKET} load-config-file "${CONFDIR}/${kcfg}"
-        [ "${debug}" ] && {
-          printf "\nDEBUG: kitty @ ${SOCKET} load-config-file ${CONFDIR}/${kcfg}"
-          prompt_continue
-        }
-      else
-        kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/${kcfg}"
-        [ "${debug}" ] && {
-          printf "\nDEBUG: kitty @ ${SOCKET} kitten read_config.py ${CONFDIR}/${kcfg}"
-          prompt_continue
-        }
-      fi
+    bn=$(basename "$1")
+    if [ -f "$1" ] && [ "${bn}" == "kitty.conf" ]; then
+      load_config_file "$1"
     else
-      if [ "$2" ] && [ -f "${CONFDIR}/$2/kitty.conf" ]; then
-        kcfg="$2/kitty.conf"
-        if [ "${USE_LOAD_CONFIG}" ]; then
-          kitty @ ${SOCKET} load-config-file "${CONFDIR}/${kcfg}"
-          [ "${debug}" ] && {
-            printf "\nDEBUG: kitty @ ${SOCKET} load-config-file ${CONFDIR}/${kcfg}"
-            prompt_continue
-          }
-        else
-          kitty @ ${SOCKET} kitten read_config.py "${CONFDIR}/${kcfg}"
-          [ "${debug}" ] && {
-            printf "\nDEBUG: kitty @ ${SOCKET} kitten read_config.py ${CONFDIR}/${kcfg}"
-            prompt_continue
-          }
-        fi
+      kcfg="$1/kitty.conf"
+      [ "$1" == "default" ] && kcfg="kitty.conf"
+      if [ -f "${CONFDIR}/${kcfg}" ]; then
+        load_config_file "${CONFDIR}/${kcfg}"
       else
-        printf "\n ${CONFDIR}/${kcfg} does not exist or is not a regular file\n"
-        prompt_continue
+        if [ "$2" ] && [ -f "${CONFDIR}/$2/kitty.conf" ]; then
+          kcfg="$2/kitty.conf"
+          load_config_file "${CONFDIR}/${kcfg}"
+        else
+          printf "\n ${CONFDIR}/${kcfg} does not exist or is not a regular file\n"
+          prompt_continue
+        fi
       fi
     fi
   fi
@@ -1736,15 +1735,21 @@ menu_font_size() {
 
 menu_load_config() {
   cfopts=("$@")
-  cfopts+=( "Help" "Main Menu" "Quit" )
+  cfopts+=( "Enter kitty config to load" "Help" "Main Menu" "Quit" )
   if [ "${use_fzf}" ]; then
     while true; do
-      heading "Kitty Configuration" "Configuration"
+      heading "Select Kitty Configuration" "Configuration"
       choice=$(printf "%s\n" "${cfopts[@]}" | fzf --prompt="😺 Select Kitty Configuration ('Esc' or 'Main Menu' to return)  " --height=16 --layout=reverse --exit-0)
       if [ "${choice}" ]; then
         case "${choice}" in
           "h" | "H" | "help" | "Help")
             show_help
+            ;;
+          "Enter"* | "enter"*)
+            FILE=
+            select_file
+            [ "${FILE}" ] && load-config "${FILE}"
+            break
             ;;
           "Main"* | "main"*)
             break
@@ -1778,6 +1783,12 @@ menu_load_config() {
         "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
           show_help
           break
+          ;;
+        "Enter"*,* | *,"Enter"* | "enter"*,* | *,"enter"*)
+          FILE=
+          select_file
+          [ "${FILE}" ] && load-config "${FILE}"
+          break 2
           ;;
         "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
           break 2

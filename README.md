@@ -174,10 +174,11 @@ Where:
            See https://sw.kovidgoyal.net/kitty/kittens/icat/#options
     'list [self]' Displays full information on Kitty windows
     'ls [self]' Displays the id, title, pid, and state of Kitty windows
-    'load [subdir]' Reloads the Kitty configuration in ~/.config/kitty/kitty.conf
+    'load [subdir|file]' Reloads the Kitty configuration in ~/.config/kitty/kitty.conf
            Can use 'load' or 'reload'
            Specify a second argument to load ~/.config/kitty/<subdir>/kitty.conf
            e.g. 'kitty-control load tv' would load ~/.config/kitty/tv/kitty.conf
+           This argument can also be the path to a Kitty configuration file to load
            'kitty-control load default' loads the ~/.config/kitty/kitty.conf config
            'kitty-control load --help' displays a help message for the load command
     'man' Displays the kitty-control manual

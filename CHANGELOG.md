@@ -4,6 +4,9 @@
 
 ### ⚡️ Added
 
+- Add support for specifying an arbitrary `kitty` config to load on the command line
+- Add menu support for selecting an arbitrary `kitty` config to load
+
 ### 🐞 Fixed
 
 ## v1.0.5r1
