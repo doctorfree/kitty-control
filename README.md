@@ -147,8 +147,8 @@ To display a usage message use `kitty-control -u`. To see several examples,
 ```
 Usage: kitty-control [-adefhuv] [back <color>] [-c command] [dark]
                      [diff [opts] <path1> <path2>] [font [num]] [fore <color>]
-                     [-i /path/to/image] [icat [opts] <image>] [list|ls [self]]
-                     [load [subdir|file]] [-m|t <match>] [man] [menu]
+                     [-i /path/to/image] [icat [opts] <image>] [load [subdir|file]]
+                     [ls|list [self|colors]] [-m|t <match>] [man] [menu]
                      [-s /path/to/socket] [term] [theme] [tools] [title <title>]
                      [transparent [opacity]] [unicode] [upgrade]
 Where:
@@ -172,8 +172,10 @@ Where:
            To remove all images currently displayed on the screen:
                kitty-control icat --clear
            See https://sw.kovidgoyal.net/kitty/kittens/icat/#options
-    'list [self]' Displays full information on Kitty windows
-    'ls [self]' Displays the id, title, pid, and state of Kitty windows
+    'list|ls [self|colors]' Displays information on Kitty windows/colors
+        'list' displays full info, 'ls' abbreviated info
+        'self' Indicates display info for this Kitty window
+        'colors' Indicates display the names of the supported Kitty colors
     'load [subdir|file]' Reloads the Kitty configuration in ~/.config/kitty/kitty.conf
            Can use 'load' or 'reload'
            Specify a second argument to load ~/.config/kitty/<subdir>/kitty.conf

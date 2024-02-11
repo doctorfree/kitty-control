@@ -4,6 +4,8 @@
 
 ### ⚡️ Added
 
+- Add support for listing the supported `kitty` color names with `kitty-control ls colors`
+
 ### 🐞 Fixed
 
 ## v1.0.5r2

@@ -61,13 +61,15 @@ BOLD=$(tput bold 2>/dev/null)
 NORM=$(tput sgr0 2>/dev/null)
 
 # Colors
-colors=("reset" "custom" "black" "white" "red" "green" "yellow" "blue" "magenta" "cyan" "gray" "maroon" "navy" "purple" "aliceblue" "antiquewhite" "aquamarine" "azure" "beige" "bisque" "blanchedalmond" "blueviolet" "brown" "burlywood" "cadetblue" "chartreuse" "chocolate" "coral" "cornflowerblue" "cornsilk" "darkblue" "darkcyan" "darkgoldenrod" "darkgray" "darkgreen" "darkgrey" "darkkhaki" "darkmagenta" "darkolivegreen" "darkorange" "darkorchid" "darkred" "darksalmon" "darkseagreen" "darkslateblue" "darkslategray" "darkslategrey" "darkturquoise" "darkviolet" "debianred" "deeppink" "deepskyblue" "dimgray" "dimgrey" "dodgerblue" "firebrick" "floralwhite" "forestgreen" "gainsboro" "ghostwhite" "gold" "goldenrod" "greenyellow" "grey" "honeydew" "hotpink" "indianred" "ivory" "khaki" "lavender" "lavenderblush" "lawngreen" "lemonchiffon" "lightblue" "lightcoral" "lightcyan" "lightgoldenrod" "lightgoldenrodyellow" "lightgray" "lightgreen" "lightgrey" "lightpink" "lightsalmon" "lightseagreen" "lightskyblue" "lightslateblue" "lightslategray" "lightslategrey" "lightsteelblue" "lightyellow" "limegreen" "linen" "mediumaquamarine" "mediumblue" "mediumorchid" "mediumpurple" "mediumseagreen" "mediumslateblue" "mediumspringgreen" "mediumturquoise" "mediumvioletred" "midnightblue" "mintcream" "mistyrose" "moccasin" "navajowhite" "navyblue" "oldlace" "olivedrab" "orange" "orangered" "orchid" "palegoldenrod" "palegreen" "paleturquoise" "palevioletred" "papayawhip" "peachpuff" "peru" "pink" "plum" "powderblue" "rosybrown" "royalblue" "saddlebrown" "salmon" "sandybrown" "seagreen" "seashell" "sienna" "skyblue" "slateblue" "slategray" "slategrey" "snow" "springgreen" "steelblue" "tan" "thistle" "tomato" "turquoise" "violet" "violetred" "wheat" "whitesmoke" "yellowgreen")
+primary_colors=("reset" "custom" "black" "white" "red" "green" "yellow" "blue" "magenta" "cyan" "gray" "maroon" "navy" "purple")
+colors=("${primary_colors[@]}")
+colors+=("aliceblue" "antiquewhite" "aquamarine" "azure" "beige" "bisque" "blanchedalmond" "blueviolet" "brown" "burlywood" "cadetblue" "chartreuse" "chocolate" "coral" "cornflowerblue" "cornsilk" "darkblue" "darkcyan" "darkgoldenrod" "darkgray" "darkgreen" "darkgrey" "darkkhaki" "darkmagenta" "darkolivegreen" "darkorange" "darkorchid" "darkred" "darksalmon" "darkseagreen" "darkslateblue" "darkslategray" "darkslategrey" "darkturquoise" "darkviolet" "debianred" "deeppink" "deepskyblue" "dimgray" "dimgrey" "dodgerblue" "firebrick" "floralwhite" "forestgreen" "gainsboro" "ghostwhite" "gold" "goldenrod" "greenyellow" "grey" "honeydew" "hotpink" "indianred" "ivory" "khaki" "lavender" "lavenderblush" "lawngreen" "lemonchiffon" "lightblue" "lightcoral" "lightcyan" "lightgoldenrod" "lightgoldenrodyellow" "lightgray" "lightgreen" "lightgrey" "lightpink" "lightsalmon" "lightseagreen" "lightskyblue" "lightslateblue" "lightslategray" "lightslategrey" "lightsteelblue" "lightyellow" "limegreen" "linen" "mediumaquamarine" "mediumblue" "mediumorchid" "mediumpurple" "mediumseagreen" "mediumslateblue" "mediumspringgreen" "mediumturquoise" "mediumvioletred" "midnightblue" "mintcream" "mistyrose" "moccasin" "navajowhite" "navyblue" "oldlace" "olivedrab" "orange" "orangered" "orchid" "palegoldenrod" "palegreen" "paleturquoise" "palevioletred" "papayawhip" "peachpuff" "peru" "pink" "plum" "powderblue" "rosybrown" "royalblue" "saddlebrown" "salmon" "sandybrown" "seagreen" "seashell" "sienna" "skyblue" "slateblue" "slategray" "slategrey" "snow" "springgreen" "steelblue" "tan" "thistle" "tomato" "turquoise" "violet" "violetred" "wheat" "whitesmoke" "yellowgreen")
 
 brief_usage() {
   printf "${BOLD}Usage: kitty-control [-adefhuv] [back <color>] [-c command] [dark]"
   printf "\n                     [diff [opts] <path1> <path2>] [font [num]] [fore <color>]"
-  printf "\n                     [-i /path/to/image] [icat [opts] <image>] [list|ls [self]]"
-  printf "\n                     [load [subdir|file]] [-m|t <match>] [man] [menu]"
+  printf "\n                     [-i /path/to/image] [icat [opts] <image>] [load [subdir|file]]"
+  printf "\n                     [ls|list [self|colors]] [-m|t <match>] [man] [menu]"
   printf "\n                     [-s /path/to/socket] [term] [theme] [tools] [title <title>]"
   printf "\n                     [transparent [opacity]] [unicode] [upgrade]${NORM}"
   [ "$1" == "noexit" ] || {
@@ -142,10 +144,10 @@ usage() {
   printf "\n           To remove all images currently displayed on the screen:"
   printf "\n               kitty-control icat --clear"
   printf "\n           See https://sw.kovidgoyal.net/kitty/kittens/icat/#options"
-  printf "\n    '${BOLD}list [self]${NORM}' Displays full information on Kitty windows"
-  [ "${have_jq}" ] && {
-    printf "\n    '${BOLD}ls [self]${NORM}' Displays the id, title, pid, and state of Kitty windows"
-  }
+  printf "\n    '${BOLD}list|ls [self|colors]${NORM}' Displays information on Kitty windows/colors"
+  printf "\n        '${BOLD}list${NORM}' displays full info, '${BOLD}ls${NORM}' abbreviated info"
+  printf "\n        '${BOLD}self${NORM}' Indicates display info for this Kitty window"
+  printf "\n        '${BOLD}colors${NORM}' Indicates display the names of the supported Kitty colors"
   printf "\n    '${BOLD}load [subdir|file]${NORM}'"
     printf " Reloads the Kitty configuration in ~/.config/kitty/kitty.conf"
   printf "\n           Can use 'load' or 'reload'"
@@ -545,6 +547,29 @@ kitty-fontsize() {
       prompt_continue
     }
   fi
+}
+
+list_colors() {
+  local cols=()
+  if [ "$1" == "brief" ]; then
+    cols=("${primary_colors[@]}")
+  else
+    cols=("${colors[@]}")
+  fi
+  for color_name in "${cols[@]}"; do
+    case "${color_name}" in
+      custom|reset)
+        continue
+        ;;
+      *)
+        printf "\n\t${color_name}"
+        ;;
+    esac
+  done
+  printf "\n"
+  [ "$1" == "brief" ] && {
+    printf "\nFor a full list of supported color names use 'kitty-control list colors'\n"
+  }
 }
 
 load_config_file() {
@@ -2184,6 +2209,9 @@ select_with_fzf() {
         "Install Ranger")
           install_ranger
           ;;
+        "List Col"* | "list col"* | "C")
+          list_colors | less
+          ;;
         "List Tab"* | "list tab"* | "K")
           tab_menu
           ;;
@@ -2291,8 +2319,7 @@ show_menu() {
     [ "${have_figlet}" ] || options+=("Install Figlet")
     [ "${have_fzf}" ] || options+=("Install Fzf")
     [ "${have_ranger}" ] || options+=("Install Ranger")
-    options+=("List Tabs")
-    options+=("List Windows")
+    options+=("List Colors" "List Tabs" "List Windows")
     [ ${numconfs} -gt 1 ] && {
       options+=("Load Configuration")
     }
@@ -2378,6 +2405,10 @@ show_menu() {
         ;;
       "Install Ranger",* | *,"Install Ranger")
         install_ranger
+        break
+        ;;
+      "List Col"*,* | *,"List Col"* | "list col"*,* | *,"list col"* | "C",* | *,"C")
+        list_colors | less
         break
         ;;
       "List Tab"*,* | *,"List Tab"* | "list tab"*,* | *,"list tab"* | "K",* | *,"K")
@@ -2665,24 +2696,34 @@ while [[ $1 ]]; do
         OPTS="--self ${OPTS}"
         shift
       }
-      if [ "${have_jq}" ]; then
-        kitty @ ${SOCKET} ls ${OPTS} | jq --color-output '.[]'
+      if [ "$2" == "colors" ]; then
+        list_colors
+        shift 2
       else
-        kitty @ ${SOCKET} ls ${OPTS}
+        if [ "${have_jq}" ]; then
+          kitty @ ${SOCKET} ls ${OPTS} | jq --color-output '.[]'
+        else
+          kitty @ ${SOCKET} ls ${OPTS}
+        fi
+        shift
       fi
-      shift
       ;;
     ls|--ls)
       [ "$2" == "self" ] && {
         OPTS="--self ${OPTS}"
         shift
       }
-      if [ "${have_jq}" ]; then
-        list_windows
+      if [ "$2" == "colors" ]; then
+        list_colors brief
+        shift 2
       else
-        kitty @ ${SOCKET} ls ${OPTS}
+        if [ "${have_jq}" ]; then
+          list_windows
+        else
+          kitty @ ${SOCKET} ls ${OPTS}
+        fi
+        shift
       fi
-      shift
       ;;
     load|reload|--load|--reload)
       if [ "$2" ]; then
