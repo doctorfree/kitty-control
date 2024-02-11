@@ -302,6 +302,10 @@ The `kitty-control` main menu:
 
 ![Main Menu](https://raw.githubusercontent.com/wiki/doctorfree/kitty-control/control-menu.png)
 
+The `kitty` window information selection menu:
+
+![Window Info](https://raw.githubusercontent.com/wiki/doctorfree/kitty-control/list-windows.png)
+
 ## Environment
 
 Environment variables can be used to influence `kitty` behavior. See
