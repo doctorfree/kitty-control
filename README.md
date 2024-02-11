@@ -145,11 +145,12 @@ To display a usage message use `kitty-control -u`. To see several examples,
 `kitty-control -e`. To display the full usage message run `kitty-control -h`.
 
 ```
-Usage: kitty-control [-a] [back <color>] [-c command] [dark] [-d]
-    [diff [opts] <path1> <path2>] [-e] [-f] [font [num]] [fore <color>]
-    [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]
-    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list|ls [self]]
-    [man] [menu] [title <title>] [transparent [opacity]] [unicode] [upgrade]
+Usage: kitty-control [-adefhuv] [back <color>] [-c command] [dark]
+                     [diff [opts] <path1> <path2>] [font [num]] [fore <color>]
+                     [-i /path/to/image] [icat [opts] <image>] [list|ls [self]]
+                     [load [subdir|file]] [-m|t <match>] [man] [menu]
+                     [-s /path/to/socket] [term] [theme] [tools] [title <title>]
+                     [transparent [opacity]] [unicode] [upgrade]
 Where:
     'back color' Sets the background color to 'color'
            If 'color' is 'reset' restores foreground and background to startup value

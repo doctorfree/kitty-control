@@ -63,11 +63,12 @@ BOLD=$(tput bold 2>/dev/null)
 NORM=$(tput sgr0 2>/dev/null)
 
 brief_usage() {
-  printf "${BOLD}Usage: kitty-control [-a] [back <color>] [-c command] [dark] [-d]"
-  printf "\n    [diff [opts] <path1> <path2>] [-e] [-f] [font [num]] [fore <color>]"
-  printf "\n    [-i /path/to/image] [load [subdir]] [-m|t <match>] [-s /path/to/socket]"
-  printf "\n    [-u|h|v] [term] [theme] [tools] [icat [opts] <image>] [list|ls [self]]"
-  printf "\n    [man] [menu] [title <title>] [transparent [opacity]] [unicode] [upgrade]${NORM}"
+  printf "${BOLD}Usage: kitty-control [-adefhuv] [back <color>] [-c command] [dark]"
+  printf "\n                     [diff [opts] <path1> <path2>] [font [num]] [fore <color>]"
+  printf "\n                     [-i /path/to/image] [icat [opts] <image>] [list|ls [self]]"
+  printf "\n                     [load [subdir|file]] [-m|t <match>] [man] [menu]"
+  printf "\n                     [-s /path/to/socket] [term] [theme] [tools] [title <title>]"
+  printf "\n                     [transparent [opacity]] [unicode] [upgrade]${NORM}"
   [ "$1" == "noexit" ] || {
     printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
       printf " displays an interactive menu system"
@@ -1019,10 +1020,10 @@ show_usage() {
   figlet_text="Usage"
   while true; do
     clear_screen
-    if [ "${use_figlet}" ]; then
-      show_figlet "${figlet_text}"
+    if [ "${have_rich}" ]; then
+      rich "[cyan]${figlet_text}[/cyan]" -p -a rounded -c -C
     else
-      [ "${have_rich}" ] && rich "[cyan]${figlet_text}[/cyan]" -p -a rounded -c -C
+      [ "${use_figlet}" ] && show_figlet "${figlet_text}"
     fi
     brief_usage noexit
     show_versions
