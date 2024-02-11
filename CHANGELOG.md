@@ -4,6 +4,12 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.5r2
+
+### ⚡️ Added
+
 - Add support for specifying an arbitrary `kitty` config to load on the command line
 - Add menu support for selecting an arbitrary `kitty` config to load
 - Add `Reset` main menu option to reset colors and configuration to defaults
