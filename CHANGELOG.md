@@ -5,6 +5,7 @@
 ### ⚡️ Added
 
 - Add support for listing the supported `kitty` color names with `kitty-control ls colors`
+- Map `kitty` color names to `rich-cli` color names when listing colors
 
 ### 🐞 Fixed
 
