@@ -45,8 +45,6 @@ fzf_url="https://raw.githubusercontent.com/junegunn/fzf/master/install"
 kitty_version_url="https://sw.kovidgoyal.net/kitty/current-version.txt"
 # Transparency opacity choices for menu
 translevels=("default" "1.0" "0.95" "0.9" "0.85" "0.8" "0.75" "0.7" "0.65" "0.6" "0.55" "0.5" "0.45" "0.4" "0.35" "0.3" "0.25" "0.2" "0.15" "0.1" "0.05" "0.0")
-# Colors
-colors=("reset" "black" "white" "red" "green" "yellow" "blue" "magenta" "cyan" "custom")
 # Give fzf a nice look
 export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
   --color=fg:#d0d0d0,fg+:#d0d0d0,bg:#0b1a38,bg+:#120f3d
@@ -61,6 +59,9 @@ export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
 # Use tput to get the bold and normal text sequence
 BOLD=$(tput bold 2>/dev/null)
 NORM=$(tput sgr0 2>/dev/null)
+
+# Colors
+colors=("reset" "custom" "black" "white" "red" "green" "yellow" "blue" "magenta" "cyan" "gray" "maroon" "navy" "purple" "aliceblue" "antiquewhite" "aquamarine" "azure" "beige" "bisque" "blanchedalmond" "blueviolet" "brown" "burlywood" "cadetblue" "chartreuse" "chocolate" "coral" "cornflowerblue" "cornsilk" "darkblue" "darkcyan" "darkgoldenrod" "darkgray" "darkgreen" "darkgrey" "darkkhaki" "darkmagenta" "darkolivegreen" "darkorange" "darkorchid" "darkred" "darksalmon" "darkseagreen" "darkslateblue" "darkslategray" "darkslategrey" "darkturquoise" "darkviolet" "debianred" "deeppink" "deepskyblue" "dimgray" "dimgrey" "dodgerblue" "firebrick" "floralwhite" "forestgreen" "gainsboro" "ghostwhite" "gold" "goldenrod" "greenyellow" "grey" "honeydew" "hotpink" "indianred" "ivory" "khaki" "lavender" "lavenderblush" "lawngreen" "lemonchiffon" "lightblue" "lightcoral" "lightcyan" "lightgoldenrod" "lightgoldenrodyellow" "lightgray" "lightgreen" "lightgrey" "lightpink" "lightsalmon" "lightseagreen" "lightskyblue" "lightslateblue" "lightslategray" "lightslategrey" "lightsteelblue" "lightyellow" "limegreen" "linen" "mediumaquamarine" "mediumblue" "mediumorchid" "mediumpurple" "mediumseagreen" "mediumslateblue" "mediumspringgreen" "mediumturquoise" "mediumvioletred" "midnightblue" "mintcream" "mistyrose" "moccasin" "navajowhite" "navyblue" "oldlace" "olivedrab" "orange" "orangered" "orchid" "palegoldenrod" "palegreen" "paleturquoise" "palevioletred" "papayawhip" "peachpuff" "peru" "pink" "plum" "powderblue" "rosybrown" "royalblue" "saddlebrown" "salmon" "sandybrown" "seagreen" "seashell" "sienna" "skyblue" "slateblue" "slategray" "slategrey" "snow" "springgreen" "steelblue" "tan" "thistle" "tomato" "turquoise" "violet" "violetred" "wheat" "whitesmoke" "yellowgreen")
 
 brief_usage() {
   printf "${BOLD}Usage: kitty-control [-adefhuv] [back <color>] [-c command] [dark]"
@@ -657,7 +658,7 @@ set-background() {
       prompt_continue
     }
   else
-    kitty @ ${SOCKET} set-colors ${OPTS} background=$1 tab_bar_background=$1
+    kitty @ ${SOCKET} set-colors ${OPTS} background="$1" tab_bar_background="$1"
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} set-colors ${OPTS} background=$1 tab_bar_background=$1\n"
       prompt_continue
@@ -673,7 +674,7 @@ set-foreground() {
       prompt_continue
     }
   else
-    kitty @ ${SOCKET} set-colors ${OPTS} foreground=$1
+    kitty @ ${SOCKET} set-colors ${OPTS} foreground="$1"
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} set-colors ${OPTS} foreground=$1\n"
       prompt_continue
@@ -1094,17 +1095,23 @@ show_usage() {
 
 prompt-color-input() {
   clear_screen
+  heading "Custom Color" "Custom Color"
+  printf "\n"
   if [ "${have_rich}" ]; then
-    rich "Enter a supported color name or hex color code" -p
-    rich "Supported color names:" -p
-    rich "    [cyan]black white red green yellow blue magenta cyan[/]" -p
-    rich "Hex color codes are of the form '[red]#120f3d[/]' (the '[red]#[/]' can be omitted)" -p
+    rich "Enter a supported color name, hex color code, '[red]q[/]' to exit, or '[red]r[/]' to reset" -p
+    rich "Valid color names can be found at:" -p
+    rich "    [red]https://www.color-hex.com/color-names.html[/]" -p
+    rich "Hex color codes are of the form '[red]#120f3d[/]' (the '[red]#[/]' prefix is required)" -p
+    printf "\n"
+    rich "Keyword '[red]reset[/]' will reset to the configured color" -p
   else
-    printf "\n\nEnter a supported color name or hex color code"
-    printf "\nSupported color names:"
-    printf "\n\tblack white red green yellow blue magenta cyan"
-    printf "\nHex color codes are of the form '#120f3d' (the '#' can be omitted)\n"
+    printf "\n\nEnter a supported color name or hex color code, 'q' to exit, or 'r' to reset"
+    printf "\nValid color names can be found at:"
+    printf "\n\thttps://www.color-hex.com/color-names.html"
+    printf "\nHex color codes are of the form '#120f3d' (the '#' prefix is required)\n"
+    printf "\nKeyword 'reset' will reset to the configured color\n"
   fi
+  printf "\n"
 }
 
 prompt-match-input() {
@@ -1211,11 +1218,13 @@ get_winopts() {
 get-color-input() {
   color_return=
   while true; do
-    read -r -p "Enter color name/code ('q' to exit): " colorcode
-    [ "${colorcode}" == "q" ] && break
+    read -r -p "Enter color name/code ('r' to reset, 'q' to exit): " colorcode
     case ${colorcode} in
-      black|white|red|green|yellow|blue|magenta|cyan)
-        color_return="${colorcode}"
+      "Quit"* | "Exit"* | "quit"* | "exit"* | "q" | "e")
+        break
+        ;;
+      "Reset"* | "reset"* | "r")
+        color_return="reset"
         break
         ;;
       "")
@@ -1223,12 +1232,7 @@ get-color-input() {
         prompt_continue
         ;;
       *)
-        first_color=${colorcode::1}
-        if [[ "${first_color}" == "#" ]]; then
-          color_return="${colorcode}"
-        else
-          color_return="#${colorcode}"
-        fi
+        color_return="${colorcode}"
         break
         ;;
     esac
@@ -1466,73 +1470,86 @@ windows_menu() {
 
 try_background() {
   color_choice="$1"
-  forepre=$(kitty @ get-colors | grep "^foreground" | awk '{ print $2 }')
-  backpre=$(kitty @ get-colors | grep "^background" | awk '{ print $2 }')
-  set-background "${color_choice}"
-  case "${color_choice}" in
-    black)
-      set-foreground white
-      ;;
-    white)
-      set-foreground black
-      ;;
-    *)
-      true
-      ;;
-  esac
-  forecolor=$(kitty @ get-colors | grep "^foreground" | awk '{ print $2 }')
-  backcolor=$(kitty @ get-colors | grep "^background" | awk '{ print $2 }')
-  [ "${forecolor}" == "${backcolor}" ] && {
-    set-foreground "${forepre}"
-    set-background "${backpre}"
-  }
+  if [ "${color_choice}" == "reset" ]; then
+    set-background reset
+  else
+    forepre=$(kitty @ get-colors | grep "^foreground" | awk '{ print $2 }')
+    backpre=$(kitty @ get-colors | grep "^background" | awk '{ print $2 }')
+    set-background "${color_choice}"
+    case "${color_choice}" in
+      black)
+        set-foreground white
+        ;;
+      white)
+        set-foreground black
+        ;;
+      *)
+        true
+        ;;
+    esac
+    forecolor=$(kitty @ get-colors | grep "^foreground" | awk '{ print $2 }')
+    backcolor=$(kitty @ get-colors | grep "^background" | awk '{ print $2 }')
+    [ "${forecolor}" == "${backcolor}" ] && {
+      set-foreground "${forepre}"
+      set-background "${backpre}"
+    }
+  fi
 }
 
 try_foreground() {
   color_choice="$1"
-  forepre=$(kitty @ get-colors | grep "^foreground" | awk '{ print $2 }')
-  backpre=$(kitty @ get-colors | grep "^background" | awk '{ print $2 }')
-  set-foreground "${color_choice}"
-  forecolor=$(kitty @ get-colors | grep "^foreground" | awk '{ print $2 }')
-  backcolor=$(kitty @ get-colors | grep "^background" | awk '{ print $2 }')
-  [ "${forecolor}" == "${backcolor}" ] && {
-    set-foreground "${forepre}"
-    set-background "${backpre}"
-  }
+  if [ "${color_choice}" == "reset" ]; then
+    set-foreground reset
+  else
+    forepre=$(kitty @ get-colors | grep "^foreground" | awk '{ print $2 }')
+    backpre=$(kitty @ get-colors | grep "^background" | awk '{ print $2 }')
+    set-foreground "${color_choice}"
+    forecolor=$(kitty @ get-colors | grep "^foreground" | awk '{ print $2 }')
+    backcolor=$(kitty @ get-colors | grep "^background" | awk '{ print $2 }')
+    [ "${forecolor}" == "${backcolor}" ] && {
+      set-foreground "${forepre}"
+      set-background "${backpre}"
+    }
+  fi
 }
 
 menu_background_color() {
   bgopts=( "${colors[@]}" )
   bgopts+=( "main menu" "quit" )
   if [ "${use_fzf}" ]; then
-    heading "Background Color" "Background"
-    choice=$(printf "%s\n" "${bgopts[@]}" | fzf --prompt="😺 Select Background Color ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
-    [ "${choice}" ] && {
-      case "${choice}" in
-        "custom"*)
-          prompt-color-input
-          color_choice=$(get-color-input)
-          [ "${color_choice}" ] && try_background "${color_choice}"
-          break
-          ;;
-        "main"*)
-          break
-          ;;
-        "reset"*)
-          set-background reset
-          break
-          ;;
-        "quit"*)
-          clear_screen
-          printf "\nExiting kitty-control\n"
-          exit 0
-          ;;
-        *)
-          try_background "${choice}"
-          break
-          ;;
-      esac
-    }
+    while true; do
+      heading "Background Color" "Background"
+      choice=$(printf "%s\n" "${bgopts[@]}" | fzf --prompt="😺 Select Background Color ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
+      [ "${choice}" ] && {
+        case "${choice}" in
+          "h" | "H" | "help" | "Help")
+            show_help
+            ;;
+          "custom"*)
+            prompt-color-input
+            color_choice=$(get-color-input)
+            [ "${color_choice}" ] && try_background "${color_choice}"
+            break
+            ;;
+          "main"*)
+            break
+            ;;
+          "reset"*)
+            set-background reset
+            break
+            ;;
+          "quit"*)
+            clear_screen
+            printf "\nExiting kitty-control\n"
+            exit 0
+            ;;
+          *)
+            try_background "${choice}"
+            break
+            ;;
+        esac
+      }
+    done
   else
     while true; do
       heading "Background Color" "Background"
@@ -1573,36 +1590,41 @@ menu_background_color() {
 
 menu_foreground_color() {
   fgopts=( "${colors[@]}" )
-  fgopts+=( "main menu" "quit" )
+  fgopts+=( "help" "main menu" "quit" )
   if [ "${use_fzf}" ]; then
-    heading "Foreground Color" "Foreground"
-    choice=$(printf "%s\n" "${fgopts[@]}" | fzf --prompt="😺 Select Foreground Color ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
-    [ "${choice}" ] && {
-      case "${choice}" in
-        "custom"*)
-          prompt-color-input
-          color_choice=$(get-color-input)
-          [ "${color_choice}" ] && try_foreground "${color_choice}"
-          break
-          ;;
-        "main"*)
-          break
-          ;;
-        "reset"*)
-          set-foreground reset
-          break
-          ;;
-        "quit"*)
-          clear_screen
-          printf "\nExiting kitty-control\n"
-          exit 0
-          ;;
-        *)
-          try_foreground "${choice}"
-          break
-          ;;
-      esac
-    }
+    while true; do
+      heading "Foreground Color" "Foreground"
+      choice=$(printf "%s\n" "${fgopts[@]}" | fzf --prompt="😺 Select Foreground Color ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
+      [ "${choice}" ] && {
+        case "${choice}" in
+          "h" | "H" | "help" | "Help")
+            show_help
+            ;;
+          "custom"*)
+            prompt-color-input
+            color_choice=$(get-color-input)
+            [ "${color_choice}" ] && try_foreground "${color_choice}"
+            break
+            ;;
+          "main"*)
+            break
+            ;;
+          "reset"*)
+            set-foreground reset
+            break
+            ;;
+          "quit"*)
+            clear_screen
+            printf "\nExiting kitty-control\n"
+            exit 0
+            ;;
+          *)
+            try_foreground "${choice}"
+            break
+            ;;
+        esac
+      }
+    done
   else
     while true; do
       heading "Foreground Color" "Foreground"
@@ -2119,8 +2141,10 @@ select_with_fzf() {
         "Main"* | "main"*)
           break
           ;;
-        "reset"*)
+        "Reset"* | "reset"*)
+          set-background reset
           set-foreground reset
+          load-config "default"
           ;;
         "Background Color"* | "bg" | "back")
           menu_background_color
@@ -2272,7 +2296,7 @@ show_menu() {
     [ ${numconfs} -gt 1 ] && {
       options+=("Load Configuration")
     }
-    options+=("Manual Page" "Options" "Show Usage/Version" "Theme Selection")
+    options+=("Manual Page" "Options" "Reset" "Show Usage/Version" "Theme Selection")
     options+=("Terminal Info" "Toggle Fullscreen" "Transparent" "Unicode Input")
     [ "${have_fzf}" ] && {
       fzf_release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
@@ -2399,6 +2423,12 @@ show_menu() {
         ;;
       "Unicode"*,* | *,"Unicode"* | "unicode"*,* | *,"unicode"*)
         kitty +kitten unicode_input
+        break
+        ;;
+      "Reset"*,* | *,"Reset"* | "reset"*,* | *,"reset"*)
+        set-background reset
+        set-foreground reset
+        load-config "default"
         break
         ;;
       "Show"*,* | *,"Show"* | "show"*,* | *,"show"*)
@@ -2563,6 +2593,7 @@ while [[ $1 ]]; do
       ;;
     -d | --debug)
       debug=1
+      set_menu=1
       shift
       ;;
     -e | --examples)
