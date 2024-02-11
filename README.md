@@ -305,7 +305,7 @@ The `kitty-control` main menu:
 
 The `kitty` configuration selection `fzf` dialog:
 
-![Window Info](https://raw.githubusercontent.com/wiki/doctorfree/kitty-control/select-config.png)
+![Select Config](https://raw.githubusercontent.com/wiki/doctorfree/kitty-control/select-conf.png)
 
 The `kitty` window information selection menu:
 
