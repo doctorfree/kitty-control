@@ -797,10 +797,12 @@ list_colors() {
   local numc=0
   local richtext=
   if [ "$1" == "brief" ]; then
+    heading "Supported Kitty Primary Color Names" "Color Names"
     cols=("${primary_colors[@]}")
     numcols=3
     spaces=11
   else
+    heading "Supported Kitty Color Names" "Color Names"
     cols=("${colors[@]}")
     numcols=2
     spaces=17

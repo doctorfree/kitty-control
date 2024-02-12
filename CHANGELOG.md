@@ -4,6 +4,8 @@
 
 ### ⚡️ Added
 
+- Add header to color names list
+
 ### 🐞 Fixed
 
 - Moved `read_config.py` kitten from `~/.config/kitty/` to `~/.config/kitty/kitty-control/`
