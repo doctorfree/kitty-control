@@ -64,7 +64,7 @@ NORM=$(tput sgr0 2>/dev/null)
 primary_colors=("reset" "custom" "black" "white" "red" "green" "yellow" "blue" "magenta" "cyan" "gray" "maroon" "navy" "purple")
 colors=("${primary_colors[@]}")
 colors+=("aliceblue" "antiquewhite" "aquamarine" "azure" "beige" "bisque" "blanchedalmond" "blueviolet" "brown" "burlywood" "cadetblue" "chartreuse" "chocolate" "coral" "cornflowerblue" "cornsilk" "darkblue" "darkcyan" "darkgoldenrod" "darkgray" "darkgreen" "darkgrey" "darkkhaki" "darkmagenta" "darkolivegreen" "darkorange" "darkorchid" "darkred" "darksalmon" "darkseagreen" "darkslateblue" "darkslategray" "darkslategrey" "darkturquoise" "darkviolet" "debianred" "deeppink" "deepskyblue" "dimgray" "dimgrey" "dodgerblue" "firebrick" "floralwhite" "forestgreen" "gainsboro" "ghostwhite" "gold" "goldenrod" "greenyellow" "grey" "honeydew" "hotpink" "indianred" "ivory" "khaki" "lavender" "lavenderblush" "lawngreen" "lemonchiffon" "lightblue")
-colors+=("lightcoral" "lightcyan" "lightgoldenrod" "lightgoldenrodyellow" "lightgray" "lightgreen" "lightgrey" "lightpink" "lightsalmon" "lightseagreen" "lightskyblue" "lightslateblue" "lightslategray" "lightslategrey" "lightsteelblue" "lightyellow" "limegreen" "linen" "mediumaquamarine" "mediumblue" "mediumorchid" "mediumpurple" "mediumseagreen" "mediumslateblue" "mediumspringgreen" "mediumturquoise" "mediumvioletred" "midnightblue" "mintcream" "mistyrose" "moccasin" "navajowhite" "navyblue" "oldlace" "olivedrab" "orange" "orangered" "orchid" "palegoldenrod" "palegreen" "paleturquoise" "palevioletred" "papayawhip" "peachpuff" "peru" "pink" "plum" "powderblue" "rosybrown" "royalblue" "saddlebrown" "salmon" "sandybrown" "seagreen" "seashell" "sienna" "skyblue" "slateblue" "slategray" "slategrey" "snow" "springgreen" "steelblue" "tan" "thistle" "tomato" "turquoise" "violet" "violetred" "wheat" "whitesmoke" "yellowgreen")
+colors+=("lightcoral" "lightcyan" "lightgray" "lightgreen" "lightgrey" "lightpink" "lightsalmon" "lightseagreen" "lightskyblue" "lightslateblue" "lightslategray" "lightslategrey" "lightsteelblue" "lightyellow" "limegreen" "linen" "mediumaquamarine" "mediumblue" "mediumorchid" "mediumpurple" "mediumseagreen" "mediumslateblue" "mediumspringgreen" "mediumturquoise" "mediumvioletred" "midnightblue" "mintcream" "mistyrose" "moccasin" "navajowhite" "navyblue" "oldlace" "olivedrab" "orange" "orangered" "orchid" "palegoldenrod" "palegreen" "paleturquoise" "palevioletred" "papayawhip" "peachpuff" "peru" "pink" "plum" "powderblue" "rosybrown" "royalblue" "saddlebrown" "salmon" "sandybrown" "seagreen" "seashell" "sienna" "skyblue" "slateblue" "slategray" "slategrey" "snow" "springgreen" "steelblue" "tan" "thistle" "tomato" "turquoise" "violet" "violetred" "wheat" "whitesmoke" "yellowgreen" "lightgoldenrod" "lightgoldenrodyellow")
 
 brief_usage() {
   printf "${BOLD}Usage: kitty-control [-adefhuv] [back <color>] [-c command] [dark]"
@@ -230,6 +230,20 @@ prompt_continue() {
   read -r yn
 }
 
+prompt_more() {
+  printf "\nPress <Enter> to view the full list of color names, 'q' to return ... "
+  read -r yn
+  case "${yn}" in
+    q*|Q*)
+      return
+      ;;
+    *)
+      list_colors
+      prompt_continue
+      ;;
+  esac
+}
+
 tolower() {
   echo "$1" | tr '[:upper:]' '[:lower:]'
 }
@@ -240,13 +254,13 @@ set_show_shortcuts() {
   else
     shortcuts="bg/back c/clear d/dark F/full f/font fg/fore h/help i/info"
   fi
-  addtlcuts="K/list tabs L/list windows l/load o/opts q/quit T/theme t/tran v/view"
+  addtlcuts="C/list colors K/list tabs L/list windows l/load o/opts q/quit T/theme t/tran v/view"
   if [ "${have_rich}" ]; then
     rich "[b cyan]Shortcuts:[/] [b yellow]${shortcuts}[/]" -p
-    rich "           [b yellow]${addtlcuts}[/]" -p
+    rich "  [b yellow]${addtlcuts}[/]" -p
   else
     printf "\nShortcuts: ${BOLD}${shortcuts}${NORM}"
-    printf "\n           ${BOLD}${addtlcuts}${NORM}\n"
+    printf "\n  ${BOLD}${addtlcuts}${NORM}\n"
   fi
 }
 
@@ -644,7 +658,7 @@ map_colors() {
     dodgerblue)
       printf "dodger_blue1"
       ;;
-    darkred)
+    darkred|maroon)
       printf "dark_red"
       ;;
     darkmagenta)
@@ -769,10 +783,16 @@ map_colors() {
 
 list_colors() {
   local cols=()
+  local numc=0
+  local richtext=
   if [ "$1" == "brief" ]; then
     cols=("${primary_colors[@]}")
+    numcols=3
+    spaces=11
   else
     cols=("${colors[@]}")
+    numcols=2
+    spaces=17
   fi
   for color_name in "${cols[@]}"; do
     case "${color_name}" in
@@ -780,26 +800,52 @@ list_colors() {
         continue
         ;;
       *)
+        ((numc++))
         if [ "${have_rich}" ]; then
           rich_color=$(map_colors $(tolower "${color_name}"))
-          if [ "${rich_color}" == "none" ]; then
-            rich "         ${color_name}" -p
+          namelen=$(echo "${color_name}" | wc -c)
+          numspaces=$((spaces - namelen))
+          [ ${numspaces} -lt 1 ] && numspaces=0
+          while [ ${numspaces} -gt 0 ]; do
+            color_name="${color_name} "
+            ((numspaces--))
+          done
+          if [ ${numc} -gt ${numcols} ]; then
+            if [ "${rich_color}" == "none" ]; then
+              rich "${richtext}          ${color_name}" -p
+            else
+              rich "${richtext} [${rich_color}]########[/] ${color_name}" -p
+            fi
+            numc=0
+            richtext=
           else
-            rich "[${rich_color}]########[/] ${color_name}" -p
+            if [ "${rich_color}" == "none" ]; then
+              richtext="${richtext}          ${color_name}"
+            else
+              richtext="${richtext} [${rich_color}]########[/] ${color_name}"
+            fi
           fi
         else
-          printf "\n\t${color_name}"
+          if [ ${numc} -gt ${numcols} ]; then
+            printf "\n${color_name}"
+            numc=0
+          else
+            printf "\t${color_name}"
+          fi
         fi
         ;;
     esac
   done
+  [ "${have_rich}" ] && [ ${numc} -gt 0 ] && rich "${richtext}" -p
   printf "\n"
   [ "$1" == "brief" ] && {
-    if [ "${have_rich}" ]; then
-      rich "For a full list of supported color names use [red]kitty-control list colors[/]" -p
-    else
-      printf "\nFor a full list of supported color names use 'kitty-control list colors'\n"
-    fi
+    [ "$2" == "more" ] || {
+      if [ "${have_rich}" ]; then
+        rich "For a full list of supported color names use [red]kitty-control list colors[/]" -p
+      else
+        printf "\nFor a full list of supported color names use 'kitty-control list colors'\n"
+      fi
+    }
   }
 }
 
@@ -2441,7 +2487,8 @@ select_with_fzf() {
           install_ranger
           ;;
         "List Col"* | "list col"* | "C")
-          list_colors | less
+          list_colors brief more
+          prompt_more
           ;;
         "List Tab"* | "list tab"* | "K")
           tab_menu
@@ -2488,7 +2535,7 @@ select_with_fzf() {
         "Unicode"* | "unicode"*)
           kitty +kitten unicode_input
           ;;
-        "Show"* | "show"*)
+        "Show"* | "show"* | "Usage"* | "usage"*)
           show_usage usage
           ;;
         "Manual"* | "manual"*)
@@ -2639,7 +2686,8 @@ show_menu() {
         break
         ;;
       "List Col"*,* | *,"List Col"* | "list col"*,* | *,"list col"* | "C",* | *,"C")
-        list_colors | less
+        list_colors brief more
+        prompt_more
         break
         ;;
       "List Tab"*,* | *,"List Tab"* | "list tab"*,* | *,"list tab"* | "K",* | *,"K")
@@ -2693,7 +2741,7 @@ show_menu() {
         load-config "default"
         break
         ;;
-      "Show"*,* | *,"Show"* | "show"*,* | *,"show"*)
+      "Show"*,* | *,"Show"* | "show"*,* | *,"show"* | "Usage"*,* | *,"Usage"* | "usage"*,* | *,"usage"*)
         show_usage usage
         break
         ;;
