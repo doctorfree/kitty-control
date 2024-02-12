@@ -1,6 +1,6 @@
 # read_config.py - load the specified Kitty configuration
 #
-# usage: kitty @ kitten read_config.py /path/to/kitty.conf
+# usage: kitty @ kitten kitty-control/read_config.py /path/to/kitty.conf
 #
 # Author: Ronald Joe Record <ronaldrecord@gmail.com>
 # Date: written February 2024

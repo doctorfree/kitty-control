@@ -6,7 +6,6 @@ DIFFCONF="${HOME}/.config/kitty/diff.conf"
 DIRDCONF="${KITTY_CONFIG_DIRECTORY}/diff.conf"
 
 rm -f ${HOME}/.local/bin/kitty-control
-rm -f ${HOME}/.config/kitty/read_config.py
 rm -rf ${HOME}/.config/kitty/kitty-control
 [ -f ${DIFFCONF} ] && {
   grep kitty-control ${DIFFCONF} | grep example >/dev/null && {
@@ -16,7 +15,6 @@ rm -rf ${HOME}/.config/kitty/kitty-control
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
   [ "${KITTY_CONFIG_DIRECTORY}" == "${HOME}/.config/kitty" ] || {
     [ -d "${KITTY_CONFIG_DIRECTORY}" ] && {
-      rm -f ${KITTY_CONFIG_DIRECTORY}/read_config.py
       rm -rf ${KITTY_CONFIG_DIRECTORY}/kitty-control
       [ -f ${DIRDCONF} ] && {
         grep kitty-control ${DIRDCONF} | grep example >/dev/null && {
