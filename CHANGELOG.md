@@ -4,11 +4,19 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.5r3
+
+### ⚡️ Added
+
 - Add support for listing the supported `kitty` color names with `kitty-control ls colors`
 - Map `kitty` color names to `rich-cli` color names when listing colors
-- Add `C` to shortcuts for colors list, format color names list
+- Add `C` to shortcuts for colors list
 
 ### 🐞 Fixed
+
+- Format color names list
 
 ## v1.0.5r2
 
