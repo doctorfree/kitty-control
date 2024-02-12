@@ -569,6 +569,9 @@ map_colors() {
     black|red|green|yellow|blue|magenta|cyan|white|purple|orchid|tan|violet)
       printf "$1"
       ;;
+    chartreuse|cornsilk|gold|thistle|pink|wheat|orange|plum|salmon)
+      printf "%s1" "$1"
+      ;;
     navy|navyblue)
       printf "navy_blue"
       ;;
@@ -581,6 +584,12 @@ map_colors() {
     darkcyan)
       printf "dark_cyan"
       ;;
+    lightcyan)
+      printf "light_cyan1"
+      ;;
+    navajowhite)
+      printf "navajo_white1"
+      ;;
     seagreen)
       printf "sea_green1"
       ;;
@@ -592,9 +601,6 @@ map_colors() {
       ;;
     mediumseagreen)
       printf "sea_green2"
-      ;;
-    thistle|pink|wheat|plum|salmon)
-      printf "%s1" "$1"
       ;;
     turquoise)
       printf "turquoise2"
@@ -626,11 +632,17 @@ map_colors() {
     steelblue)
       printf "steel_blue"
       ;;
+    coral)
+      printf "light_coral"
+      ;;
     cornflowerblue)
       printf "cornflower_blue"
       ;;
     cadetblue)
       printf "cadet_blue"
+      ;;
+    dodgerblue)
+      printf "dodger_blue1"
       ;;
     darkred)
       printf "dark_red"
@@ -640,6 +652,33 @@ map_colors() {
       ;;
     gray|grey)
       printf "grey66"
+      ;;
+    goldenrod)
+      printf "gold3"
+      ;;
+    darkgoldenrod)
+      printf "dark_goldenrod"
+      ;;
+    lightgoldenrod)
+      printf "light_goldenrod1"
+      ;;
+    lightgoldenrodyellow)
+      printf "light_goldenrod3"
+      ;;
+    lightyellow)
+      printf "light_yellow3"
+      ;;
+    mistyrose)
+      printf "misty_rose1"
+      ;;
+    palegoldenrod)
+      printf "light_goldenrod2"
+      ;;
+    palegreen)
+      printf "pale_green1"
+      ;;
+    paleturquoise)
+      printf "pale_turquoise1"
       ;;
     royalblue)
       printf "royal_blue1"
@@ -655,6 +694,9 @@ map_colors() {
       ;;
     lightslategray|lightslategrey)
       printf "light_slate_grey"
+      ;;
+    darkolivegreen)
+      printf "dark_olive_green1"
       ;;
     mediumpurple)
       printf "medium_purple"
@@ -680,9 +722,6 @@ map_colors() {
     mediumorchid)
       printf "medium_orchid"
       ;;
-    darkgoldenrod)
-      printf "dark_goldenrod"
-      ;;
     rosybrown)
       printf "rosy_brown"
       ;;
@@ -700,6 +739,9 @@ map_colors() {
       ;;
     hotpink)
       printf "hot_pink"
+      ;;
+    orangered)
+      printf "orange_red1"
       ;;
     darkorange)
       printf "dark_orange"
