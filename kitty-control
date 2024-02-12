@@ -2551,7 +2551,7 @@ select_with_fzf() {
         "Show"* | "show"* | "Usage"* | "usage"*)
           show_usage usage
           ;;
-        "Manual"* | "manual"*)
+        "Man"* | "man"* | "m")
           printf "\n"
           man kitty-control
           ;;
@@ -2758,7 +2758,7 @@ show_menu() {
         show_usage usage
         break
         ;;
-      "Manual"*,* | *,"Manual"* | "manual"*,* | *,"manual"*)
+      "Man"*,* | *,"Man"* | "man"*,* | *,"man"* | "m",* | *,"m")
         printf "\n"
         man kitty-control
         break
