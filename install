@@ -156,6 +156,11 @@ install_config() {
   [ -f ${HOME}/.config/kitty/read_config.py ] && {
     rm -f ${HOME}/.config/kitty/read_config.py
   }
+  # Link to the new location of the kitten
+  [ -f ${HOME}/.config/kitty/kitty-control/read_config.py ] && {
+    ln -s ${HOME}/.config/kitty/kitty-control/read_config.py \
+          ${DEST}/read_config.py
+  }
 }
 
 pathadd() {

@@ -7,6 +7,7 @@
 ### 🐞 Fixed
 
 - Moved `read_config.py` kitten from `~/.config/kitty/` to `~/.config/kitty/kitty-control/`
+- Link `~/.config/kitty/read_config.py` to new kitten location
 
 ## v1.0.5r3
 
