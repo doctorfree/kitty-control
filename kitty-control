@@ -467,12 +467,23 @@ install_figlet() {
 }
 
 install_fzf() {
+  [ -f ${HOME}/.local/bin/fzf ] && {
+    mv ${HOME}/.local/bin/fzf ${HOME}/.local/bin/fzf-bak$$
+  }
   [ -d ${HOME}/.fzf ] && mv ${HOME}/.fzf ${HOME}/.fzf$$
   git clone --depth 1 https://github.com/junegunn/fzf.git \
     ${HOME}/.fzf >/dev/null 2>&1
   [ -f ${HOME}/.fzf/install ] && chmod 755 ${HOME}/.fzf/install
   [ -x ${HOME}/.fzf/install ] && ${HOME}/.fzf/install --all >/dev/null 2>&1
   [ -d ${HOME}/.fzf/bin ] && pathadd "${HOME}/.fzf/bin"
+  if [ -f ${HOME}/.fzf/bin/fzf ]; then
+    ln -s ${HOME}/.fzf/bin/fzf ${HOME}/.local/bin/fzf
+    rm -f ${HOME}/.local/bin/fzf-bak$$
+  else
+    [ -f ${HOME}/.local/bin/fzf-bak$$ ] && {
+      mv ${HOME}/.local/bin/fzf-bak$$ ${HOME}/.local/bin/fzf
+    }
+  fi
   have_fzf=$(type -p fzf)
   [ "${have_fzf}" ] && use_fzf=1
 }

@@ -264,6 +264,9 @@ done
 chmod 755 ${FDEST}/*.sh
 
 # Install fzf fuzzy finder
+[ -f ${HOME}/.local/bin/fzf ] && {
+  mv ${HOME}/.local/bin/fzf ${HOME}/.local/bin/fzf-bak$$
+}
 have_fzf=$(type -p fzf)
 [ "${have_fzf}" ] || {
   [ -d ${HOME}/.fzf ] && mv ${HOME}/.fzf ${HOME}/.fzf$$
@@ -272,6 +275,14 @@ have_fzf=$(type -p fzf)
   [ -f ${HOME}/.fzf/install ] && chmod 755 ${HOME}/.fzf/install
   [ -x ${HOME}/.fzf/install ] && ${HOME}/.fzf/install --all >/dev/null 2>&1
 }
+if [ -f ${HOME}/.fzf/bin/fzf ]; then
+  ln -s ${HOME}/.fzf/bin/fzf ${HOME}/.local/bin/fzf
+  rm -f ${HOME}/.local/bin/fzf-bak$$
+else
+  [ -f ${HOME}/.local/bin/fzf-bak$$ ] && {
+    mv ${HOME}/.local/bin/fzf-bak$$ ${HOME}/.local/bin/fzf
+  }
+fi
 
 # Use a nicer Kitty icon
 if [ "${darwin}" ]; then
