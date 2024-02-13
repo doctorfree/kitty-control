@@ -4,6 +4,9 @@
 
 ### ⚡️ Added
 
+- Add `About` entry to `Usage` menu
+- Add shortcuts to `Usage` menu and `u` shortcut to main menu
+
 ### 🐞 Fixed
 
 - Remove image background before setting it

@@ -83,6 +83,34 @@ brief_usage() {
   }
 }
 
+show_about() {
+  heading "About Kitty Control" "About"
+  if [ "${have_rich}" ]; then
+    rich "[red]Kitty Control[/] is an open source command line utility to control some aspects of" -p
+    rich "the [green]Kitty[/] terminal emulator using the [green]Kitty remote control[/] facility and [green]kittens[/]." -p
+    printf "\n"
+    rich "[red]Kitty Control[/] enables support for automation of [green]Kitty[/] customization and" -p
+    rich "provides an additional layer of convenience. In particular, scripted [green]Kitty[/]" -p
+    rich "actions enable quick and easy switching between preconfigured [green]Kitty[/]" -p
+    rich "configurations without losing state or having to quit [green]Kitty[/] and restart" -p
+    rich "with another configuration. This is accomplished through the use of the" -p
+    rich "[red]read_config.py[/] custom [green]kitten[/] included with [red]kitty-control[/]." -p
+    printf "\n"
+    rich "[red]kitty-control[/] is written in [yellow]Bash[/] and [yellow]Python[/] by Ronald Record." -p
+  else
+    printf "\n'Kitty Control' is an open source command line utility to control some aspects of"
+    printf "\nthe 'Kitty' terminal emulator using the 'Kitty' remote control facility and kittens.\n"
+    printf "\nKitty Control enables support for automation of 'Kitty' customization and"
+    printf "\nprovides an additional layer of convenience. In particular, scripted 'Kitty'"
+    printf "\nactions enable quick and easy switching between preconfigured 'Kitty'"
+    printf "\nconfigurations without losing state or having to quit 'Kitty' and restart"
+    printf "\nwith another configuration. This is accomplished through the use of the"
+    printf "\n'read_config.py' custom 'kitten' included with 'kitty-control'.\n"
+    printf "\n'kitty-control' is written in 'Bash' and 'Python' by Ronald Record.\n"
+  fi
+  show_versions
+}
+
 show_examples() {
   clear_screen
   if [ "${have_rich}" ]; then
@@ -445,7 +473,6 @@ show_versions() {
       printf "\nAvailable fzf version: ${release_version}\n"
     fi
   fi
-  printf "\n"
 }
 
 install_figlet() {
@@ -1342,23 +1369,25 @@ show_usage() {
     fi
     brief_usage noexit
     show_versions
-    options=("Examples" "Full Usage" "Main Menu" "Quit (q)")
+    options=("Examples" "Full Usage" "About" "Main Menu" "Quit (q)")
     if [ "${use_fzf}" ]; then
       choice=$(printf "%s\n" "${options[@]}" | fzf --prompt="😺 Select option ('Esc' or 'Main Menu' to return)  " --height=8 --layout=reverse --exit-0)
       if [ "${choice}" ]; then
         case "${choice}" in
-          Example*)
+          About* | about* | a)
+            show_about
+            prompt_continue
+            ;;
+          Exam* | exam* | e)
             show_examples noexit | less
-            break
             ;;
-          Full*)
+          Full* | full* | f)
             usage noexit | less
+            ;;
+          Main* | main* | m)
             break
             ;;
-          Main* | "")
-            break 2
-            ;;
-          Quit*)
+          Quit* | quit* | q)
             clear_screen
             heading "Exiting kitty-control" "Farewell"
             exit 0
@@ -1366,11 +1395,10 @@ show_usage() {
           *)
             printf "\nCould not match '${choice}' with an entry."
             printf "\nPlease try again with an exact match.\n"
-            break
             ;;
         esac
       else
-        break 2
+        break
       fi
     else
       PS3="${BOLD}Enter a choice (number, shortcut, or text, 'h' help): ${NORM}"
@@ -1380,15 +1408,20 @@ show_usage() {
           show_help
           break
           ;;
-        "Example"*,* | *,"Example"* | "example"*,* | *,"example"*)
+        "About"*,* | *,"About"* | "about"*,* | *,"about"* | "a",* | *,"a")
+          show_about
+          prompt_continue
+          break
+          ;;
+        "Exam"*,* | *,"Exam"* | "exam"*,* | *,"exam"* | "e",* | *,"e")
           show_examples noexit | less
           break
           ;;
-        "Full"*,* | *,"Full"* | "full"*,* | *,"full"*)
+        "Full"*,* | *,"Full"* | "full"*,* | *,"full"* | "f",* | *,"f")
           usage noexit | less
           break
           ;;
-        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+        "Main"*,* | *,"Main"* | "main"*,* | *,"main"* | "m",* | *,"m")
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
@@ -2609,7 +2642,7 @@ show_menu() {
     if [ "${use_figlet}" ]; then
       show_figlet
     else
-      [ "${have_rich}" ] && rich "[cyan]Kitty Control[/cyan]" -p -a rounded -c -C
+      [ "${have_rich}" ] && rich "[cyan]Kitty Control Main Menu[/cyan]" -p -a rounded -c -C
     fi
     printf "\n"
     options=()
@@ -2776,7 +2809,7 @@ show_menu() {
         load-config "default"
         break
         ;;
-      "Show"*,* | *,"Show"* | "show"*,* | *,"show"* | "Usage"*,* | *,"Usage"* | "usage"*,* | *,"usage"*)
+      "Show"*,*|*,"Show"*|"show"*,*|*,"show"*|"Usage"*,*|*,"Usage"*|"usage"*,*|*,"usage"*|"u",*|*,"u")
         show_usage usage
         break
         ;;
