@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/wiki/doctorfree/kitty-control/kitty-control.png" style="width:1059px;height:122px;">
+  <img src="https://raw.githubusercontent.com/wiki/doctorfree/kitty-control/kitty-control.png" style="width:1377px;height:164px;">
   <br />
 Control some aspects of the Kitty terminal emulator from the command line
 </div>
