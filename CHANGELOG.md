@@ -8,9 +8,11 @@
 - Add shortcuts to `Usage` menu and `u` shortcut to main menu
 - Add shortcuts to all main menu entries
 - Add `Fuzzy Select` option to main menu
+- Align main menu shortcuts
 
 ### 🐞 Fixed
 
+- Fix background image match in `Fuzzy Select` dialog
 - Remove image background before setting it
 - Remove `Fuzzy Select` menu entry when entering `Fuzzy Select` dialog
 - Add `List Tabs` to `List Windows` menu

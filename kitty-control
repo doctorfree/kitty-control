@@ -1883,7 +1883,7 @@ menu_background_color() {
     while true; do
       heading "Background Color" "Background"
       choice=$(printf "%s\n" "${bgopts[@]}" | fzf --prompt="😺 Select Background Color ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
-      [ "${choice}" ] && {
+      if [ "${choice}" ]; then
         case "${choice}" in
           "h" | "H" | "help" | "Help")
             show_help
@@ -1911,7 +1911,9 @@ menu_background_color() {
             break
             ;;
         esac
-      }
+      else
+        break
+      fi
     done
   else
     while true; do
@@ -1958,7 +1960,7 @@ menu_foreground_color() {
     while true; do
       heading "Foreground Color" "Foreground"
       choice=$(printf "%s\n" "${fgopts[@]}" | fzf --prompt="😺 Select Foreground Color ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
-      [ "${choice}" ] && {
+      if [ "${choice}" ]; then
         case "${choice}" in
           "h" | "H" | "help" | "Help")
             show_help
@@ -1986,7 +1988,9 @@ menu_foreground_color() {
             break
             ;;
         esac
-      }
+      else
+        break
+      fi
     done
   else
     while true; do
@@ -2501,7 +2505,10 @@ select_with_fzf() {
         keepit=
       fi
     done
-    [ "${keepit}" ] && tmp_array+=( "${fzopts[i]}" )
+    [ "${keepit}" ] && {
+      entry=$(echo "${fzopts[i]}" | sed -e "s/ \[.\]//")
+      tmp_array+=( "${entry}" )
+    }
   done
   fzopts=("${tmp_array[@]}")
   unset tmp_array
@@ -2530,7 +2537,7 @@ select_with_fzf() {
         "Foreground Color"* | "fore")
           menu_foreground_color
           ;;
-        "Background Image")
+        "Background Image"*)
           FILE=
           select_file image
           [ "${FILE}" ] && {
@@ -2556,13 +2563,13 @@ select_with_fzf() {
         "Font"* | "font"* | "f")
           menu_font_size
           ;;
-        "Install Figlet")
+        "Install Figlet"*)
           install_figlet
           ;;
-        "Install Fzf")
+        "Install Fzf"*)
           install_fzf
           ;;
-        "Install Ranger")
+        "Install Ranger"*)
           install_ranger
           ;;
         "List Col"* | "list col"* | "C")
@@ -2607,7 +2614,7 @@ select_with_fzf() {
         "Tran"* | "tran"* | "t")
           menu_set_trans
           ;;
-        "Toggle"* | "toggle"* | "full" | "F")
+        "Full"* | "full"* | "F")
           toggle-fullscreen
           sleep 1
           ;;
@@ -2674,16 +2681,17 @@ show_menu() {
       ((numconfs++))
       configs+=("${kconf}")
     done
-    options+=("Background Color (b)" "Background Image (i)" "Clear Background (c)")
-    options+=("Dark/Opaque (B)" "Diff Files (d)" "Diff Folders (D)" "Examples (e)" "Font Size (f)")
-    options+=("Foreground Color (g)" "Fullscreen (F)")
-    options+=("List Colors (C)" "List Tabs (k)" "List Windows (w)")
+    options+=("Background Color [b]" "Background Image [i]" "Clear Background [c]")
+    options+=("Dark/Opaque      [B]" "Diff Files       [d]" "Diff Folders     [D]")
+    options+=("Examples         [e]" "Font Size        [f]")
+    options+=("Foreground Color [g]" "Fullscreen       [F]")
+    options+=("List Colors      [C]" "List Tabs        [k]" "List Windows     [w]")
     [ ${numconfs} -gt 1 ] && {
-      options+=("Load Config (l)")
+      options+=("Load Config      [l]")
     }
-    options+=("Manual Page (m)" "Options (o)" "Reset (r)" "Theme (T)")
-    options+=("Terminal Info (I)" "Transparent (t)" "Unicode Input (U)")
-    options+=("Usage (u)" "View an Image (v)")
+    options+=("Manual Page      [m]" "Options          [o]" "Reset            [r]")
+    options+=("Theme            [T]" "Terminal Info    [I]" "Transparent      [t]")
+    options+=("Unicode Input    [U]" "Usage            [u]" "View an Image    [v]")
     [ "${have_figlet}" ] || options+=("Install Figlet")
     [ "${have_fzf}" ] || options+=("Install Fzf")
     [ "${have_ranger}" ] || options+=("Install Ranger")
@@ -2707,7 +2715,7 @@ show_menu() {
     [ "${update_control}" ] && {
       options+=("Upgrade kitty-control (${install_version} -> ${control_version})")
     }
-    options+=("Fuzzy Select (z)" "About (a)" "Quit (q)")
+    options+=("Fuzzy Select     [z]" "About            [a]" "Quit             [q]")
     set_show_shortcuts
     select opt in "${options[@]}"; do
       case "$opt,$REPLY" in
