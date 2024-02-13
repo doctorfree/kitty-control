@@ -7,12 +7,15 @@
 - Add `About` entry to `Usage` menu
 - Add shortcuts to `Usage` menu and `u` shortcut to main menu
 - Add shortcuts to all main menu entries
+- Add `Fuzzy Select` option to main menu
 
 ### 🐞 Fixed
 
 - Remove image background before setting it
+- Remove `Fuzzy Select` menu entry when entering `Fuzzy Select` dialog
 - Add `List Tabs` to `List Windows` menu
 - Add `List Windows` to `List Tabs` menu
+- All single character shortcuts in main menu
 
 ## v1.0.5r4
 

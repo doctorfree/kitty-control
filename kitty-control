@@ -277,9 +277,9 @@ tolower() {
 
 set_show_shortcuts() {
   if [ "${have_fzf}" ]; then
-    shortcuts="bg/back c/clear d/dark F/full f/font fg/fore fzf/fuzzy h/help i/info"
+    shortcuts="b/back c/clear B/dark F/full f/font g/fore z/fuzzy h/help I/info"
   else
-    shortcuts="bg/back c/clear d/dark F/full f/font fg/fore h/help i/info"
+    shortcuts="b/back c/clear B/dark F/full f/font g/fore h/help I/info"
   fi
   addtlcuts="C/colors k/tabs w/windows l/load o/opts q/quit T/theme t/tran v/view"
   if [ "${have_rich}" ]; then
@@ -2491,10 +2491,25 @@ options_menu() {
 
 select_with_fzf() {
   fzopts=("$@")
+  delete=("Fuzzy Select (z)")
+  tmp_array=()
+  for i in "${!fzopts[@]}"; do
+    keepit=1
+    for target in "${delete[@]}"; do
+      if [[ ${fzopts[i]} = $target ]]; then
+        unset 'fzopts[i]'
+        keepit=
+      fi
+    done
+    [ "${keepit}" ] && tmp_array+=( "${fzopts[i]}" )
+  done
+  fzopts=("${tmp_array[@]}")
+  unset tmp_array
+
   fzopts+=( "Help" "Main Menu" )
   while true; do
     clear_screen
-    heading "Kitty Control" "Kitty Control"
+    heading "Kitty Control Fuzzy Select" "Kitty Control"
     choice=$(printf "%s\n" "${fzopts[@]}" | fzf -m --prompt="😺 Select Menu Option ('Main Menu' or 'Esc' to return)  " --height=18 --layout=reverse --exit-0)
     if [ "${choice}" ]; then
       case "${choice}" in
@@ -2509,10 +2524,10 @@ select_with_fzf() {
           set-foreground reset
           load-config "default"
           ;;
-        "Background Color"* | "bg" | "back")
+        "Background Color"* | "back")
           menu_background_color
           ;;
-        "Foreground Color"* | "fg" | "fore")
+        "Foreground Color"* | "fore")
           menu_foreground_color
           ;;
         "Background Image")
@@ -2659,15 +2674,15 @@ show_menu() {
       ((numconfs++))
       configs+=("${kconf}")
     done
-    options+=("Background Color (bg)" "Background Image (bi)" "Clear Background (c)")
-    options+=("Dark/Opaque (b)" "Diff Files (d)" "Diff Folders (D)" "Examples (e)" "Font Size (f)")
-    options+=("Foreground Color (fg)" "Fullscreen (F)")
+    options+=("Background Color (b)" "Background Image (i)" "Clear Background (c)")
+    options+=("Dark/Opaque (B)" "Diff Files (d)" "Diff Folders (D)" "Examples (e)" "Font Size (f)")
+    options+=("Foreground Color (g)" "Fullscreen (F)")
     options+=("List Colors (C)" "List Tabs (k)" "List Windows (w)")
     [ ${numconfs} -gt 1 ] && {
       options+=("Load Config (l)")
     }
     options+=("Manual Page (m)" "Options (o)" "Reset (r)" "Theme (T)")
-    options+=("Terminal Info (i)" "Transparent (t)" "Unicode Input (I)")
+    options+=("Terminal Info (I)" "Transparent (t)" "Unicode Input (U)")
     options+=("Usage (u)" "View an Image (v)")
     [ "${have_figlet}" ] || options+=("Install Figlet")
     [ "${have_fzf}" ] || options+=("Install Fzf")
@@ -2692,7 +2707,7 @@ show_menu() {
     [ "${update_control}" ] && {
       options+=("Upgrade kitty-control (${install_version} -> ${control_version})")
     }
-    options+=("About (a)" "Quit (q)")
+    options+=("Fuzzy Select (z)" "About (a)" "Quit (q)")
     set_show_shortcuts
     select opt in "${options[@]}"; do
       case "$opt,$REPLY" in
@@ -2700,15 +2715,15 @@ show_menu() {
         show_help
         break
         ;;
-      "Background Color",* | *,"Background Color" | "bg",* | *,"bg" | "back",* | *,"back")
+      "Background Color",* | *,"Background Color" | "b",* | *,"b" | "bg",* | *,"bg" | "back",* | *,"back")
         menu_background_color
         break
         ;;
-      "Foreground Color",* | *,"Foreground Color" | "fg",* | *,"fg" | "fore",* | *,"fore")
+      "Foreground Color",* | *,"Foreground Color" | "g",* | *,"g" | "fg",* | *,"fg" | "fore",* | *,"fore")
         menu_foreground_color
         break
         ;;
-      "Background Image",* | *,"Background Image" | "bi",* | *,"bi")
+      "Background Image",* | *,"Background Image" | "i",* | *,"i" | "bi",* | *,"bi")
         FILE=
         select_file image
         [ "${FILE}" ] && {
@@ -2721,7 +2736,7 @@ show_menu() {
         set-bg-image none
         break
         ;;
-      "Dark"*,* | *,"Dark"* | "dark"*,* | *,"dark"* | "b",* | *,"b")
+      "Dark"*,* | *,"Dark"* | "dark"*,* | *,"dark"* | "B",* | *,"B")
         set-opacity "1.0"
         break
         ;;
@@ -2741,7 +2756,7 @@ show_menu() {
         menu_font_size
         break
         ;;
-      "Fzf",* | *,"Fzf" | "fzf",* | *,"fzf" | "Fuzzy",* | *,"Fuzzy" | "fuzzy",* | *,"fuzzy")
+      "z",*|*,"z"|"Fzf",*|*,"Fzf"|"fzf",*|*,"fzf"|"Fuzzy"*,*|*,"Fuzzy"*|"fuzzy"*,*|*,"fuzzy"*)
         [ "${have_fzf}" ] && select_with_fzf "${options[@]}"
         break
         ;;
@@ -2788,7 +2803,7 @@ show_menu() {
         kitty +kitten themes
         break
         ;;
-      "Term"*,* | *,"Term"* | "term"*,* | *,"term"* | "info",* | *,"info" | "i",* | *,"i")
+      "Term"*,* | *,"Term"* | "term"*,* | *,"term"* | "info",* | *,"info" | "I",* | *,"I")
         printf "\n"
         kitty +kitten query_terminal
         prompt_continue
@@ -2803,7 +2818,7 @@ show_menu() {
         sleep 1
         break
         ;;
-      "Unicode"*,* | *,"Unicode"* | "unicode"*,* | *,"unicode"* | "I",* | *,"I")
+      "Unicode"*,* | *,"Unicode"* | "unicode"*,* | *,"unicode"* | "U",* | *,"U")
         kitty +kitten unicode_input
         break
         ;;
