@@ -4,6 +4,12 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.6r1
+
+### ⚡️ Added
+
 - Add `About` entry to `Usage` menu
 - Add shortcuts to `Usage` menu and `u` shortcut to main menu
 - Add shortcuts to all main menu entries

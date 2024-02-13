@@ -273,10 +273,17 @@ info, load an alternate `kitty` configuration, toggle fullscreen, and more.
 
 Shortcuts exist to quickly select a menu option:
 
-```
-bg/back c/clear d/dark F/full f/font fg/fore fzf/fuzzy h/help i/info
-K/list tabs L/list windows l/load o/opts q/quit T/theme t/tran v/view w/windows
-```
+| **Shortcut**/*Action* | **Shortcut**/*Action* | **Shortcut**/*Action* |
+| --------------------- | --------------------- | --------------------- |
+| **a**/*about* | **b**/*background color* | **B**/*dark/opaque* |
+| **c**/*clear background image* | **C**/*list colors* | **d**/*diff files* |
+| **D**/*diff folders* | **e**/*examples* | **f**/*font size* |
+| **F**/*fullscreen* | **g**/*foreground color* | **h**/*help* |
+| **i**/*background image* | **I**/*terminal info* | **k**/*list tabs* |
+| **l**/*load config* | **m**/*manual* | **o**/*options* |
+| **q**/*quit* | **r**/*reset* | **t**/*transparent* |
+| **T**/*theme* | **u**/*usage* | **U**/*unicode input* |
+| **v**/*view image* | **w**/*list windows* | **z**/*fuzzy select* |
 
 Enter a menu option number or shortcut to select an option.
 
