@@ -1638,7 +1638,7 @@ tab_menu() {
                    --arg tipost "$newline" \
                    '$idpre + (.id|tostring), $titpre + .title + $tipost')
 
-    tab_array+=( "All Tabs" "Help" "Main Menu" "Quit" )
+    tab_array+=( "All Tabs" "List Windows" "Help" "Main Menu" "Quit" )
     if [ "${use_fzf}" ]; then
       while true; do
         heading "Kitty Tabs List" "Kitty Tabs"
@@ -1658,6 +1658,10 @@ tab_menu() {
               ;;
             "All Tabs"*)
               show_tab_info "ID: __all__"
+              ;;
+            "List Win"* | "list win"* | "L")
+              windows_menu
+              break
               ;;
             *)
               show_tab_info "${choice}"
@@ -1688,6 +1692,10 @@ tab_menu() {
           "All Tabs"*,* | *,"All Tabs"* | "all tabs"*,* | *,"all tabs"*)
               show_tab_info "ID: __all__"
               ;;
+          "List Win"*,* | *,"List Win"* | "list win"*,* | *,"list win"*)
+            windows_menu
+            break 2
+            ;;
           *,*)
             show_tab_info "${subopt}"
             break
@@ -1720,7 +1728,7 @@ windows_menu() {
                    --arg tipost "$newline" \
                    '$idpre + (.id|tostring), $titpre + .title + $tipost')
 
-    win_array+=( "All Windows" "Help" "Main Menu" "Quit" )
+    win_array+=( "All Windows" "List Tabs" "Help" "Main Menu" "Quit" )
     if [ "${use_fzf}" ]; then
       while true; do
         heading "Kitty Windows List" "Kitty Windows"
@@ -1740,6 +1748,10 @@ windows_menu() {
               ;;
             "All Windows"*)
               show_window_info "ID: __all__"
+              ;;
+            "List Tab"* | "list tab"* | "K")
+              tab_menu
+              break
               ;;
             *)
               show_window_info "${choice}"
@@ -1770,6 +1782,10 @@ windows_menu() {
           "All Windows"*,* | *,"All Windows"* | "all windows"*,* | *,"all windows"*)
               show_window_info "ID: __all__"
               ;;
+          "List Tab"*,* | *,"List Tab"* | "list tab"*,* | *,"list tab"*)
+            tab_menu
+            break 2
+            ;;
           *,*)
             show_window_info "${subopt}"
             break
@@ -2470,7 +2486,10 @@ select_with_fzf() {
         "Background Image")
           FILE=
           select_file image
-          [ "${FILE}" ] && set-bg-image "${FILE}"
+          [ "${FILE}" ] && {
+            set-bg-image none
+            set-bg-image "${FILE}"
+          }
           ;;
         "Clear"* | "clear"* | "c")
           set-bg-image none
@@ -2655,7 +2674,10 @@ show_menu() {
       "Background Image",* | *,"Background Image")
         FILE=
         select_file image
-        [ "${FILE}" ] && set-bg-image "${FILE}"
+        [ "${FILE}" ] && {
+          set-bg-image none
+          set-bg-image "${FILE}"
+        }
         break
         ;;
       "Clear"*,* | *,"Clear"* | "clear"*,* | *,"clear"* | "c",* | *,"c")
@@ -3157,6 +3179,9 @@ done
 [ "${foregrnd}" ] && set-foreground "${foregrnd}"
 [ "${fullscrn}" ] && toggle-fullscreen
 [ "${setopcty}" ] && set-opacity "${setopcty}"
-[ "${bg_image}" ] && set-bg-image "${bg_image}"
+[ "${bg_image}" ] && {
+  set-bg-image none
+  set-bg-image "${bg_image}"
+}
 [ "${kittycmd}" ] && kitty @ ${SOCKET} ${kittycmd} ${OPTS}
 [ "${set_menu}" ] && show_menu

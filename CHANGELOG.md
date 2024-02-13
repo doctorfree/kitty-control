@@ -6,6 +6,10 @@
 
 ### 🐞 Fixed
 
+- Remove image background before setting it
+- Add `List Tabs` to `List Windows` menu
+- Add `List Windows` to `List Tabs` menu
+
 ## v1.0.5r4
 
 ### ⚡️ Added
