@@ -4,6 +4,12 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.5r4
+
+### ⚡️ Added
+
 - Add header to color names list
 
 ### 🐞 Fixed
