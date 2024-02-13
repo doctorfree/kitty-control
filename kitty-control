@@ -89,12 +89,11 @@ show_about() {
     rich "[red]Kitty Control[/] is an open source command line utility to control some aspects of" -p
     rich "the [green]Kitty[/] terminal emulator using the [green]Kitty remote control[/] facility and [green]kittens[/]." -p
     printf "\n"
-    rich "[red]Kitty Control[/] enables support for automation of [green]Kitty[/] customization and" -p
-    rich "provides an additional layer of convenience. In particular, scripted [green]Kitty[/]" -p
-    rich "actions enable quick and easy switching between preconfigured [green]Kitty[/]" -p
-    rich "configurations without losing state or having to quit [green]Kitty[/] and restart" -p
-    rich "with another configuration. This is accomplished through the use of the" -p
-    rich "[red]read_config.py[/] custom [green]kitten[/] included with [red]kitty-control[/]." -p
+    rich "[red]Kitty Control[/] enables automation of [green]Kitty[/] customization and provides an" -p
+    rich "additional layer of convenience. Scripted [green]Kitty[/] actions enable quick and easy" -p
+    rich "switching between preconfigured [green]Kitty[/] configurations without losing state or" -p
+    rich "or having to quit [green]Kitty[/] and restart with another configuration. This is done" -p
+    rich "through the use of the [red]read_config.py[/] custom [green]kitten[/] included with [red]kitty-control[/]." -p
     printf "\n"
     rich "[red]kitty-control[/] is written in [yellow]Bash[/] and [yellow]Python[/] by Ronald Record." -p
   else
@@ -282,13 +281,13 @@ set_show_shortcuts() {
   else
     shortcuts="bg/back c/clear d/dark F/full f/font fg/fore h/help i/info"
   fi
-  addtlcuts="C/list colors K/list tabs L/list windows l/load o/opts q/quit T/theme t/tran v/view"
+  addtlcuts="C/colors k/tabs w/windows l/load o/opts q/quit T/theme t/tran v/view"
   if [ "${have_rich}" ]; then
     rich "[b cyan]Shortcuts:[/] [b yellow]${shortcuts}[/]" -p
-    rich "  [b yellow]${addtlcuts}[/]" -p
+    rich "           [b yellow]${addtlcuts}[/]" -p
   else
     printf "\nShortcuts: ${BOLD}${shortcuts}${NORM}"
-    printf "\n  ${BOLD}${addtlcuts}${NORM}\n"
+    printf "\n           ${BOLD}${addtlcuts}${NORM}\n"
   fi
 }
 
@@ -1381,7 +1380,7 @@ show_usage() {
           Exam* | exam* | e)
             show_examples noexit | less
             ;;
-          Full* | full* | f)
+          *Full* | *full* | f)
             usage noexit | less
             ;;
           Main* | main* | m)
@@ -1417,7 +1416,7 @@ show_usage() {
           show_examples noexit | less
           break
           ;;
-        "Full"*,* | *,"Full"* | "full"*,* | *,"full"* | "f",* | *,"f")
+        *"Full"*,* | *,*"Full"* | *"full"*,* | *,*"full"* | "F",* | *,"F")
           usage noexit | less
           break
           ;;
@@ -2527,7 +2526,7 @@ select_with_fzf() {
         "Clear"* | "clear"* | "c")
           set-bg-image none
           ;;
-        "Dark"* | "dark"* | "d" | "d")
+        "Dark"* | "dark"*)
           set-opacity "1.0"
           ;;
         "Diff File"* | "diff file"*)
@@ -2619,6 +2618,10 @@ select_with_fzf() {
         "Upgrade Fzf"* | "upgrade fzf"*)
           upgrade_fzf
           ;;
+        "About"* | "about"* | "A" | "a")
+          show_about
+          prompt_continue
+          ;;
         "Quit"* | "quit"* | "Q" | "q")
           clear_screen
           heading "Exiting kitty-control" "Farewell"
@@ -2656,18 +2659,19 @@ show_menu() {
       ((numconfs++))
       configs+=("${kconf}")
     done
-    options+=("Background Color" "Background Image" "Clear Background")
-    options+=("Dark/Opaque" "Diff Files" "Diff Folders" "Examples" "Font Size")
-    options+=("Foreground Color")
+    options+=("Background Color (bg)" "Background Image (bi)" "Clear Background (c)")
+    options+=("Dark/Opaque (b)" "Diff Files (d)" "Diff Folders (D)" "Examples (e)" "Font Size (f)")
+    options+=("Foreground Color (fg)" "Fullscreen (F)")
+    options+=("List Colors (C)" "List Tabs (k)" "List Windows (w)")
+    [ ${numconfs} -gt 1 ] && {
+      options+=("Load Config (l)")
+    }
+    options+=("Manual Page (m)" "Options (o)" "Reset (r)" "Theme (T)")
+    options+=("Terminal Info (i)" "Transparent (t)" "Unicode Input (I)")
+    options+=("Usage (u)" "View an Image (v)")
     [ "${have_figlet}" ] || options+=("Install Figlet")
     [ "${have_fzf}" ] || options+=("Install Fzf")
     [ "${have_ranger}" ] || options+=("Install Ranger")
-    options+=("List Colors" "List Tabs" "List Windows")
-    [ ${numconfs} -gt 1 ] && {
-      options+=("Load Configuration")
-    }
-    options+=("Manual Page" "Options" "Reset" "Show Usage/Version" "Theme Selection")
-    options+=("Terminal Info" "Toggle Fullscreen" "Transparent" "Unicode Input")
     [ "${have_fzf}" ] && {
       fzf_release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
       fzf_install_version=$(fzf --version | awk '{ print $1 }')
@@ -2688,7 +2692,7 @@ show_menu() {
     [ "${update_control}" ] && {
       options+=("Upgrade kitty-control (${install_version} -> ${control_version})")
     }
-    options+=("View an Image" "Quit (q)")
+    options+=("About (a)" "Quit (q)")
     set_show_shortcuts
     select opt in "${options[@]}"; do
       case "$opt,$REPLY" in
@@ -2704,7 +2708,7 @@ show_menu() {
         menu_foreground_color
         break
         ;;
-      "Background Image",* | *,"Background Image")
+      "Background Image",* | *,"Background Image" | "bi",* | *,"bi")
         FILE=
         select_file image
         [ "${FILE}" ] && {
@@ -2717,19 +2721,19 @@ show_menu() {
         set-bg-image none
         break
         ;;
-      "Dark"*,* | *,"Dark"* | "dark"*,* | *,"dark"* | "d",* | *,"d")
+      "Dark"*,* | *,"Dark"* | "dark"*,* | *,"dark"* | "b",* | *,"b")
         set-opacity "1.0"
         break
         ;;
-      "Diff File"*,* | *,"Diff File"* | "diff file"*,* | *,"diff file"*)
+      "Diff File"*,* | *,"Diff File"* | "diff file"*,* | *,"diff file"* | "d",* | *,"d")
         menu_diff_file
         break
         ;;
-      "Diff Fold"*,* | *,"Diff Fold"* | "diff fold"*,* | *,"diff fold"*)
+      "Diff Fold"*,* | *,"Diff Fold"* | "diff fold"*,* | *,"diff fold"* | "D",* | *,"D")
         menu_diff_folder
         break
         ;;
-      "Exam"*,* | *,"Exam"* | "exam"*,* | *,"exam"*)
+      "Exam"*,* | *,"Exam"* | "exam"*,* | *,"exam"* | "e",* | *,"e")
         show_examples noexit | less
         break
         ;;
@@ -2758,11 +2762,11 @@ show_menu() {
         prompt_more
         break
         ;;
-      "List Tab"*,* | *,"List Tab"* | "list tab"*,* | *,"list tab"* | "K",* | *,"K")
+      "List Tab"*,* | *,"List Tab"* | "list tab"*,* | *,"list tab"* | "k",* | *,"k")
         tab_menu
         break
         ;;
-      "List Win"*,* | *,"List Win"* | "list win"*,* | *,"list win"* | "L",* | *,"L")
+      "List Win"*,* | *,"List Win"* | "list win"*,* | *,"list win"* | "w",* | *,"w")
         windows_menu
         break
         ;;
@@ -2794,16 +2798,16 @@ show_menu() {
         menu_set_trans
         break
         ;;
-      "Toggle"*,* | *,"Toggle"* | "toggle"*,* | *,"toggle"* | "full",* | *,"full" | "F",* | *,"F")
+      *"Full"*,* | *,*"Full"* | *"full"*,* | *,*"full"* | "F",* | *,"F")
         toggle-fullscreen
         sleep 1
         break
         ;;
-      "Unicode"*,* | *,"Unicode"* | "unicode"*,* | *,"unicode"*)
+      "Unicode"*,* | *,"Unicode"* | "unicode"*,* | *,"unicode"* | "I",* | *,"I")
         kitty +kitten unicode_input
         break
         ;;
-      "Reset"*,* | *,"Reset"* | "reset"*,* | *,"reset"*)
+      "Reset"*,* | *,"Reset"* | "reset"*,* | *,"reset"* | "r",* | *,"r")
         set-background reset
         set-foreground reset
         load-config "default"
@@ -2832,6 +2836,11 @@ show_menu() {
         ;;
       "Upgrade Fzf"*,* | *,"Upgrade Fzf"* | "upgrade fzf"*,* | *,"upgrade fzf"*)
         upgrade_fzf
+        break
+        ;;
+      "About"*,* | *,"About"* | "about"*,* | *,"about"* | "a",* | *,"a")
+        show_about
+        prompt_continue
         break
         ;;
       "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")

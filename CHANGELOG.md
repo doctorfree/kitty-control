@@ -6,6 +6,7 @@
 
 - Add `About` entry to `Usage` menu
 - Add shortcuts to `Usage` menu and `u` shortcut to main menu
+- Add shortcuts to all main menu entries
 
 ### 🐞 Fixed
 
