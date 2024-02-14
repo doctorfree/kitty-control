@@ -4,10 +4,17 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.6r3
+
+### ⚡️ Added
+
 - Install `rich-cli` in a Python virtual environment if not already present
 
 ### 🐞 Fixed
 
+- Exec `kitty-control` after upgrading so we are running the upgrade
 - Format `About` and `Usage` if `rich` not available
 - Remove dupliate screen clear when displaying heading
 
