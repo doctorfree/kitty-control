@@ -2,19 +2,25 @@
 
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_PATH="$(realpath "$SCRIPT_PATH")"
-DIFFCONF="${HOME}/.config/kitty/diff.conf"
+KITTCONF="${HOME}/.config/kitty"
+KCDIR="${KITTCONF}/kitty-control"
+DIFFCONF="${KITTCONF}/diff.conf"
 DIRDCONF="${KITTY_CONFIG_DIRECTORY}/diff.conf"
 
+rloc=$(readlink ${HOME}/.local/bin/rich)
+[ "${rloc}" == "${KCDIR}/.venv/bin/rich" ] && {
+  rm -f ${HOME}/.local/bin/rich
+}
 rm -f ${HOME}/.local/bin/kitty-control
-rm -f ${HOME}/.config/kitty/read_config.py
-rm -rf ${HOME}/.config/kitty/kitty-control
+rm -f ${KITTCONF}/read_config.py
+rm -rf ${KCDIR}
 [ -f ${DIFFCONF} ] && {
   grep kitty-control ${DIFFCONF} | grep example >/dev/null && {
     rm -f ${DIFFCONF}
   }
 }
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
-  [ "${KITTY_CONFIG_DIRECTORY}" == "${HOME}/.config/kitty" ] || {
+  [ "${KITTY_CONFIG_DIRECTORY}" == "${KITTCONF}" ] || {
     [ -d "${KITTY_CONFIG_DIRECTORY}" ] && {
       rm -f ${KITTY_CONFIG_DIRECTORY}/read_config.py
       rm -rf ${KITTY_CONFIG_DIRECTORY}/kitty-control

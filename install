@@ -3,6 +3,7 @@
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_PATH="$(realpath "$SCRIPT_PATH")"
 REPO_URL="https://github.com/doctorfree/kitty-control"
+KCDIR="${HOME}/.config/kitty/kitty-control"
 
 install_kitty() {
   if [ "${darwin}" ]; then
@@ -157,9 +158,8 @@ install_config() {
     rm -f ${HOME}/.config/kitty/read_config.py
   }
   # Link to the new location of the kitten
-  [ -f ${HOME}/.config/kitty/kitty-control/read_config.py ] && {
-    ln -s ${HOME}/.config/kitty/kitty-control/read_config.py \
-          ${DEST}/read_config.py
+  [ -f ${KCDIR}/read_config.py ] && {
+    ln -s ${KCDIR}/read_config.py ${DEST}/read_config.py
   }
 }
 
@@ -180,6 +180,7 @@ have_git=$(type -p git)
   exit 1
 }
 
+printf "\nInstalling kitty-control\n"
 darwin=
 platform=$(uname -s)
 [ "${platform}" == "Darwin" ] && darwin=1
@@ -189,6 +190,7 @@ have_kitty=$(type -p kitty)
 
 # If standalone install, clone the repository, run the install script, exit
 [ -f "${SCRIPT_PATH}"/kitty-control ] || {
+  printf "\nCloning kitty-control repository\n"
   git clone ${REPO_URL} /tmp/kc$$ >/dev/null 2>&1
   [ -x /tmp/kc$$/install ] || {
     [ -f /tmp/kc$$/install ] || {
@@ -208,12 +210,10 @@ cp "${SCRIPT_PATH}"/kitty-control ${HOME}/.local/bin/kitty-control
 chmod 755 ${HOME}/.local/bin/kitty-control
 
 [ -d ${HOME}/.config/kitty ] || mkdir -p ${HOME}/.config/kitty
-[ -d ${HOME}/.config/kitty/kitty-control ] || {
-  mkdir -p ${HOME}/.config/kitty/kitty-control
-}
-rm -f ${HOME}/.config/kitty/kitty-control/read_config.py
-cp "${SCRIPT_PATH}"/kitten/read_config.py ${HOME}/.config/kitty/kitty-control
-chmod 644 ${HOME}/.config/kitty/kitty-control/read_config.py
+[ -d ${KCDIR} ] || mkdir -p ${KCDIR}
+rm -f ${KCDIR}/read_config.py
+cp "${SCRIPT_PATH}"/kitten/read_config.py ${KCDIR}
+chmod 644 ${KCDIR}/read_config.py
 
 [ -f ${HOME}/.config/kitty/diff.conf ] || {
   cp "${SCRIPT_PATH}"/config/diff.conf ${HOME}/.config/kitty/diff.conf
@@ -269,6 +269,7 @@ chmod 755 ${FDEST}/*.sh
 }
 have_fzf=$(type -p fzf)
 [ "${have_fzf}" ] || {
+  printf "\nInstalling fzf fuzzy finder\n"
   [ -d ${HOME}/.fzf ] && mv ${HOME}/.fzf ${HOME}/.fzf$$
   git clone --depth 1 https://github.com/junegunn/fzf.git \
       ${HOME}/.fzf >/dev/null 2>&1
@@ -284,7 +285,24 @@ else
   }
 fi
 
+# Install rich cli
+have_rich=$(type -p rich)
+[ "${have_rich}" ] || {
+  have_python=$(type -p python3)
+  [ "${have_python}" ] && {
+    printf "\nInstalling rich-cli fancy output toolbox\n"
+    python3 -m venv ${KCDIR}/.venv >/dev/null 2>&1
+    [ -x ${KCDIR}/.venv/bin/python ] && {
+      ${KCDIR}/.venv/bin/python -m pip install rich-cli >/dev/null 2>&1
+      [ -x ${KCDIR}/.venv/bin/rich ] && {
+        ln -s ${KCDIR}/.venv/bin/rich ${HOME}/.local/bin/rich
+      }
+    }
+  }
+}
+
 # Use a nicer Kitty icon
+printf "\nInstalling nicer Kitty icons\n"
 if [ "${darwin}" ]; then
   APP="/Applications/kitty.app/Contents/Resources/kitty/logo"
   icon="${APP}"/kitty.png
@@ -344,5 +362,5 @@ else
   }
 fi
 
-printf "Installation of kitty-control complete ✨ 🌟 ✨\n"
+printf "\nInstallation of kitty-control complete ✨ 🌟 ✨\n"
 printf "\nSee ${REPO_URL}#readme\n\n"

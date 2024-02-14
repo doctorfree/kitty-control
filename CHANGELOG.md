@@ -4,7 +4,12 @@
 
 ### ⚡️ Added
 
+- Install `rich-cli` in a Python virtual environment if not already present
+
 ### 🐞 Fixed
+
+- Format `About` and `Usage` if `rich` not available
+- Remove dupliate screen clear when displaying heading
 
 ## v1.0.6r2
 

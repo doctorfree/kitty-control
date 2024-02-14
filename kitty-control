@@ -97,15 +97,14 @@ show_about() {
     printf "\n"
     rich "[red]kitty-control[/] is written in [yellow]Bash[/] and [yellow]Python[/] by Ronald Record." -p
   else
-    printf "\n'Kitty Control' is an open source command line utility to control some aspects of"
+    printf "'Kitty Control' is an open source command line utility to control some aspects of"
     printf "\nthe 'Kitty' terminal emulator using the 'Kitty' remote control facility and kittens.\n"
-    printf "\nKitty Control enables support for automation of 'Kitty' customization and"
-    printf "\nprovides an additional layer of convenience. In particular, scripted 'Kitty'"
-    printf "\nactions enable quick and easy switching between preconfigured 'Kitty'"
-    printf "\nconfigurations without losing state or having to quit 'Kitty' and restart"
-    printf "\nwith another configuration. This is accomplished through the use of the"
-    printf "\n'read_config.py' custom 'kitten' included with 'kitty-control'.\n"
-    printf "\n'kitty-control' is written in 'Bash' and 'Python' by Ronald Record.\n"
+    printf "\n'Kitty Control' enables automation of 'Kitty' customization and provides an"
+    printf "\nadditional layer of convenience. Scripted 'Kitty' actions enable quick and easy"
+    printf "\nswitching between preconfigured 'Kitty' configurations without losing state or"
+    printf "\nor having to quit 'Kitty' and restart with another configuration. This is done"
+    printf "\nthrough the use of the 'read_config.py' custom 'kitten' included with 'kitty-control'."
+    printf "\n\n'kitty-control' is written in 'Bash' and 'Python' by Ronald Record."
   fi
   show_versions
 }
@@ -241,8 +240,6 @@ clear_screen() {
 
 exit_control() {
   exitcode=$?
-  clear_screen
-  printf "\n"
   heading "Exiting kitty-control" "Farewell"
   printf "\n"
   exit ${exitcode}
@@ -489,9 +486,9 @@ show_versions() {
   else
     printf "\nInstalled kitty version: ${install_version}"
     if [ "${install_version}" == "${release_version}" ]; then
-      printf " ( current)\n\n"
+      printf " ( current)"
     else
-      printf "\nAvailable kitty version: ${release_version}\n\n"
+      printf "\nAvailable kitty version: ${release_version}"
     fi
   fi
   release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
@@ -1263,6 +1260,8 @@ upgrade_kitty_control() {
   install_version=$(get_install_version)
   VERSION=$(echo ${install_version} | awk -F 'r' '{ print $1 }' | sed -e "s/v//")
   RELEASE=$(echo ${install_version} | awk -F 'r' '{ print $2 }')
+  Where_Am_I=$(readlink -f "$0")
+  exec "${Where_Am_I}"
 }
 
 heading() {
@@ -1446,7 +1445,6 @@ show_usage() {
             break
             ;;
           Quit* | quit* | q)
-            clear_screen
             heading "Exiting kitty-control" "Farewell"
             exit 0
             ;;
@@ -1483,7 +1481,6 @@ show_usage() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          clear_screen
           heading "Exiting kitty-control" "Farewell"
           exit 0
           ;;
@@ -1500,7 +1497,6 @@ show_usage() {
 }
 
 prompt-color-input() {
-  clear_screen
   heading "Custom Color" "Custom Color"
   printf "\n"
   if [ "${have_rich}" ]; then
@@ -1743,7 +1739,6 @@ tab_menu() {
               break
               ;;
             "Quit"*)
-              clear_screen
               heading "Exiting kitty-control" "Farewell"
               exit 0
               ;;
@@ -1776,7 +1771,6 @@ tab_menu() {
             break 2
             ;;
           "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-            clear_screen
             heading "Exiting kitty-control" "Farewell"
             exit 0
             ;;
@@ -1833,7 +1827,6 @@ windows_menu() {
               break
               ;;
             "Quit"*)
-              clear_screen
               heading "Exiting kitty-control" "Farewell"
               exit 0
               ;;
@@ -1866,7 +1859,6 @@ windows_menu() {
             break 2
             ;;
           "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-            clear_screen
             heading "Exiting kitty-control" "Farewell"
             exit 0
             ;;
@@ -1961,7 +1953,6 @@ menu_background_color() {
             break
             ;;
           "quit"*)
-            clear_screen
             heading "Exiting kitty-control" "Farewell"
             exit 0
             ;;
@@ -1998,7 +1989,6 @@ menu_background_color() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          clear_screen
           heading "Exiting kitty-control" "Farewell"
           exit 0
           ;;
@@ -2038,7 +2028,6 @@ menu_foreground_color() {
             break
             ;;
           "quit"*)
-            clear_screen
             heading "Exiting kitty-control" "Farewell"
             exit 0
             ;;
@@ -2075,7 +2064,6 @@ menu_foreground_color() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          clear_screen
           heading "Exiting kitty-control" "Farewell"
           exit 0
           ;;
@@ -2139,7 +2127,6 @@ menu_font_size() {
           break
           ;;
         "quit"*)
-          clear_screen
           heading "Exiting kitty-control" "Farewell"
           exit 0
           ;;
@@ -2167,7 +2154,6 @@ menu_font_size() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          clear_screen
           heading "Exiting kitty-control" "Farewell"
           exit 0
           ;;
@@ -2207,7 +2193,6 @@ menu_load_config() {
             break
             ;;
           "Quit"* | "quit"* | "q")
-            clear_screen
             heading "Exiting kitty-control" "Farewell"
             exit 0
             ;;
@@ -2246,7 +2231,6 @@ menu_load_config() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          clear_screen
           heading "Exiting kitty-control" "Farewell"
           exit 0
           ;;
@@ -2278,7 +2262,6 @@ menu_set_layout() {
             break
             ;;
           "Quit"*)
-            clear_screen
             heading "Exiting kitty-control" "Farewell"
             exit 0
             ;;
@@ -2312,7 +2295,6 @@ menu_set_layout() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          clear_screen
           heading "Exiting kitty-control" "Farewell"
           exit 0
           ;;
@@ -2345,7 +2327,6 @@ menu_set_trans() {
             break
             ;;
           "quit"*)
-            clear_screen
             heading "Exiting kitty-control" "Farewell"
             exit 0
             ;;
@@ -2380,7 +2361,6 @@ menu_set_trans() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          clear_screen
           heading "Exiting kitty-control" "Farewell"
           exit 0
           ;;
@@ -2516,7 +2496,6 @@ options_menu() {
             break
             ;;
           Quit*)
-            clear_screen
             heading "Exiting kitty-control" "Farewell"
             exit 0
             ;;
@@ -2608,7 +2587,6 @@ options_menu() {
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          clear_screen
           heading "Exiting kitty-control" "Farewell"
           exit 0
           ;;
@@ -2646,7 +2624,6 @@ select_with_fzf() {
 
   fzopts+=( "Help" "Main Menu" )
   while true; do
-    clear_screen
     heading "Kitty Control Fuzzy Select" "Kitty Control"
     choice=$(printf "%s\n" "${fzopts[@]}" | fzf -m --prompt="😺 Select Menu Option ('Main Menu' or 'Esc' to return)  " --height=18 --layout=reverse --exit-0)
     if [ "${choice}" ]; then
@@ -2779,7 +2756,6 @@ select_with_fzf() {
           prompt_continue
           ;;
         "Quit"* | "quit"* | "Q" | "q")
-          clear_screen
           heading "Exiting kitty-control" "Farewell"
           exit 0
           ;;
@@ -3006,7 +2982,6 @@ show_menu() {
         break
         ;;
       "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-        clear_screen
         heading "Exiting kitty-control" "Farewell"
         exit 0
         ;;
