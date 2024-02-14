@@ -25,12 +25,13 @@ command line
 \f[B]kitty-control\f[R] [\f[B]-a\f[R]] [\f[B]back\f[R] color]
 [\f[B]-c\f[R] command] [-d] [\f[B]dark\f[R]] [\f[B]diff\f[R] [opts]
 path1 path2] [\f[B]-e\f[R]] [\f[B]-f\f[R]] [\f[B]font\f[R] [num]]
-[\f[B]fore\f[R] color] [\f[B]-i\f[R] /path/to/image] [\f[B]load\f[R]
-[subdir]] [\f[B]-m|t\f[R] match] [\f[B]-s\f[R] /path/to/socket]
-[\f[B]-u|h|v\f[R]] [\f[B]term\f[R]] [\f[B]theme\f[R]] [\f[B]tools\f[R]]
-[\f[B]icat\f[R] [opts] image] [\f[B]list|ls\f[R]] [\f[B]man\f[R]]
-[\f[B]menu\f[R]] [\f[B]title\f[R] title] [\f[B]transparent\f[R]
-[opacity]] [\f[B]unicode\f[R]] [\f[B]upgrade\f[R]]
+[\f[B]fore\f[R] color] [\f[B]-i\f[R] /path/to/image] [\f[B]layout\f[R]
+layout-name] [\f[B]load\f[R] [subdir]] [\f[B]-m|t\f[R] match]
+[\f[B]-s\f[R] /path/to/socket] [\f[B]-u|h|v\f[R]] [\f[B]term\f[R]]
+[\f[B]theme\f[R]] [\f[B]tools\f[R]] [\f[B]icat\f[R] [opts] image]
+[\f[B]list|ls\f[R]] [\f[B]man\f[R]] [\f[B]menu\f[R]] [\f[B]title\f[R]
+title] [\f[B]transparent\f[R] [opacity]] [\f[B]unicode\f[R]]
+[\f[B]upgrade\f[R]]
 .SH DESCRIPTION
 .PP
 \f[B]kitty-control\f[R] acts as a wrapper for the \f[I]Kitty\f[R]
@@ -88,6 +89,11 @@ To remove all images currently displayed on the screen: kitty-control
 icat --clear.
 See
 \f[I]\f[BI]<https://sw.kovidgoyal.net/kitty/kittens/icat/#options>\f[I]\f[R]
+.TP
+\f[B]layout layout-name\f[R]
+Sets the Kitty window layout to \[aq]layout-name\[aq] where
+\[aq]layout-name\[aq] can be one of Previous Fat Grid Horizontal Splits
+Stack Tall Vertical
 .TP
 \f[B]list\f[R]
 Displays full information on Kitty windows.
@@ -234,12 +240,13 @@ files\f[R] \f[B]D\f[R]/\f[I]diff folders\f[R]
 \f[B]F\f[R]/\f[I]fullscreen\f[R] \f[B]g\f[R]/\f[I]foreground color\f[R]
 \f[B]h\f[R]/\f[I]help\f[R] \f[B]i\f[R]/\f[I]background image\f[R]
 \f[B]I\f[R]/\f[I]terminal info\f[R] \f[B]k\f[R]/\f[I]list tabs\f[R]
-\f[B]l\f[R]/\f[I]load config\f[R] \f[B]m\f[R]/\f[I]manual\f[R]
-\f[B]o\f[R]/\f[I]options\f[R] \f[B]q\f[R]/\f[I]quit\f[R]
-\f[B]r\f[R]/\f[I]reset\f[R] \f[B]t\f[R]/\f[I]transparent\f[R]
-\f[B]T\f[R]/\f[I]theme\f[R] \f[B]u\f[R]/\f[I]usage\f[R]
-\f[B]U\f[R]/\f[I]unicode input\f[R] \f[B]v\f[R]/\f[I]view image\f[R]
-\f[B]w\f[R]/\f[I]list windows\f[R] \f[B]z\f[R]/\f[I]fuzzy select\f[R]
+\f[B]l\f[R]/\f[I]load config\f[R] \f[B]L\f[R]/\f[I]layouts\f[R]
+\f[B]m\f[R]/\f[I]manual\f[R] \f[B]o\f[R]/\f[I]options\f[R]
+\f[B]q\f[R]/\f[I]quit\f[R] \f[B]r\f[R]/\f[I]reset\f[R]
+\f[B]t\f[R]/\f[I]transparent\f[R] \f[B]T\f[R]/\f[I]theme\f[R]
+\f[B]u\f[R]/\f[I]usage\f[R] \f[B]U\f[R]/\f[I]unicode input\f[R]
+\f[B]v\f[R]/\f[I]view image\f[R] \f[B]w\f[R]/\f[I]list windows\f[R]
+\f[B]z\f[R]/\f[I]fuzzy select\f[R]
 .PP
 Enter a menu option number or shortcut to select an option.
 .PP
@@ -251,7 +258,7 @@ Press \f[I]Enter\f[R] to select the highlighted option.
 Some of the main menu options bring up a submenu from which to further
 select.
 For example, to view detailed information on a \f[I]kitty\f[R] window,
-select \f[I]\f[BI]L\f[I]\f[R] or \f[I]\f[BI]List Windows\f[I]\f[R] from
+select \f[I]\f[BI]w\f[I]\f[R] or \f[I]\f[BI]List Windows\f[I]\f[R] from
 the main menu.
 This brings up a submenu that lists the \f[I]kitty\f[R] windows along
 with a fuzzy selection dialog using \f[I]fzf\f[R].
