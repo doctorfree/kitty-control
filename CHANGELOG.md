@@ -5,6 +5,7 @@
 ### ⚡️ Added
 
 - Add `Window Layout` selection support
+- Add `layout name` command line arguments to specify a window layout
 - Add help for `Window Layout`
 
 ### 🐞 Fixed

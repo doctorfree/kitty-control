@@ -9,7 +9,7 @@ date: February 06, 2024
 **kitty-control** - Control the Kitty terminal emulator from the command line
 
 # SYNOPSIS
-**kitty-control** [**-a**] [**back** color] [**-c** command] [-d] [**dark**] [**diff** [opts] path1 path2] [**-e**] [**-f**] [**font** [num]] [**fore** color] [**-i** /path/to/image] [**load** [subdir]] [**-m|t** match] [**-s** /path/to/socket] [**-u|h|v**] [**term**] [**theme**] [**tools**] [**icat** [opts] image] [**list|ls**] [**man**] [**menu**] [**title** title] [**transparent** [opacity]] [**unicode**] [**upgrade**]
+**kitty-control** [**-a**] [**back** color] [**-c** command] [-d] [**dark**] [**diff** [opts] path1 path2] [**-e**] [**-f**] [**font** [num]] [**fore** color] [**-i** /path/to/image] [**layout** layout-name] [**load** [subdir]] [**-m|t** match] [**-s** /path/to/socket] [**-u|h|v**] [**term**] [**theme**] [**tools**] [**icat** [opts] image] [**list|ls**] [**man**] [**menu**] [**title** title] [**transparent** [opacity]] [**unicode**] [**upgrade**]
 
 # DESCRIPTION
 **kitty-control** acts as a wrapper for the *Kitty* terminal emulator remote
@@ -51,6 +51,10 @@ use of the **read_config.py** custom *kitten* included with *kitty-control*
            To remove all images currently displayed on the screen:
                kitty-control icat --clear.
            See ***https://sw.kovidgoyal.net/kitty/kittens/icat/#options***
+
+**layout layout-name**
+: Sets the Kitty window layout to 'layout-name' where 'layout-name' can be one of
+           Previous Fat Grid Horizontal Splits Stack Tall Vertical
 
 **list**
 : Displays full information on Kitty windows.
@@ -170,7 +174,7 @@ Shortcuts exist to quickly select a menu option:
 **C**/*list colors* **d**/*diff files* **D**/*diff folders* **e**/*examples*
 **f**/*font size* **F**/*fullscreen* **g**/*foreground color* **h**/*help*
 **i**/*background image* **I**/*terminal info* **k**/*list tabs* **l**/*load config*
-**m**/*manual* **o**/*options* **q**/*quit* **r**/*reset*
+**L**/*layouts* **m**/*manual* **o**/*options* **q**/*quit* **r**/*reset*
 **t**/*transparent* **T**/*theme* **u**/*usage* **U**/*unicode input*
 **v**/*view image* **w**/*list windows* **z**/*fuzzy select*
 
@@ -181,7 +185,7 @@ or use the *Up-Arrow* and *Down-Arrow* keys to move through the options.
 Press *Enter* to select the highlighted option.
 
 Some of the main menu options bring up a submenu from which to further select.
-For example, to view detailed information on a *kitty* window, select ***L*** or
+For example, to view detailed information on a *kitty* window, select ***w*** or
 ***List Windows*** from the main menu. This brings up a submenu that lists the
 *kitty* windows along with a fuzzy selection dialog using *fzf*. Select a
 window and detailed information on that window will be displayed. A similar

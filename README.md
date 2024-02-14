@@ -147,10 +147,10 @@ To display a usage message use `kitty-control -u`. To see several examples,
 ```
 Usage: kitty-control [-adefhuv] [back <color>] [-c command] [dark]
                      [diff [opts] <path1> <path2>] [font [num]] [fore <color>]
-                     [-i /path/to/image] [icat [opts] <image>] [load [subdir|file]]
-                     [ls|list [self|colors]] [-m|t <match>] [man] [menu]
-                     [-s /path/to/socket] [term] [theme] [tools] [title <title>]
-                     [transparent [opacity]] [unicode] [upgrade]
+                     [-i /path/to/image] [icat [opts] <image>] [layout <name>]
+                     [load [subdir|file]] [ls|list [self|colors]] [-m|t <match>]
+                     [man] [menu] [-s /path/to/socket] [term] [theme] [tools]
+                     [title <title>] [transparent [opacity]] [unicode] [upgrade]
 Where:
     'back color' Sets the background color to 'color'
            If 'color' is 'reset' restores foreground and background to startup value
@@ -176,6 +176,9 @@ Where:
         'list' displays full info, 'ls' abbreviated info
         'self' Indicates display info for this Kitty window
         'colors' Indicates display the names of the supported Kitty colors
+    'layout <name>'
+        Sets the Kitty window layout to '<name>' where '<name>' can be one of:
+          Previous Fat Grid Horizontal Splits Stack Tall Vertical
     'load [subdir|file]' Reloads the Kitty configuration in ~/.config/kitty/kitty.conf
            Can use 'load' or 'reload'
            Specify a second argument to load ~/.config/kitty/<subdir>/kitty.conf
@@ -273,17 +276,15 @@ info, load an alternate `kitty` configuration, toggle fullscreen, and more.
 
 Shortcuts exist to quickly select a menu option:
 
-| **Shortcut** / *Action* | **Shortcut** / *Action* | **Shortcut** / *Action* |
-| ----------------------- | ----------------------- | ----------------------- |
-| **a** / *about* | **b** / *background color* | **B** / *opaque* |
-| **c** / *clear background image* | **C** / *list colors* | **d** / *diff files* |
-| **D** / *diff folders* | **e** / *examples* | **f** / *font size* |
-| **F** / *fullscreen* | **g** / *foreground color* | **h** / *help* |
-| **i** / *background image* | **I** / *terminal info* | **k** / *list tabs* |
-| **l** / *load config* | **m** / *manual* | **o** / *options* |
-| **q** / *quit* | **r** / *reset* | **t** / *transparent* |
-| **T** / *theme* | **u** / *usage* | **U** / *unicode input* |
-| **v** / *view image* | **w** / *list windows* | **z** / *fuzzy select* |
+|**Shortcut** / *Action*|**Shortcut** / *Action*|**Shortcut** / *Action*|**Shortcut** / *Action*|
+| --------------------- | --------------------- | --------------------- | --------------------- |
+| **a** / *about* | **b** / *background color* | **B** / *opaque* | **c** / *clear background image* |
+| **C** / *list colors* | **d** / *diff files* | **D** / *diff folders* | **e** / *examples* |
+| **f** / *font size* | **F** / *fullscreen* | **g** / *foreground color* | **h** / *help* |
+| **i** / *background image* | **I** / *terminal info* | **k** / *list tabs* | **l** / *load config* |
+| **L** / *layouts* | **m** / *manual* | **o** / *options* | **q** / *quit* |
+| **r** / *reset* | **t** / *transparent* | **T** / *theme* | **u** / *usage* |
+| **U** / *unicode input* | **v** / *view image* | **w** / *list windows* | **z** / *fuzzy select* |
 
 Enter a menu option number or shortcut to select an option.
 
@@ -292,7 +293,7 @@ or use the *Up-Arrow* and *Down-Arrow* keys to move through the options.
 Press *Enter* to select the highlighted option.
 
 Some of the main menu options bring up a submenu from which to further select.
-For example, to view detailed information on a `kitty` window, select `L` or
+For example, to view detailed information on a `kitty` window, select `w` or
 `List Windows` from the main menu. This brings up a submenu that lists the
 `kitty` windows along with a fuzzy selection dialog using `fzf`. Select a
 window and detailed information on that window will be displayed. A similar

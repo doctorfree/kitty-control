@@ -69,10 +69,10 @@ colors+=("lightcoral" "lightcyan" "lightgray" "lightgreen" "lightgrey" "lightpin
 brief_usage() {
   printf "${BOLD}Usage: kitty-control [-adefhuv] [back <color>] [-c command] [dark]"
   printf "\n                     [diff [opts] <path1> <path2>] [font [num]] [fore <color>]"
-  printf "\n                     [-i /path/to/image] [icat [opts] <image>] [load [subdir|file]]"
-  printf "\n                     [ls|list [self|colors]] [-m|t <match>] [man] [menu]"
-  printf "\n                     [-s /path/to/socket] [term] [theme] [tools] [title <title>]"
-  printf "\n                     [transparent [opacity]] [unicode] [upgrade]${NORM}"
+  printf "\n                     [-i /path/to/image] [icat [opts] <image>] [layout <name>]"
+  printf "\n                     [load [subdir|file]] [ls|list [self|colors]] [-m|t <match>]"
+  printf "\n                     [man] [menu] [-s /path/to/socket] [term] [theme] [tools]"
+  printf "\n                     [title <title>] [transparent [opacity]] [unicode] [upgrade]${NORM}"
   [ "$1" == "noexit" ] || {
     printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
       printf " displays an interactive menu system"
@@ -176,6 +176,9 @@ usage() {
   printf "\n        '${BOLD}list${NORM}' displays full info, '${BOLD}ls${NORM}' abbreviated info"
   printf "\n        '${BOLD}self${NORM}' Indicates display info for this Kitty window"
   printf "\n        '${BOLD}colors${NORM}' Indicates display the names of the supported Kitty colors"
+  printf "\n    '${BOLD}layout <name>${NORM}'"
+  printf "\n        Sets the Kitty window layout to '<name>' where '<name>' can be one of:"
+  printf "\n          Previous Fat Grid Horizontal Splits Stack Tall Vertical"
   printf "\n    '${BOLD}load [subdir|file]${NORM}'"
     printf " Reloads the Kitty configuration in ~/.config/kitty/kitty.conf"
   printf "\n           Can use 'load' or 'reload'"
@@ -3176,7 +3179,7 @@ while [[ $1 ]]; do
         backgrnd="$2"
         shift 2
       else
-        printf "\nERROR: background keyword requires an argument"
+        printf "\nERROR: background keyword requires an argument\n\n"
         brief_usage
       fi
       ;;
@@ -3185,7 +3188,7 @@ while [[ $1 ]]; do
         foregrnd="$2"
         shift 2
       else
-        printf "\nERROR: foreground keyword requires an argument"
+        printf "\nERROR: foreground keyword requires an argument\n\n"
         brief_usage
       fi
       ;;
@@ -3194,7 +3197,7 @@ while [[ $1 ]]; do
         kitty +kitten diff $2 $3
         shift 3
       else
-        printf "\nERROR: diff keyword requires two file or directory arguments"
+        printf "\nERROR: diff keyword requires two file or directory arguments\n\n"
         brief_usage
       fi
       ;;
@@ -3203,7 +3206,27 @@ while [[ $1 ]]; do
         kitty +kitten icat $2
         shift 2
       else
-        printf "\nERROR: icat keyword requires an image as argument"
+        printf "\nERROR: icat keyword requires an image as argument\n\n"
+        brief_usage
+      fi
+      ;;
+    layout|--layout)
+      if [ "$2" ]; then
+        layout=$(tolower "$2")
+        case "${layout}" in
+          previous|fat|grid|horizontal|splits|stack|tall|vertical)
+            set-layout "$2"
+            ;;
+          *)
+            printf "\nERROR: unsupported layout name: $2"
+            printf "\nSupported layout names:"
+            printf "\n  previous fat grid horizontal splits stack tall vertical\n\n"
+            brief_usage
+            ;;
+        esac
+        shift 2
+      else
+        printf "\nERROR: layout keyword requires a layout name as argument\n\n"
         brief_usage
       fi
       ;;
@@ -3294,7 +3317,7 @@ while [[ $1 ]]; do
         kitty @ ${SOCKET} set-tab-title ${OPTS} "$2"
         shift 2
       else
-        printf "\nERROR: title keyword requires an argument"
+        printf "\nERROR: title keyword requires an argument\n\n"
         brief_usage
       fi
       ;;
