@@ -4,7 +4,12 @@
 
 ### ⚡️ Added
 
+- Add `Window Layout` selection support
+- Add help for `Window Layout`
+
 ### 🐞 Fixed
+
+- Move some `fzf` selection dialogs inside `while` loop
 
 ## v1.0.6r1
 

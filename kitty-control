@@ -310,12 +310,52 @@ show_help() {
     printf "or use the <Up-Arrow> and <Down-Arrow> keys to move through the options."
     printf "\nPress <Enter> to select the highlighted option.\n"
   fi
-  printf "\nNot all actions are available from the interactive menu interface.\n"
   printf "\nKitty Control can also be used from the command line.\n"
   if [ "${have_rich}" ]; then
     rich "See: [cyan]kitty-control -h[/] for full usage details" -p
   else
     printf "${BOLD}${LINE}See:${NORM} ${BOLD}kitty-control -h${NORM} for full usage details\n"
+  fi
+  prompt_continue
+}
+
+show_layout_help() {
+  clear_screen
+  if [ "${have_rich}" ]; then
+    rich "[cyan]Kitty Window Layout Help[/cyan]" -p -a rounded -c -C
+    rich "[red]Kitty[/] has the ability to define its own windows that can be tiled next to each" -p
+    rich "other in arbitrary arrangements, based on [yellow]Layouts[/]. A [yellow]layout[/] is an" -p
+    rich "arrangement of multiple [red]kitty[/] windows inside a top-level OS window. The layout" -p
+    rich "manages all its windows automatically, resizing and moving them as needed." -p
+    rich "You can create a new window using the [green]ctrl+shift+enter[/] key combination." -p
+    printf "\n"
+    rich "Currently, there are seven layouts available:" -p
+    rich "[yellow]Fat[/] -- One (or optionally more) windows are shown full width on the top." -p
+    rich "       The rest of the windows are shown side-by-side on the bottom" -p
+    rich "[yellow]Grid[/] -- All windows are shown in a grid" -p
+    rich "[yellow]Horizontal[/] -- All windows are shown side-by-side" -p
+    rich "[yellow]Splits[/] -- Windows arranged in arbitrary patterns created using horizontal and vertical splits" -p
+    rich "[yellow]Stack[/] -- Only a single maximized window is shown at a time" -p
+    rich "[yellow]Tall[/] -- One (or optionally more) windows are shown full height on the left." -p
+    rich "        The rest of the windows are shown one below the other on the right" -p
+    rich "[yellow]Vertical[/] -- All windows are shown one below the other" -p
+  else
+    printf "\n\tKitty Window Layout Help\n"
+    printf "\n${BOLD}Kitty${NORM} has the ability to define its own windows that can be tiled"
+    printf "\nnext to each other in arbitrary arrangements, based on ${BOLD}Layouts${NORM}.\n"
+    printf "\nA layout is an arrangement of multiple kitty windows inside a top-level OS window."
+    printf "\nThe layout manages all its windows automatically, resizing and moving them as needed."
+    printf "\nYou can create a new window using the ctrl+shift+enter key combination.\n"
+    printf "\nCurrently, there are seven layouts available:"
+    printf "\n  Fat -- One (or optionally more) windows are shown full width on the top."
+    printf "\n         The rest of the windows are shown side-by-side on the bottom"
+    printf "\n  Grid -- All windows are shown in a grid"
+    printf "\n  Horizontal -- All windows are shown side-by-side"
+    printf "\n  Splits -- Windows arranged in arbitrary patterns created using horizontal and vertical splits"
+    printf "\n  Stack -- Only a single maximized window is shown at a time"
+    printf "\n  Tall -- One (or optionally more) windows are shown full height on the left."
+    printf "\n          The rest of the windows are shown one below the other on the right"
+    printf "\n  Vertical -- All windows are shown one below the other\n"
   fi
   prompt_continue
 }
@@ -1023,20 +1063,36 @@ set-foreground() {
   fi
 }
 
-set-opacity() {
-  kitty @ ${SOCKET} set-background-opacity ${OPTS} $1
+set-layout() {
+  if [ "$1" == "Previous" ]; then
+    kitty @ ${SOCKET} last-used-layout ${OPTS}
     [ "${debug}" ] && {
-    printf "\nDEBUG: kitty @ ${SOCKET} set-background-opacity ${OPTS} $1\n"
+      printf "\nDEBUG: kitty @ ${SOCKET} last-used-layout ${OPTS}\n"
       prompt_continue
     }
+  else
+    kitty @ ${SOCKET} goto-layout ${OPTS} $1
+    [ "${debug}" ] && {
+      printf "\nDEBUG: kitty @ ${SOCKET} goto-layout ${OPTS} $1\n"
+      prompt_continue
+    }
+  fi
+}
+
+set-opacity() {
+  kitty @ ${SOCKET} set-background-opacity ${OPTS} $1
+  [ "${debug}" ] && {
+    printf "\nDEBUG: kitty @ ${SOCKET} set-background-opacity ${OPTS} $1\n"
+    prompt_continue
+  }
 }
 
 toggle-fullscreen() {
   kitty @ ${SOCKET} resize-os-window --action toggle-fullscreen ${OPTS}
-    [ "${debug}" ] && {
+  [ "${debug}" ] && {
     printf "\nDEBUG: kitty @ ${SOCKET} resize-os-window --action toggle-fullscreen ${OPTS}\n"
-      prompt_continue
-    }
+    prompt_continue
+  }
 }
 
 install_kitty() {
@@ -2203,30 +2259,102 @@ menu_load_config() {
   fi
 }
 
-menu_set_trans() {
-  tropts=( "${translevels[@]}" )
-  tropts+=( "main menu" "quit" )
+menu_set_layout() {
+  lyopts=("Previous" "Fat" "Grid" "Horizontal" "Splits" "Stack" "Tall" "Vertical")
+  lyopts+=( "Help" "Main Menu" "Quit" )
   if [ "${use_fzf}" ]; then
-    heading "Transparency Opacity" "Transparency"
-    choice=$(printf "%s\n" "${tropts[@]}" | fzf --prompt="😺 Select Transparency Opacity ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
-    [ "${choice}" ] && {
-      case "${choice}" in
-        "default"*)
-          set-opacity "${OPACITY}"
-          ;;
-        "main"*)
+    while true; do
+      heading "Select Window Layout" "Window Layout"
+      choice=$(printf "%s\n" "${lyopts[@]}" | fzf --prompt="😺 Select Window Layout ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
+      if [ "${choice}" ]; then
+        case "${choice}" in
+          "Help"*)
+            show_layout_help
+            ;;
+          "Main"*)
+            break
+            ;;
+          "Quit"*)
+            clear_screen
+            heading "Exiting kitty-control" "Farewell"
+            exit 0
+            ;;
+          "Previous"|"Fat"|"Grid"|"Horizontal"|"Splits"|"Stack"|"Tall"|"Vertical")
+            set-layout "${choice}"
+            break
+            ;;
+          *)
+            printf "\nUnrecognized selection. Try again.\n"
+            ;;
+        esac
+      else
+        break
+      fi
+    done
+  else
+    while true; do
+      heading "Select Window Layout" "Window Layout"
+      PS3="${BOLD}Select Window Layout (number, shortcut, or text, 'h' help): ${NORM}"
+      select subopt in "${lyopts[@]}"; do
+        case "$subopt,$REPLY" in
+        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+          show_layout_help
           break
           ;;
-        "quit"*)
+        "Previous",*|*,"Previous"|"Fat",*|*,"Fat"|"Grid",*|*,"Grid"|"Horizontal",*|*,"Horizontal"|"Splits",*|*,"Splits"|"Stack",*|*,"Stack"|"Tall",*|*,"Tall"|"Vertical",*|*,"Vertical")
+          set-layout "${subopt}"
+          break 2
+          ;;
+        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+          break 2
+          ;;
+        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
           clear_screen
           heading "Exiting kitty-control" "Farewell"
           exit 0
           ;;
-        *)
-        set-opacity "${choice}"
-        ;;
-      esac
-    }
+        *,*)
+          printf "\nCould not match '${REPLY}' with a menu entry."
+          printf "\nPlease try again with an exact match.\n"
+          break
+          ;;
+        esac
+        REPLY=
+      done
+    done
+  fi
+}
+
+menu_set_trans() {
+  tropts=( "${translevels[@]}" )
+  tropts+=( "main menu" "quit" )
+  if [ "${use_fzf}" ]; then
+    while true; do
+      heading "Transparency Opacity" "Transparency"
+      choice=$(printf "%s\n" "${tropts[@]}" | fzf --prompt="😺 Select Transparency Opacity ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
+      if [ "${choice}" ]; then
+        case "${choice}" in
+          "default"*)
+            set-opacity "${OPACITY}"
+            break
+            ;;
+          "main"*)
+            break
+            ;;
+          "quit"*)
+            clear_screen
+            heading "Exiting kitty-control" "Farewell"
+            exit 0
+            ;;
+          *)
+            set-opacity "${choice}"
+            break
+            ;;
+        esac
+      else
+        break
+      fi
+    done
   else
     while true; do
       heading "Transparency Opacity" "Transparency"
@@ -2631,6 +2759,9 @@ select_with_fzf() {
         "Opt"* | "opt"* | "o")
           options_menu
           ;;
+        *"Layout"* | *"layout"* | "L")
+          menu_set_layout
+          ;;
         "Upgrade kitty-control"* | "upgrade kitty-control"*)
           upgrade_kitty_control noexit
           ;;
@@ -2692,6 +2823,7 @@ show_menu() {
     options+=("Manual Page      [m]" "Options          [o]" "Reset            [r]")
     options+=("Theme            [T]" "Terminal Info    [I]" "Transparent      [t]")
     options+=("Unicode Input    [U]" "Usage            [u]" "View an Image    [v]")
+    options+=("Window Layout    [L]")
     [ "${have_figlet}" ] || options+=("Install Figlet")
     [ "${have_fzf}" ] || options+=("Install Fzf")
     [ "${have_ranger}" ] || options+=("Install Ranger")
@@ -2847,6 +2979,10 @@ show_menu() {
         ;;
       "Opt"*,* | *,"Opt"* | "opt"*,* | *,"opt"* | "o",* | *,"o")
         options_menu
+        break
+        ;;
+      *"Layout"*,* | *,*"Layout"* | *"layout"*,* | *,*"layout"* | "L",* | *,"L")
+        menu_set_layout
         break
         ;;
       "Upgrade kitty-control"*,* | *,"Upgrade kitty-control"* | "upgrade kitty-control"*,* | *,"upgrade kitty-control"*)
