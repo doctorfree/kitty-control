@@ -41,9 +41,9 @@ install_kitty() {
     else
       printf "\nUnable to create Kitty link to ~/.local/bin/\n"
     fi
-    if [ -x ~/${KBIN}/kitten ]; then
+    if [ -x ${KBIN}/kitten ]; then
       [ -x ~/.local/bin/kitten ] || {
-        ln -s ~/${KBIN}/kitten ~/.local/bin/
+        ln -s ${KBIN}/kitten ~/.local/bin/
       }
     else
       printf "\nUnable to create kitten link to ~/.local/bin/\n"

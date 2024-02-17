@@ -6,6 +6,8 @@
 
 ### 🐞 Fixed
 
+- Fix `install` script symlink for `kitten`
+
 ## v1.0.6r3
 
 ### ⚡️ Added
