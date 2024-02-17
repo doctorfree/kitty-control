@@ -8,7 +8,8 @@ FONT_URL="https://raw.githubusercontent.com/wiki/doctorfree/workspaces-images"
 
 install_kitty() {
   if [ "${darwin}" ]; then
-    LOCAL="/Applications/kitty.app/Contents"
+    KTAPP="/Applications/kitty.app"
+    LOCAL="${KTAPP}/Contents"
     KBIN="${LOCAL}/MacOS"
     KTINFO="${LOCAL}/Resources/kitty/terminfo/kitty.terminfo"
     KXTERM="${LOCAL}/Resources/kitty/terminfo/78/xterm-kitty"
@@ -132,6 +133,17 @@ install_kitty() {
           printf "\nUnable to create Kitty terminfo entry ${KITERM}\n"
         fi
       fi
+    }
+  }
+  [ "${darwin}" ] && {
+    have_xattr=$(type -p xattr)
+    [ "${have_xattr}" ] && {
+      xattr -cr "${KTAPP}"
+      [ $? -eq 0 ] || {
+        printf "\nWARNING: attribute modification for ${KTAPP} failed"
+        printf "\nPermission to modify this application may need to be granted"
+        printf "\nSee 'Privacy & Security' -> 'App Management' in 'Settings'\n"
+      }
     }
   }
 }

@@ -4,6 +4,8 @@
 
 ### ⚡️ Added
 
+- Modify `kitty.app` attributes on `macOS` to permit launching
+
 ### 🐞 Fixed
 
 - Check for `figlet` font dir before removing in `uninstall`
