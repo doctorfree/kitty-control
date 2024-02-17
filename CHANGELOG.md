@@ -6,7 +6,17 @@
 
 ### 🐞 Fixed
 
+## v1.0.7r1
+
+### ⚡️ Added
+
+- Install `JetBrains Mono Nerd Font`
+
+### 🐞 Fixed
+
 - Fix `install` script symlink for `kitten`
+- Fix `macOS` user font directory location
+- Leave internal `kitty` config load command disabled for now until in release
 
 ## v1.0.6r3
 

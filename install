@@ -4,6 +4,7 @@ SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_PATH="$(realpath "$SCRIPT_PATH")"
 REPO_URL="https://github.com/doctorfree/kitty-control"
 KCDIR="${HOME}/.config/kitty/kitty-control"
+FONT_URL="https://raw.githubusercontent.com/wiki/doctorfree/workspaces-images"
 
 install_kitty() {
   if [ "${darwin}" ]; then
@@ -21,14 +22,18 @@ install_kitty() {
   fi
   printf "\n\tInstalling Kitty terminal emulator ..."
   installer_url="https://sw.kovidgoyal.net/kitty/installer.sh"
-  curl --silent --location ${installer_url} >/tmp/kitty-$$.sh
-  [ $? -eq 0 ] || {
-    rm -f /tmp/kitty-$$.sh
-    curl --insecure --silent --location ${installer_url} >/tmp/kitty-$$.sh
-    cat /tmp/kitty-$$.sh | sed -e "s/curl -/curl -k/" >/tmp/k$$
-    cp /tmp/k$$ /tmp/kitty-$$.sh
-    rm -f /tmp/k$$
-  }
+  if [ "${have_curl}" ]; then
+    curl --silent --location ${installer_url} >/tmp/kitty-$$.sh
+    [ $? -eq 0 ] || {
+      rm -f /tmp/kitty-$$.sh
+      curl --insecure --silent --location ${installer_url} >/tmp/kitty-$$.sh
+      cat /tmp/kitty-$$.sh | sed -e "s/curl -/curl -k/" >/tmp/k$$
+      cp /tmp/k$$ /tmp/kitty-$$.sh
+      rm -f /tmp/k$$
+    }
+  else
+    [ "${have_wget}" ] && wget --quiet -O /tmp/kitty-$$.sh ${installer_url}
+  fi
   if [ -s /tmp/kitty-$$.sh ]; then
     sh /tmp/kitty-$$.sh launch=n >/dev/null 2>&1
     rm -f /tmp/kitty-$$.sh
@@ -112,7 +117,6 @@ install_kitty() {
     [ -d ${HOME}/.terminfo ] || mkdir -p ${HOME}/.terminfo
     [ -d ${HOME}/.terminfo/x ] || mkdir -p ${HOME}/.terminfo/x
     [ -d ${HOME}/.terminfo/78 ] || mkdir -p ${HOME}/.terminfo/78
-    have_tic=$(type -p tic)
     [ "${have_tic}" ] && {
       [ -f "${KTINFO}" ] && {
         tic -x -o ${HOME}/.terminfo "${KTINFO}" >/dev/null 2>&1
@@ -163,6 +167,25 @@ install_config() {
   }
 }
 
+install_fonts() {
+  printf "\nInstalling JetBrains Mono Nerd Font\n"
+  if [ "${have_wget}" ]; then
+    wget --quiet -O /tmp/fonts.tar.gz ${FONT_URL}/fonts/JetBrainsMonoNerdFont.tar.gz
+  else
+    [ "${have_curl}" ] && {
+      curl --silent --location \
+        ${FONT_URL}/fonts/JetBrainsMonoNerdFont.tar.gz >/tmp/fonts.tar.gz
+    }
+  fi
+  [ -f /tmp/fonts.tar.gz ] && {
+    [ -d ${usr_font_dir} ] || mkdir -p ${usr_font_dir}
+    tar xzf /tmp/fonts.tar.gz -C ${usr_font_dir}
+    rm -f /tmp/fonts.tar.gz
+    have_fc=$(type -p fc-cache)
+    [ "${have_fc}" ] && fc-cache -f
+  }
+}
+
 pathadd() {
   if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
     PATH="$1${PATH:+":$PATH"}"
@@ -185,6 +208,12 @@ darwin=
 platform=$(uname -s)
 [ "${platform}" == "Darwin" ] && darwin=1
 
+have_curl=$(type -p curl)
+have_fzf=$(type -p fzf)
+have_rich=$(type -p rich)
+have_python=$(type -p python3)
+have_tic=$(type -p tic)
+have_wget=$(type -p wget)
 have_kitty=$(type -p kitty)
 [ "${have_kitty}" ] || install_kitty
 
@@ -267,7 +296,6 @@ chmod 755 ${FDEST}/*.sh
 [ -f ${HOME}/.local/bin/fzf ] && {
   mv ${HOME}/.local/bin/fzf ${HOME}/.local/bin/fzf-bak$$
 }
-have_fzf=$(type -p fzf)
 [ "${have_fzf}" ] || {
   printf "\nInstalling fzf fuzzy finder\n"
   [ -d ${HOME}/.fzf ] && mv ${HOME}/.fzf ${HOME}/.fzf$$
@@ -286,9 +314,7 @@ else
 fi
 
 # Install rich cli
-have_rich=$(type -p rich)
 [ "${have_rich}" ] || {
-  have_python=$(type -p python3)
   [ "${have_python}" ] && {
     printf "\nInstalling rich-cli fancy output toolbox\n"
     python3 -m venv ${KCDIR}/.venv >/dev/null 2>&1
@@ -361,6 +387,15 @@ else
     fi
   }
 fi
+
+# Install JetBrains Mono font
+if [ "${darwin}" ]; then
+  usr_font_dir="${HOME}/Library/Fonts"
+else
+  usr_font_dir="${HOME}/.local/share/fonts"
+fi
+JB_FONT="NerdFonts/JetBrains Mono Bold Nerd Font Complete.ttf"
+[ -f "${usr_font_dir}/${JB_FONT}" ] || install_fonts
 
 printf "\nInstallation of kitty-control complete ✨ 🌟 ✨\n"
 printf "\nSee ${REPO_URL}#readme\n\n"
