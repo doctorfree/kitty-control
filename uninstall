@@ -51,7 +51,9 @@ do
   [ "$i" == "${FDEST}/*" ] && continue
   empty=
 done
-[ "${empty}" ] && rmdir "${FDEST}"
+[ "${empty}" ] && {
+  [ -d "${FDEST}" ] && rmdir "${FDEST}"
+}
 
 # Restore ugly Kitty icons
 darwin=

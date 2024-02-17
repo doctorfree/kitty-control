@@ -6,6 +6,8 @@
 
 ### 🐞 Fixed
 
+- Check for `figlet` font dir before removing in `uninstall`
+
 ## v1.0.7r1
 
 ### ⚡️ Added
