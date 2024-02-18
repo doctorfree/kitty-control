@@ -4,6 +4,12 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.7r2
+
+### ⚡️ Added
+
 - Modify `kitty.app` attributes on `macOS` to permit launching
 - Install `kitty` session files, session desktop file, and icon
 
