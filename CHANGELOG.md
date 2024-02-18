@@ -5,6 +5,7 @@
 ### ⚡️ Added
 
 - Modify `kitty.app` attributes on `macOS` to permit launching
+- Install `kitty` session files, session desktop file, and icon
 
 ### 🐞 Fixed
 

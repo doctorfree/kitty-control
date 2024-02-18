@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Kitty Session
+GenericName=Terminal emulator
+Comment=Fast, feature-rich, GPU based terminal with session startup
+Exec=/bin/bash -c "$HOME/.local/kitty.app/bin/kitty --session $HOME/.config/kitty/sessions/startup --title 'Kitty Terminal Session' --override allow_remote_control=yes --listen-on unix:/tmp/kitty-control"
+Icon=kitty
+Categories=System;TerminalEmulator;

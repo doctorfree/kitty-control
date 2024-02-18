@@ -33,6 +33,24 @@ rm -rf ${KCDIR}
   }
 }
 rm -f ${HOME}/.local/share/man/man1/kitty-control*
+APP_TOP="${HOME}"/.local/share/applications/kitty-session.desktop
+[ -f "${SCRIPT_PATH}"/kitty-session.desktop ] && {
+  [ -f "${APP_TOP}" ] && {
+    diff "${SCRIPT_PATH}"/kitty-session.desktop "${APP_TOP}" >/dev/null && {
+      rm -f "${APP_TOP}"
+    }
+  }
+}
+SES_DIR="${HOME}/.config/kitty/sessions"
+for start in startup startup-bash; do
+  [ -f "${SCRIPT_PATH}"/config/sessions/${start} ] && {
+    [ -f "${SES_DIR}"/${start} ] && {
+      diff "${SCRIPT_PATH}"/config/sessions/${start} "${SES_DIR}"/${start} >/dev/null && {
+        rm -f "${SES_DIR}"/${start}
+      }
+    }
+  }
+done
 
 FDEST="${HOME}/.local/share/figlet-fonts"
 for ff in "${SCRIPT_PATH}"/figlet-fonts/*

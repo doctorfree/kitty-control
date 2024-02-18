@@ -400,6 +400,33 @@ else
   }
 fi
 
+# Kitty session desktop file icon
+ICON_DIR="${HOME}/.local/share/icons/hicolor/256x256/apps"
+[ -d "${ICON_DIR}" ] || mkdir -p "${ICON_DIR}"
+[ -f "${SCRIPT_PATH}"/icons/kitty-256.png ] && {
+  [ -f "${ICON_DIR}"/kitty.png ] || {
+    cp "${SCRIPT_PATH}"/icons/kitty-256.png "${ICON_DIR}"/kitty.png
+  }
+}
+# Kitty session desktop file
+APP_DIR="${HOME}/.local/share/applications"
+[ -d "${APP_DIR}" ] || mkdir -p "${APP_DIR}"
+[ -f "${SCRIPT_PATH}"/kitty-session.desktop ] && {
+  [ -f "${APP_DIR}"/kitty-session.desktop ] || {
+    cp "${SCRIPT_PATH}"/kitty-session.desktop "${APP_DIR}"/kitty-session.desktop
+  }
+}
+# Kitty session startup file
+SES_DIR="${HOME}/.config/kitty/sessions"
+[ -d "${SES_DIR}" ] || mkdir -p "${SES_DIR}"
+for start in startup startup-bash; do
+  [ -f "${SCRIPT_PATH}"/config/sessions/${start} ] && {
+    [ -f "${SES_DIR}"/${start} ] || {
+      cp "${SCRIPT_PATH}"/config/sessions/${start} "${SES_DIR}"/${start}
+    }
+  }
+done
+
 # Install JetBrains Mono font
 if [ "${darwin}" ]; then
   usr_font_dir="${HOME}/Library/Fonts"
