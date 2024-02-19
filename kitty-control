@@ -375,7 +375,7 @@ show_neofetch() {
   else
     neofetch
   fi
-  prompt_continue
+  [ "$1" == "proceed" ] || prompt_continue
 }
 
 get_control_version() {
@@ -3083,6 +3083,7 @@ release_version=
 kittycmd=
 setopcty=
 set_menu=
+show_neo=
 tabopts=
 winopts=
 while [[ $1 ]]; do
@@ -3317,6 +3318,10 @@ while [[ $1 ]]; do
       set_menu=1
       shift
       ;;
+    neo*|--neo*)
+      show_neo=1
+      shift
+      ;;
     title|--title)
       if [ "$2" ]; then
         kitty @ ${SOCKET} set-tab-title ${OPTS} "$2"
@@ -3413,4 +3418,5 @@ done
   set-bg-image "${bg_image}"
 }
 [ "${kittycmd}" ] && kitty @ ${SOCKET} ${kittycmd} ${OPTS}
+[ "${show_neo}" ] && [ "${have_neo}" ] && show_neofetch proceed
 [ "${set_menu}" ] && show_menu
