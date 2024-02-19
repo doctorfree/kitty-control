@@ -427,6 +427,22 @@ for start in startup startup-bash; do
   }
 done
 
+# Additional icons
+ICON_DIR="${HOME}/.local/share/icons/hicolor/512x512/apps"
+[ -d "${ICON_DIR}" ] || mkdir -p "${ICON_DIR}"
+[ -f "${SCRIPT_PATH}"/icons/kitty-512.png ] && {
+  [ -f "${ICON_DIR}"/kitty.png ] || {
+    cp "${SCRIPT_PATH}"/icons/kitty-512.png "${ICON_DIR}"/kitty.png
+  }
+}
+for icon in apple-logo.png tux.png; do
+  [ -f "${SCRIPT_PATH}"/icons/${icon} ] && {
+    [ -f "${ICON_DIR}"/${icon} ] || {
+      cp "${SCRIPT_PATH}"/icons/${icon} "${ICON_DIR}"/${icon}
+    }
+  }
+done
+
 # Install JetBrains Mono font
 if [ "${darwin}" ]; then
   usr_font_dir="${HOME}/Library/Fonts"
@@ -435,6 +451,15 @@ else
 fi
 JB_FONT="NerdFonts/JetBrains Mono Bold Nerd Font Complete.ttf"
 [ -f "${usr_font_dir}/${JB_FONT}" ] || install_fonts
+
+# Neofetch configuration
+NEOF_DIR="${HOME}/.config/neofetch"
+[ -f "${NEOF_DIR}"/config.conf ] || {
+  [ -d "${NEOF_DIR}" ] || mkdir -p "${NEOF_DIR}"
+  [ -f "${SCRIPT_PATH}"/neofetch/config.conf ] && {
+    cp "${SCRIPT_PATH}"/neofetch/config.conf "${NEOF_DIR}"/config.conf
+  }
+}
 
 printf "\nInstallation of kitty-control complete ✨ 🌟 ✨\n"
 printf "\nSee ${REPO_URL}#readme\n\n"

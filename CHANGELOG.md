@@ -4,7 +4,12 @@
 
 ### ⚡️ Added
 
+- Add `neofetch` menu entry and command line argument
+- Add `neofetc` configuration file if none present
+
 ### 🐞 Fixed
+
+- Only display `neofetch` menu entry and usage if `neofetch` present
 
 ## v1.0.7r2
 

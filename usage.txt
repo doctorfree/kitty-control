@@ -2,7 +2,7 @@ Usage: kitty-control [-adefhuv] [back <color>] [-c command] [dark]
                      [diff [opts] <path1> <path2>] [font [num]] [fore <color>]
                      [-i /path/to/image] [icat [opts] <image>] [layout <name>]
                      [load [subdir|file]] [ls|list [self|colors]] [-m|t <match>]
-                     [man] [menu] [-s /path/to/socket] [term] [theme] [tools]
+                     [man] [menu] [neo] [-s /path/to/socket] [term] [theme] [tools]
                      [title <title>] [transparent [opacity]] [unicode] [upgrade]
 Where:
     'back color' Sets the background color to 'color'
@@ -41,6 +41,7 @@ Where:
            'kitty-control load --help' displays a help message for the load command
     'man' Displays the kitty-control manual
     'menu' Displays the kitty-control interactive menu system
+    'neo' Displays neofetch system information
     'term' Displays information about the terminal using the query_terminal kitten
     'theme' Displays the interactive theme selection kitten
     'title <tab title>' Sets the Kitty tab title to "tab title"
