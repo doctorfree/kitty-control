@@ -93,18 +93,20 @@ rm -f /tmp/ins$$
 
 ### Tools
 
-The `kitty-control` menu system uses `fzf`, `ranger`, `neofetch`, `lolcat`, and `figlet` if installed.
+The `kitty-control` menu system uses `fzf`, `jq`, `ranger`, `neofetch`,
+`lolcat`, and `figlet` if installed.
 
 The [Ranger](https://github.com/ranger/ranger) file manager,
 [Fzf](https://github.com/junegunn/fzf) fuzzy finder,
+[jq](https://jqlang.github.io/jq) JSON processor,
 [Neofetch](https://github.com/dylanaraps/neofetch) system info,
 [Lolcat](https://github.com/busyloop/lolcat) rainbow coloring tool,
 and [FIGlet](http://www.figlet.org) font text display programs are *NOT*
 required by `kitty-control`. However, some additional features are enabled
 if they are present.
 
-`Fzf` is installed by the `install` command, the others are not. `FIGlet`, `Lolcat`,
-`Neofetch`, and `Ranger` can be installed with the command:
+`Fzf` is installed by the `install` command, the others are not. `FIGlet`,
+`jq`, `Lolcat`, `Neofetch`, and `Ranger` can be installed with the command:
 
 ```bash
 kitty-control tools
@@ -112,7 +114,8 @@ kitty-control tools
 
 Individual tools can be installed via the `kitty-control` menu interface.
 
-The installation of `ranger`, `lolcat`, `neofetch`, and `figlet` require administrative privilege.
+The installation of `ranger`, `jq`, `lolcat`, `neofetch`, and `figlet`
+require administrative privilege.
 
 ### Aliases
 
@@ -204,7 +207,7 @@ Where:
     'title <tab title>' Sets the Kitty tab title to "tab title"
           Quote tab titles which contain spaces, e.g. "This Is My Tab Title"
           Use '-m <match>' to specify the tab to match
-    'tools' Installs 'figlet' 'lolcat' 'neofetch' and 'ranger' if not already present
+    'tools' Installs 'figlet' 'jq' 'lolcat' 'neofetch' and 'ranger' if not already present
     'tran [opacity]' Sets the Kitty background opacity to 0.8
            Can use 'tran', 'opacity', 'trans' or 'transparent'
            Specify a second argument to set a custom background opacity:

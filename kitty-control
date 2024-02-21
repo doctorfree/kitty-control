@@ -593,34 +593,35 @@ install_lolcat() {
   have_lolcat=$(type -p lolcat)
 }
 
-install_neofetch() {
-  printf "\nInstalling neofetch\n"
+install_package() {
+  pkg="$1"
+  printf "\nInstalling ${pkg}\n"
   if [ "${darwin}" ]; then
-    [ "${have_brew}" ] && brew install neofetch >/dev/null 2>&1
+    [ "${have_brew}" ] && brew install ${pkg} >/dev/null 2>&1
   else
     have_apt=$(type -p apt)
     if [ "${have_apt}" ]; then
-      ${SUDO} apt install neofetch >/dev/null 2>&1
+      ${SUDO} apt install ${pkg} >/dev/null 2>&1
     else
       have_pac=$(type -p pacman)
       if [ "${have_pac}" ]; then
-        ${SUDO} pacman -S neofetch >/dev/null 2>&1
+        ${SUDO} pacman -S ${pkg} >/dev/null 2>&1
       else
         have_apk=$(type -p apk)
         if [ "${have_apk}" ]; then
-          ${SUDO} apk add neofetch >/dev/null 2>&1
+          ${SUDO} apk add ${pkg} >/dev/null 2>&1
         else
           have_dnf=$(type -p dnf)
           if [ "${have_dnf}" ]; then
-            ${SUDO} dnf install neofetch >/dev/null 2>&1
+            ${SUDO} dnf install ${pkg} >/dev/null 2>&1
           else
             have_xbps=$(type -p xbps-install)
             if [ "${have_xbps}" ]; then
-              ${SUDO} xbps-install -S neofetch >/dev/null 2>&1
+              ${SUDO} xbps-install -S ${pkg} >/dev/null 2>&1
             else
               have_zypp=$(type -p zypper)
               [ "${have_zypp}" ] && {
-                ${SUDO} zypper install neofetch >/dev/null 2>&1
+                ${SUDO} zypper install ${pkg} >/dev/null 2>&1
               }
             fi
           fi
@@ -628,7 +629,6 @@ install_neofetch() {
       fi
     fi
   fi
-  have_neo=$(type -p neofetch)
 }
 
 install_ranger() {
@@ -2810,11 +2810,16 @@ select_with_fzf() {
         "Install Fzf"*)
           install_fzf
           ;;
+        "Install jq"*)
+          install_package jq
+          have_jq=$(type -p jq)
+          ;;
         "Install Lolcat"*)
           install_lolcat
           ;;
         "Install Neofetch"*)
-          install_neofetch
+          install_package neofetch
+          have_neo=$(type -p neofetch)
           ;;
         "Install Ranger"*)
           install_ranger
@@ -2951,6 +2956,7 @@ show_menu() {
     options+=("View an Image    [v]" "Window Layout    [L]" "Window Size      [W]")
     [ "${have_figlet}" ] || options+=("Install Figlet")
     [ "${have_fzf}" ] || options+=("Install Fzf")
+    [ "${have_jq}" ] || options+=("Install jq")
     [ "${have_lolcat}" ] || options+=("Install Lolcat")
     [ "${have_neo}" ] || options+=("Install Neofetch")
     [ "${have_ranger}" ] || options+=("Install Ranger")
@@ -3043,12 +3049,18 @@ show_menu() {
         install_fzf
         break
         ;;
+      "Install jq",* | *,"Install jq")
+        install_package jq
+        have_jq=$(type -p jq)
+        break
+        ;;
       "Install Lolcat",* | *,"Install Lolcat")
         install_lolcat
         break
         ;;
       "Install Neofetch",* | *,"Install Neofetch")
-        install_neofetch
+        install_package neofetch
+        have_neo=$(type -p neofetch)
         break
         ;;
       "Install Ranger",* | *,"Install Ranger")
@@ -3501,8 +3513,15 @@ while [[ $1 ]]; do
       ;;
     tool*|--tool*)
       set_haves
+      [ "${have_jq}" ] || {
+        install_package jq
+        have_jq=$(type -p jq)
+      }
       [ "${have_lolcat}" ] || install_lolcat
-      [ "${have_neo}" ] || install_neofetch
+      [ "${have_neo}" ] || {
+        install_package neofetch
+        have_neo=$(type -p neofetch)
+      }
       if [ "${have_make}" ]; then
         [ "${have_figlet}" ] || {
           if [ "${have_gcc}" ]; then

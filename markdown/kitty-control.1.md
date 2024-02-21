@@ -91,7 +91,7 @@ use of the **read_config.py** custom *kitten* included with *kitty-control*
           Use **-m match** to specify the tab to match.
 
 **tools**
-: Installs *figlet* *lolcat* *neofetch* and *ranger* if not already present (administrative privilege required)
+: Installs *figlet* *jq* *lolcat* *neofetch* and *ranger* if not already present (administrative privilege required)
 
 **tran [opacity]**
 : Sets the Kitty background opacity to 0.8.
