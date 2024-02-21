@@ -9,7 +9,7 @@ date: February 06, 2024
 **kitty-control** - Control the Kitty terminal emulator from the command line
 
 # SYNOPSIS
-**kitty-control** [**-a**] [**back** color] [**-c** command] [-d] [**dark**] [**diff** [opts] path1 path2] [**-e**] [**-f**] [**font** [num]] [**fore** color] [**-i** /path/to/image] [**layout** layout-name] [**load** [subdir]] [**-m|t** match] [**-s** /path/to/socket] [**-u|h|v**] [**term**] [**theme**] [**tools**] [**icat** [opts] image] [**list|ls**] [**man**] [**menu**] [**title** title] [**transparent** [opacity]] [**unicode**] [**upgrade**]
+**kitty-control** [**-a**] [**back** color] [**-c** command] [-d] [**dark**] [**diff** [opts] path1 path2] [**-e**] [**-f**] [**font** [num]] [**fore** color] [**-i** /path/to/image] [**layout** layout-name] [**load** [subdir]] [**-m|t** match] [**-s** /path/to/socket] [**-u|h|v**] [size w h] [**term**] [**theme**] [**tools**] [**icat** [opts] image] [**list|ls**] [**man**] [**menu**] [**title** title] [**transparent** [opacity]] [**unicode**] [**upgrade**]
 
 # DESCRIPTION
 **kitty-control** acts as a wrapper for the *Kitty* terminal emulator remote
@@ -75,6 +75,9 @@ use of the **read_config.py** custom *kitten* included with *kitty-control*
 
 **menu**
 : Displays the kitty-control interactive menu system
+
+**size w h**
+: Increases/decreases the Kitty window size, **w** specifies width adjustment and **h** height
 
 **term**
 : Displays information about the terminal using the *query_terminal* kitten
@@ -176,7 +179,7 @@ Shortcuts exist to quickly select a menu option:
 **i**/*background image* **I**/*terminal info* **k**/*list tabs* **l**/*load config*
 **L**/*layouts* **m**/*manual* **o**/*options* **q**/*quit* **r**/*reset*
 **t**/*transparent* **T**/*theme* **u**/*usage* **U**/*unicode input*
-**v**/*view image* **w**/*list windows* **z**/*fuzzy select*
+**v**/*view image* **w**/*list windows* **W**/*window size* **z**/*fuzzy select*
 
 Enter a menu option number or shortcut to select an option.
 
@@ -239,6 +242,9 @@ non-kitty terminal or console.
 
 ***kitty-control font +2***
 : Increase the font size by 2 points
+
+***kitty-control size 4 3***
+: Increase the window width by 4 cells and height by 3 cells
 
 ***kitty-control -i ~/Pictures/groovy.png***
 : Set the background image to *~/Pictures/groovy.png*

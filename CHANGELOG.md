@@ -4,6 +4,7 @@
 
 ### ⚡️ Added
 
+- Add `size w h` argument to increase/decrease the `kitty` window width and height
 - Add `neofetch` menu entry and command line argument
 - Add `neofetc` configuration file if none present
 

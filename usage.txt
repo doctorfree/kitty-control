@@ -42,6 +42,10 @@ Where:
     'man' Displays the kitty-control manual
     'menu' Displays the kitty-control interactive menu system
     'neo' Displays neofetch system information
+    'size w h' Increases/decreases the window size 'w' and 'h' cells
+           The 'w' argument specifies the window width adjustment in cells
+           The 'h' argument specifies the window height adjustment in cells
+           'kitty-control size 4 3' increases the window width by 4 cells and height by 3 cells
     'term' Displays information about the terminal using the query_terminal kitten
     'theme' Displays the interactive theme selection kitten
     'title <tab title>' Sets the Kitty tab title to "tab title"

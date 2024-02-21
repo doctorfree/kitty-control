@@ -36,6 +36,8 @@ FONTDIR="${HOME}/.local/share/figlet-fonts"
 LOLCAT="lolcat"
 # Clear the screen, can be "clear" or "tput clear"
 CLEAR_COMMAND="tput clear"
+# Window size increments
+winsizes=("+1" "+2" "+4" "+6" "+8" "+10" "+12" "-1" "-2" "-4" "-6" "-8" "-10" "-12")
 # Array with font names
 fonts=("Fire Font-k" "Graceful" "Script" "Shadow" "Slant" "Small" "Standard")
 # Font size choices for menu
@@ -74,7 +76,7 @@ brief_usage() {
   if [ "${have_neo}" ]; then
     printf "\n                     [man] [menu] [neo] [-s /path/to/socket] [term] [theme] [tools]"
   else
-    printf "\n                     [man] [menu] [-s /path/to/socket] [term] [theme] [tools]"
+    printf "\n                     [man] [menu] [-s /path/to/socket] [size w h] [term] [theme] [tools]"
   fi
   printf "\n                     [title <title>] [transparent [opacity]] [unicode] [upgrade]${NORM}"
   [ "$1" == "noexit" ] || {
@@ -134,6 +136,8 @@ show_examples() {
   printf "\n\t${BOLD}kitty-control load laptop${NORM}"
   printf "\nTo increase the font size by 2 points:"
   printf "\n\t${BOLD}kitty-control font +2${NORM}"
+  printf "\nTo increase the window width by 4 cells and height by 3 cells:"
+  printf "\n\t${BOLD}kitty-control size 4 3${NORM}"
   printf "\nTo set the background image to ~/Pictures/groovy.png"
   printf "\n\t${BOLD}kitty-control -i ~/Pictures/groovy.png${NORM}"
   printf "\nActions can be combined on the same command line:"
@@ -195,6 +199,10 @@ usage() {
   [ "${have_neo}" ] && {
     printf "\n    '${BOLD}neo${NORM}' Displays neofetch system information"
   }
+  printf "\n    '${BOLD}size w h${NORM}' Increases/decreases the window size 'w' and 'h' cells"
+  printf "\n           The 'w' argument specifies the window width adjustment in cells"
+  printf "\n           The 'h' argument specifies the window height adjustment in cells"
+  printf "\n           'kitty-control size 4 3' increases the window width by 4 cells and height by 3 cells"
   printf "\n    '${BOLD}term${NORM}'"
     printf " Displays information about the terminal using the query_terminal kitten"
   printf "\n    '${BOLD}theme${NORM}' Displays the interactive theme selection kitten"
@@ -284,9 +292,9 @@ tolower() {
 
 set_show_shortcuts() {
   if [ "${have_fzf}" ]; then
-    shortcuts="b/back c/clear B/dark F/full f/font g/fore z/fuzzy h/help I/info"
+    shortcuts="b/back c/clear B/dark F/full f/font g/fore z/fuzzy h/help I/info W/size"
   else
-    shortcuts="b/back c/clear B/dark F/full f/font g/fore h/help I/info"
+    shortcuts="b/back c/clear B/dark F/full f/font g/fore h/help I/info W/size"
   fi
   addtlcuts="C/colors k/tabs w/windows l/load o/opts q/quit T/theme t/tran v/view"
   if [ "${have_rich}" ]; then
@@ -1101,6 +1109,14 @@ set-opacity() {
   kitty @ ${SOCKET} set-background-opacity ${OPTS} $1
   [ "${debug}" ] && {
     printf "\nDEBUG: kitty @ ${SOCKET} set-background-opacity ${OPTS} $1\n"
+    prompt_continue
+  }
+}
+
+set-window-size() {
+  kitty @ ${SOCKET} resize-os-window --action resize --incremental --width "$1" --height "$2" ${OPTS}
+  [ "${debug}" ] && {
+    printf "\nDEBUG: kitty @ ${SOCKET} resize-os-window --incremental --action resize --width $1 --height $2 ${OPTS}\n"
     prompt_continue
   }
 }
@@ -2128,6 +2144,54 @@ menu_diff_folder() {
   }
 }
 
+menu_window_size() {
+  wnopts=( "${winsizes[@]}" )
+  wnopts+=( "main menu" "quit" )
+  if [ "${use_fzf}" ]; then
+    heading "Window Size" "Window Size"
+    choice=$(printf "%s\n" "${wnopts[@]}" | fzf --prompt="😺 Select Window Size Adjustment ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
+    [ "${choice}" ] && {
+      case "${choice}" in
+        "main"*)
+          break
+          ;;
+        "quit"*)
+          heading "Exiting kitty-control" "Farewell"
+          exit 0
+          ;;
+        *)
+          set-window-size "${choice}" "${choice}"
+          break
+          ;;
+      esac
+    }
+  else
+    while true; do
+      heading "Window Size" "Window Size"
+      PS3="${BOLD}Select Window Size Adjustment (number, shortcut, or text, 'h' help): ${NORM}"
+      select subopt in "${wnopts[@]}"; do
+        case "$subopt,$REPLY" in
+        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+          show_help
+          break
+          ;;
+        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+          break 2
+          ;;
+        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          heading "Exiting kitty-control" "Farewell"
+          exit 0
+          ;;
+        *,*)
+          set-window-size "${subopt}" "${subopt}"
+          break 2
+          ;;
+        esac
+      done
+    done
+  fi
+}
+
 menu_font_size() {
   fnopts=( "${fontsizes[@]}" )
   fnopts+=( "main menu" "quit" )
@@ -2762,6 +2826,9 @@ select_with_fzf() {
         *"Layout"* | *"layout"* | "L")
           menu_set_layout
           ;;
+        "Window"* | "window"* | "W")
+          menu_window_size
+          ;;
         "Upgrade kitty-control"* | "upgrade kitty-control"*)
           upgrade_kitty_control noexit
           ;;
@@ -2824,7 +2891,7 @@ show_menu() {
     options+=("Options          [o]")
     options+=("Reset            [r]" "Theme            [T]" "Terminal Info    [I]")
     options+=("Transparent      [t]" "Unicode Input    [U]" "Usage            [u]")
-    options+=("View an Image    [v]" "Window Layout    [L]")
+    options+=("View an Image    [v]" "Window Layout    [L]" "Window Size      [W]")
     [ "${have_figlet}" ] || options+=("Install Figlet")
     [ "${have_fzf}" ] || options+=("Install Fzf")
     [ "${have_ranger}" ] || options+=("Install Ranger")
@@ -2895,6 +2962,14 @@ show_menu() {
         ;;
       "Font"*,* | *,"Font"* | "font"*,* | *,"font"* | "f",* | *,"f")
         menu_font_size
+        break
+        ;;
+      *"Layout"*,* | *,*"Layout"* | *"layout"*,* | *,*"layout"* | "L",* | *,"L")
+        menu_set_layout
+        break
+        ;;
+      "Window"*,* | *,"Window"* | "window"*,* | *,"window"* | "W",* | *,"W")
+        menu_window_size
         break
         ;;
       "z",*|*,"z"|"Fzf",*|*,"Fzf"|"fzf",*|*,"fzf"|"Fuzzy"*,*|*,"Fuzzy"*|"fuzzy"*,*|*,"fuzzy"*)
@@ -2984,10 +3059,6 @@ show_menu() {
         ;;
       "Opt"*,* | *,"Opt"* | "opt"*,* | *,"opt"* | "o",* | *,"o")
         options_menu
-        break
-        ;;
-      *"Layout"*,* | *,*"Layout"* | *"layout"*,* | *,*"layout"* | "L",* | *,"L")
-        menu_set_layout
         break
         ;;
       "Upgrade kitty-control"*,* | *,"Upgrade kitty-control"* | "upgrade kitty-control"*,* | *,"upgrade kitty-control"*)
@@ -3085,6 +3156,8 @@ setopcty=
 set_menu=
 show_neo=
 tabopts=
+width=
+height=
 winopts=
 while [[ $1 ]]; do
   case "$1" in
@@ -3322,6 +3395,17 @@ while [[ $1 ]]; do
       show_neo=1
       shift
       ;;
+    size*|--size*)
+      if [ "$3" ]; then
+        width="$2"
+        height="$3"
+        shift 3
+      else
+        width="$2"
+        height="$2"
+        shift 2
+      fi
+      ;;
     title|--title)
       if [ "$2" ]; then
         kitty @ ${SOCKET} set-tab-title ${OPTS} "$2"
@@ -3413,6 +3497,10 @@ done
 [ "${foregrnd}" ] && set-foreground "${foregrnd}"
 [ "${fullscrn}" ] && toggle-fullscreen
 [ "${setopcty}" ] && set-opacity "${setopcty}"
+[ "${width}" ] && {
+  [ "${height}" ] || height="${width}"
+  set-window-size "${width}" "${height}"
+}
 [ "${bg_image}" ] && {
   set-bg-image none
   set-bg-image "${bg_image}"

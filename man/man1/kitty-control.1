@@ -27,11 +27,11 @@ command line
 path1 path2] [\f[B]-e\f[R]] [\f[B]-f\f[R]] [\f[B]font\f[R] [num]]
 [\f[B]fore\f[R] color] [\f[B]-i\f[R] /path/to/image] [\f[B]layout\f[R]
 layout-name] [\f[B]load\f[R] [subdir]] [\f[B]-m|t\f[R] match]
-[\f[B]-s\f[R] /path/to/socket] [\f[B]-u|h|v\f[R]] [\f[B]term\f[R]]
-[\f[B]theme\f[R]] [\f[B]tools\f[R]] [\f[B]icat\f[R] [opts] image]
-[\f[B]list|ls\f[R]] [\f[B]man\f[R]] [\f[B]menu\f[R]] [\f[B]title\f[R]
-title] [\f[B]transparent\f[R] [opacity]] [\f[B]unicode\f[R]]
-[\f[B]upgrade\f[R]]
+[\f[B]-s\f[R] /path/to/socket] [\f[B]-u|h|v\f[R]] [size w h]
+[\f[B]term\f[R]] [\f[B]theme\f[R]] [\f[B]tools\f[R]] [\f[B]icat\f[R]
+[opts] image] [\f[B]list|ls\f[R]] [\f[B]man\f[R]] [\f[B]menu\f[R]]
+[\f[B]title\f[R] title] [\f[B]transparent\f[R] [opacity]]
+[\f[B]unicode\f[R]] [\f[B]upgrade\f[R]]
 .SH DESCRIPTION
 .PP
 \f[B]kitty-control\f[R] acts as a wrapper for the \f[I]Kitty\f[R]
@@ -118,6 +118,10 @@ Displays the kitty-control manual
 .TP
 \f[B]menu\f[R]
 Displays the kitty-control interactive menu system
+.TP
+\f[B]size w h\f[R]
+Increases/decreases the Kitty window size, \f[B]w\f[R] specifies width
+adjustment and \f[B]h\f[R] height
 .TP
 \f[B]term\f[R]
 Displays information about the terminal using the
@@ -246,7 +250,7 @@ files\f[R] \f[B]D\f[R]/\f[I]diff folders\f[R]
 \f[B]t\f[R]/\f[I]transparent\f[R] \f[B]T\f[R]/\f[I]theme\f[R]
 \f[B]u\f[R]/\f[I]usage\f[R] \f[B]U\f[R]/\f[I]unicode input\f[R]
 \f[B]v\f[R]/\f[I]view image\f[R] \f[B]w\f[R]/\f[I]list windows\f[R]
-\f[B]z\f[R]/\f[I]fuzzy select\f[R]
+\f[B]W\f[R]/\f[I]window size\f[R] \f[B]z\f[R]/\f[I]fuzzy select\f[R]
 .PP
 Enter a menu option number or shortcut to select an option.
 .PP
@@ -324,6 +328,9 @@ Load the Kitty config in \f[I]\[ti]/.config/kitty/laptop/kitty.conf\f[R]
 .TP
 \f[I]\f[BI]kitty-control font +2\f[I]\f[R]
 Increase the font size by 2 points
+.TP
+\f[I]\f[BI]kitty-control size 4 3\f[I]\f[R]
+Increase the window width by 4 cells and height by 3 cells
 .TP
 \f[I]\f[BI]kitty-control -i \[ti]/Pictures/groovy.png\f[I]\f[R]
 Set the background image to \f[I]\[ti]/Pictures/groovy.png\f[R]
