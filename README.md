@@ -93,14 +93,18 @@ rm -f /tmp/ins$$
 
 ### Tools
 
-The `kitty-control` menu system uses `fzf`, `ranger` and `figlet` if installed.
+The `kitty-control` menu system uses `fzf`, `ranger`, `neofetch`, `lolcat`, and `figlet` if installed.
 
-Neither the [Ranger file manager](https://github.com/ranger/ranger) nor
-the [FIGlet font text display](http://www.figlet.org) programs are
+The [Ranger](https://github.com/ranger/ranger) file manager,
+[Fzf](https://github.com/junegunn/fzf) fuzzy finder,
+[Neofetch](https://github.com/dylanaraps/neofetch) system info,
+[Lolcat](https://github.com/busyloop/lolcat) rainbow coloring tool,
+and [FIGlet](http://www.figlet.org) font text display programs are **NOT**
 required by `kitty-control`. However, some additional features are enabled
 if they are present.
 
-Both `figlet` and `ranger` can be installed with the command:
+`Fzf` is installed by the `install` command, the others are not. `FIGlet` and `Ranger`
+can be installed with the command:
 
 ```bash
 kitty-control tools
