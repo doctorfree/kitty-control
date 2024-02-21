@@ -99,18 +99,20 @@ The [Ranger](https://github.com/ranger/ranger) file manager,
 [Fzf](https://github.com/junegunn/fzf) fuzzy finder,
 [Neofetch](https://github.com/dylanaraps/neofetch) system info,
 [Lolcat](https://github.com/busyloop/lolcat) rainbow coloring tool,
-and [FIGlet](http://www.figlet.org) font text display programs are **NOT**
+and [FIGlet](http://www.figlet.org) font text display programs are *NOT*
 required by `kitty-control`. However, some additional features are enabled
 if they are present.
 
-`Fzf` is installed by the `install` command, the others are not. `FIGlet` and `Ranger`
-can be installed with the command:
+`Fzf` is installed by the `install` command, the others are not. `FIGlet`, `Lolcat`,
+`Neofetch`, and `Ranger` can be installed with the command:
 
 ```bash
 kitty-control tools
 ```
 
-The installation of `ranger` and `figlet` require administrative privilege.
+Individual tools can be installed via the `kitty-control` menu interface.
+
+The installation of `ranger`, `lolcat`, `neofetch`, and `figlet` require administrative privilege.
 
 ### Aliases
 

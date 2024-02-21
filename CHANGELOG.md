@@ -4,6 +4,9 @@
 
 ### ⚡️ Added
 
+- Add option to install `lolcat` if not already present
+- Add option to install `neofetch` if not already present
+
 ### 🐞 Fixed
 
 ## v1.0.7r3

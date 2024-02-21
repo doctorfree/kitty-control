@@ -543,6 +543,7 @@ show_versions() {
 install_figlet() {
   have_make=$(type -p make)
   if [ "${have_make}" ]; then
+    printf "\nInstalling figlet\n"
     HERE=$(pwd)
     git clone https://github.com/cmatsuoka/figlet /tmp/figlet$$ >/dev/null 2>&1
     cd /tmp/figlet$$
@@ -559,6 +560,7 @@ install_figlet() {
 }
 
 install_fzf() {
+  printf "\nInstalling fzf\n"
   [ -f ${HOME}/.local/bin/fzf ] && {
     mv ${HOME}/.local/bin/fzf ${HOME}/.local/bin/fzf-bak$$
   }
@@ -580,9 +582,59 @@ install_fzf() {
   [ "${have_fzf}" ] && use_fzf=1
 }
 
+install_lolcat() {
+  printf "\nInstalling lolcat\n"
+  if [ "${darwin}" ]; then
+    [ "${have_brew}" ] && brew install lolcat >/dev/null 2>&1
+  else
+    have_snap=$(type -p snap)
+    [ "${have_snap}" ] && ${SUDO} snap install lolcat >/dev/null 2>&1
+  fi
+  have_lolcat=$(type -p lolcat)
+}
+
+install_neofetch() {
+  printf "\nInstalling neofetch\n"
+  if [ "${darwin}" ]; then
+    [ "${have_brew}" ] && brew install neofetch >/dev/null 2>&1
+  else
+    have_apt=$(type -p apt)
+    if [ "${have_apt}" ]; then
+      ${SUDO} apt install neofetch >/dev/null 2>&1
+    else
+      have_pac=$(type -p pacman)
+      if [ "${have_pac}" ]; then
+        ${SUDO} pacman -S neofetch >/dev/null 2>&1
+      else
+        have_apk=$(type -p apk)
+        if [ "${have_apk}" ]; then
+          ${SUDO} apk add neofetch >/dev/null 2>&1
+        else
+          have_dnf=$(type -p dnf)
+          if [ "${have_dnf}" ]; then
+            ${SUDO} dnf install neofetch >/dev/null 2>&1
+          else
+            have_xbps=$(type -p xbps-install)
+            if [ "${have_xbps}" ]; then
+              ${SUDO} xbps-install -S neofetch >/dev/null 2>&1
+            else
+              have_zypp=$(type -p zypper)
+              [ "${have_zypp}" ] && {
+                ${SUDO} zypper install neofetch >/dev/null 2>&1
+              }
+            fi
+          fi
+        fi
+      fi
+    fi
+  fi
+  have_neo=$(type -p neofetch)
+}
+
 install_ranger() {
   have_make=$(type -p make)
   if [ "${have_make}" ]; then
+    printf "\nInstalling ranger\n"
     HERE=$(pwd)
     git clone https://github.com/ranger/ranger /tmp/ranger$$ >/dev/null 2>&1
     cd /tmp/ranger$$
@@ -1266,7 +1318,6 @@ upgrade_fzf() {
       install_fzf
     fi
   else
-    have_brew=$(type -p brew)
     [ "${have_brew}" ] && brew uninstall fzf >/dev/null 2>&1
     install_fzf
   fi
@@ -1419,6 +1470,7 @@ select_folder() {
 }
 
 set_haves() {
+  have_brew=$(type -p brew)
   have_gcc=$(type -p gcc)
   have_fzf=$(type -p fzf)
   have_figlet=$(type -p figlet)
@@ -2758,6 +2810,12 @@ select_with_fzf() {
         "Install Fzf"*)
           install_fzf
           ;;
+        "Install Lolcat"*)
+          install_lolcat
+          ;;
+        "Install Neofetch"*)
+          install_neofetch
+          ;;
         "Install Ranger"*)
           install_ranger
           ;;
@@ -2783,7 +2841,7 @@ select_with_fzf() {
           done
           menu_load_config "${configs[@]}"
           ;;
-        "Neo"* | "neo"* | "n")
+        "System"* | "system"* | "n")
           show_neofetch
           ;;
         "View"* | "view"* | "v")
@@ -2795,7 +2853,7 @@ select_with_fzf() {
             prompt_continue
           }
           ;;
-        "Theme"* | "theme"* | "T")
+        *"Theme"* | *"theme"* | "T")
           kitty +kitten themes
           ;;
         "Term"* | "term"* | "info" | "i")
@@ -2881,19 +2939,20 @@ show_menu() {
     options+=("Background Color [b]" "Background Image [i]" "Clear Background [c]")
     options+=("Dark/Opaque      [B]" "Diff Files       [d]" "Diff Folders     [D]")
     options+=("Examples         [e]" "Font Size        [f]")
-    options+=("Foreground Color [g]" "Fullscreen       [F]")
+    options+=("Foreground Color [g]" "Fullscreen       [F]" "Kitty Theme      [T]")
     options+=("List Colors      [C]" "List Tabs        [k]" "List Windows     [w]")
     [ ${numconfs} -gt 1 ] && {
       options+=("Load Config      [l]")
     }
-    options+=("Manual Page      [m]")
-    [ "${have_neo}" ] && options+=("Neofetch         [n]")
-    options+=("Options          [o]")
-    options+=("Reset            [r]" "Theme            [T]" "Terminal Info    [I]")
+    options+=("Manual Page      [m]" "Options          [o]" "Reset            [r]")
+    [ "${have_neo}" ] && options+=("System Info      [n]")
+    options+=("Terminal Info    [I]")
     options+=("Transparent      [t]" "Unicode Input    [U]" "Usage            [u]")
     options+=("View an Image    [v]" "Window Layout    [L]" "Window Size      [W]")
     [ "${have_figlet}" ] || options+=("Install Figlet")
     [ "${have_fzf}" ] || options+=("Install Fzf")
+    [ "${have_lolcat}" ] || options+=("Install Lolcat")
+    [ "${have_neo}" ] || options+=("Install Neofetch")
     [ "${have_ranger}" ] || options+=("Install Ranger")
     [ "${have_fzf}" ] && {
       fzf_release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
@@ -2984,6 +3043,14 @@ show_menu() {
         install_fzf
         break
         ;;
+      "Install Lolcat",* | *,"Install Lolcat")
+        install_lolcat
+        break
+        ;;
+      "Install Neofetch",* | *,"Install Neofetch")
+        install_neofetch
+        break
+        ;;
       "Install Ranger",* | *,"Install Ranger")
         install_ranger
         break
@@ -3015,7 +3082,7 @@ show_menu() {
         }
         break
         ;;
-      "Theme"*,* | *,"Theme"* | "theme"*,* | *,"theme"* | "T",* | *,"T")
+      *"Theme"*,* | *,*"Theme"* | *"theme"*,* | *,*"theme"* | "T",* | *,"T")
         kitty +kitten themes
         break
         ;;
@@ -3038,7 +3105,7 @@ show_menu() {
         kitty +kitten unicode_input
         break
         ;;
-      "Neo"*,* | *,"Neo"* | "neo"*,* | *,"neo"* | "n",* | *,"n")
+      "System"*,* | *,"System"* | "system"*,* | *,"system"* | "n",* | *,"n")
         show_neofetch
         break
         ;;
@@ -3434,6 +3501,8 @@ while [[ $1 ]]; do
       ;;
     tool*|--tool*)
       set_haves
+      [ "${have_lolcat}" ] || install_lolcat
+      [ "${have_neo}" ] || install_neofetch
       if [ "${have_make}" ]; then
         [ "${have_figlet}" ] || {
           if [ "${have_gcc}" ]; then
