@@ -9,7 +9,7 @@
 # Written February, 2024 by Ronald Joe Record <ronaldrecord@gmail.com>
 #
 VERSION=1.0.7
-RELEASE=3
+RELEASE=4
 # The Kitty configuration directory
 CONFDIR="${HOME}/.config/kitty"
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
@@ -209,7 +209,7 @@ usage() {
   printf "\n    '${BOLD}title <tab title>${NORM}' Sets the Kitty tab title to \"tab title\""
   printf "\n          Quote tab titles which contain spaces, e.g. \"This Is My Tab Title\""
   printf "\n          Use '-m <match>' to specify the tab to match"
-  printf "\n    '${BOLD}tools${NORM}' Installs 'figlet' and 'ranger' if not already present"
+  printf "\n    '${BOLD}tools${NORM}' Installs 'figlet' 'lolcat' 'neofetch' and 'ranger' if not already present"
   printf "\n    '${BOLD}tran [opacity]${NORM}' Sets the Kitty background opacity to 0.8"
   printf "\n           Can use 'tran', 'opacity', 'trans' or 'transparent'"
   printf "\n           Specify a second argument to set a custom background opacity:"

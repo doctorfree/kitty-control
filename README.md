@@ -204,7 +204,7 @@ Where:
     'title <tab title>' Sets the Kitty tab title to "tab title"
           Quote tab titles which contain spaces, e.g. "This Is My Tab Title"
           Use '-m <match>' to specify the tab to match
-    'tools' Installs 'figlet' and 'ranger' if not already present
+    'tools' Installs 'figlet' 'lolcat' 'neofetch' and 'ranger' if not already present
     'tran [opacity]' Sets the Kitty background opacity to 0.8
            Can use 'tran', 'opacity', 'trans' or 'transparent'
            Specify a second argument to set a custom background opacity:

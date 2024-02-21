@@ -4,10 +4,18 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.7r4
+
+### ⚡️ Added
+
 - Add option to install `lolcat` if not already present
 - Add option to install `neofetch` if not already present
 
 ### 🐞 Fixed
+
+- Change `Neofetch` menu entry to `System Info`
 
 ## v1.0.7r3
 
