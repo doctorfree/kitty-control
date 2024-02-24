@@ -17,7 +17,7 @@ Additional `kitty` window info listing features are enabled if the [jq JSON pars
 ### With curl
 
 ```bash
-curl -sL https://raw.githubusercontent.com/doctorfree/kitty-control/main/install | sh /dev/stdin
+curl -sL https://raw.githubusercontent.com/doctorfree/kitty-control/main/install | bash /dev/stdin
 ```
 
 ### With a clone

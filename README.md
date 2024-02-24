@@ -68,7 +68,7 @@ Additional `kitty` window info listing features are enabled if the
 ### With curl
 
 ```bash
-curl -sL https://raw.githubusercontent.com/doctorfree/kitty-control/main/install | sh /dev/stdin
+curl -sL https://raw.githubusercontent.com/doctorfree/kitty-control/main/install | bash /dev/stdin
 ```
 
 ### With a clone
@@ -492,7 +492,7 @@ also upgrade `kitty` and `fzf` if updates are available.
 Alternately, an update can be performed with `curl`:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/doctorfree/kitty-control/main/install | sh /dev/stdin
+curl -sL https://raw.githubusercontent.com/doctorfree/kitty-control/main/install | bash /dev/stdin
 ```
 
 Updates can also be performed with a `git pull` in the cloned `kitty-control`

@@ -15,6 +15,7 @@
 
 ### 🐞 Fixed
 
+- Use `bash` rather than `sh` for `curl` install to support `bash` syntax in `install` script
 - Update `kitty-control` usage and man page
 
 ## v1.0.8r1
