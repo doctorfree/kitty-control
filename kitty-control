@@ -8,7 +8,7 @@
 #
 # Written February, 2024 by Ronald Joe Record <ronaldrecord@gmail.com>
 #
-VERSION=1.0.8
+VERSION=1.0.9
 RELEASE=1
 # The Kitty configuration directory
 CONFDIR="${HOME}/.config/kitty"
