@@ -72,7 +72,7 @@ brief_usage() {
   printf "${BOLD}Usage: kitty-control [-adefhuv] [back <color>] [-c command] [dark]"
   printf "\n                     [diff [opts] <path1> <path2>] [font [num]] [fore <color>]"
   printf "\n                     [-i /path/to/image] [icat [opts] <image>] [layout <name>]"
-  printf "\n                     [load [subdir|file]] [ls|list [self|colors]] [-m|t <match>]"
+  printf "\n                     [load [subdir|file]] [ls|list [self|colors|tabs|windows]] [-m|t <match>]"
   if [ "${have_neo}" ]; then
     printf "\n                     [man] [menu] [neo] [-o doc] [-s /path/to/socket] [term] [theme] [tools]"
   else
@@ -179,10 +179,11 @@ usage() {
   printf "\n           To remove all images currently displayed on the screen:"
   printf "\n               kitty-control icat --clear"
   printf "\n           See https://sw.kovidgoyal.net/kitty/kittens/icat/#options"
-  printf "\n    '${BOLD}list|ls [self|colors]${NORM}' Displays information on Kitty windows/colors"
+  printf "\n    '${BOLD}list|ls [self|colors|tabs|windows]${NORM}' Displays info on Kitty tabs/windows/colors"
   printf "\n        '${BOLD}list${NORM}' displays full info, '${BOLD}ls${NORM}' abbreviated info"
   printf "\n        '${BOLD}self${NORM}' Indicates display info for this Kitty window"
   printf "\n        '${BOLD}colors${NORM}' Indicates display the names of the supported Kitty colors"
+  printf "\n        '${BOLD}tabs|windows${NORM}' Indicates display info on Kitty tabs or windows"
   printf "\n    '${BOLD}layout <name>${NORM}'"
   printf "\n        Sets the Kitty window layout to '<name>' where '<name>' can be one of:"
   printf "\n          Previous Fat Grid Horizontal Splits Stack Tall Vertical"
@@ -1390,7 +1391,6 @@ select_file() {
   if [ "${use_ranger}" ]; then
     selectedFile="$(choose_file)"
   else
-#   selectedFile=$(dialog --stdout --title "Please select a file" --fselect ${HOME} 0 0)
     printf "\nEnter the path to a file\n"
     while true; do
       read -r -p "Enter file path ('q' to exit): " filepath
@@ -1454,9 +1454,6 @@ select_folder() {
       esac
     done
   else
-#   FOLD=$(dialog --stdout \
-#                 --title "Please select an image input folder" \
-#                 --fselect ${HOME}/ 14 48)
     printf "\nEnter the path to a directory\n"
     while true; do
       read -r -p "Enter directory path ('q' to exit): " foldpath
@@ -1932,29 +1929,130 @@ open_doc_menu() {
   fi
 }
 
-tab_menu() {
+set_win_array() {
+  while read id_title; do
+    [ "${id_title}" ] || continue
+    echo "${id_title}" | grep ID: >/dev/null && {
+      entry="${id_title}"
+    }
+    echo "${id_title}" | grep TITLE: >/dev/null && {
+      entry="${entry} ${id_title}"
+      win_array+=( "${entry}" )
+    }
+  done < <(kitty @ ls | jq -r '.[]?.tabs | .[]?.windows' | jq -r '.[]' | \
+           jq -r --arg idpre "ID: " \
+                 --arg titpre "TITLE: " \
+                 --arg tipost "$newline" \
+                 '$idpre + (.id|tostring), $titpre + .title + $tipost')
+}
+
+set_tab_array() {
+  while read id_title; do
+    [ "${id_title}" ] || continue
+    echo "${id_title}" | grep ID: >/dev/null && {
+      entry="${id_title}"
+    }
+    echo "${id_title}" | grep TITLE: >/dev/null && {
+      entry="${entry} ${id_title}"
+      tab_array+=( "${entry}" )
+    }
+  done < <(kitty @ ls | jq -r '.[]?.tabs' | jq -r '.[]' | \
+           jq -r --arg idpre "ID: " \
+                 --arg titpre "TITLE: " \
+                 --arg tipost "$newline" \
+                 '$idpre + (.id|tostring), $titpre + .title + $tipost')
+}
+
+tab_title_menu() {
+  tab_array=()
+  printf -v newline %b "\n"
+  set_tab_array
+
+  tab_array+=( "List Windows" "Help" "Main Menu" "Quit" )
+  while true; do
+    heading "Select Tab to Title" "Select Tab"
+    choice=$(printf "%s\n" "${tab_array[@]}" | fzf --prompt="😺 Select Tab to Title ('Esc' or 'Main Menu' to return)   " --height=18 --layout=reverse --exit-0)
+    if [ "${choice}" ]; then
+      case "${choice}" in
+        "Help")
+          show_help
+          ;;
+        "Main"*)
+          break
+          ;;
+        "Quit"*)
+          heading "Exiting kitty-control" "Farewell"
+          exit 0
+          ;;
+        "List Win"* | "list win"* | "w")
+          windows_menu
+          break
+          ;;
+        *)
+          tabnum=$(echo "${choice}" | awk '{ print $2 }')
+          read -r -p "Enter title for tab number ${tabnum} ('q' to exit): " tabtitle
+          [ "${tabtitle}" == "q" ] && break
+          [ "${tabtitle}" ] || break
+          kitty @ ${SOCKET} set-tab-title --match id:${tabnum} "${tabtitle}"
+          break
+          ;;
+      esac
+    else
+      break
+    fi
+  done
+}
+
+window_title_menu() {
+  win_array=()
+  printf -v newline %b "\n"
+  set_win_array
+
+  win_array+=( "List Tabs" "Help" "Main Menu" "Quit" )
+  while true; do
+    heading "Select Window to Title" "Select Window"
+    choice=$(printf "%s\n" "${win_array[@]}" | fzf --prompt="😺 Select Window to Title ('Esc' or 'Main Menu' to return)   " --height=18 --layout=reverse --exit-0)
+    if [ "${choice}" ]; then
+      case "${choice}" in
+        "Help")
+          show_help
+          ;;
+        "Main"*)
+          break
+          ;;
+        "Quit"*)
+          heading "Exiting kitty-control" "Farewell"
+          exit 0
+          ;;
+        "List Tab"* | "list tab"* | "k")
+          tabs_menu
+          break
+          ;;
+        *)
+          winnum=$(echo "${choice}" | awk '{ print $2 }')
+          read -r -p "Enter title for window number ${winnum} ('q' to exit): " wintitle
+          [ "${wintitle}" == "q" ] && break
+          [ "${wintitle}" ] || break
+          kitty @ ${SOCKET} set-window-title --temporary --match id:${winnum} "${wintitle}"
+          break
+          ;;
+      esac
+    else
+      break
+    fi
+  done
+}
+
+tabs_menu() {
   if [ "${have_jq}" ]; then
     tab_array=()
     printf -v newline %b "\n"
-    while read id_title; do
-      [ "${id_title}" ] || continue
-      echo "${id_title}" | grep ID: >/dev/null && {
-        entry="${id_title}"
-      }
-      echo "${id_title}" | grep TITLE: >/dev/null && {
-        entry="${entry} ${id_title}"
-        tab_array+=( "${entry}" )
-      }
-    done < <(kitty @ ls | jq -r '.[]?.tabs' | jq -r '.[]' | \
-             jq -r --arg idpre "ID: " \
-                   --arg titpre "TITLE: " \
-                   --arg tipost "$newline" \
-                   '$idpre + (.id|tostring), $titpre + .title + $tipost')
+    set_tab_array
 
-    tab_array+=( "All Tabs" "List Windows" "Help" "Main Menu" "Quit" )
+    tab_array+=( "All Tabs" "Set Tab Title" "List Windows" "Help" "Main Menu" "Quit" )
     if [ "${use_fzf}" ]; then
       while true; do
-        heading "Kitty Tabs List" "Kitty Tabs"
+        heading "Kitty Tabs/Windows List" "Tabs/Windows"
         choice=$(printf "%s\n" "${tab_array[@]}" | fzf --prompt="😺 Select Tab ('Esc' or 'Main Menu' to return)   " --height=18 --layout=reverse --exit-0)
         if [ "${choice}" ]; then
           case "${choice}" in
@@ -1971,7 +2069,11 @@ tab_menu() {
             "All Tabs"*)
               show_tab_info "ID: __all__"
               ;;
-            "List Win"* | "list win"* | "L")
+            "Set Tab"* | "set tab"*)
+              tab_title_menu
+              break
+              ;;
+            "List Win"* | "list win"* | "w")
               windows_menu
               break
               ;;
@@ -1985,7 +2087,7 @@ tab_menu() {
       done
     else
       while true; do
-        heading "Kitty Tabs List" "Kitty Tabs"
+        heading "Kitty Tabs/Windows List" "Tabs/Windows"
         PS3="${BOLD}Select Tab (number, shortcut, or text, 'h' help): ${NORM}"
         select subopt in "${tab_array[@]}"; do
           case "$subopt,$REPLY" in
@@ -2002,6 +2104,10 @@ tab_menu() {
             ;;
           "All Tabs"*,* | *,"All Tabs"* | "all tabs"*,* | *,"all tabs"*)
             show_tab_info "ID: __all__"
+            ;;
+          "Set Tab"*,* | *,"Set Tab"* | "set tab"*,* | *,"set tab"*)
+            tab_title_menu
+            break 2
             ;;
           "List Win"*,* | *,"List Win"* | "list win"*,* | *,"list win"*)
             windows_menu
@@ -2024,22 +2130,9 @@ windows_menu() {
   if [ "${have_jq}" ]; then
     win_array=()
     printf -v newline %b "\n"
-    while read id_title; do
-      [ "${id_title}" ] || continue
-      echo "${id_title}" | grep ID: >/dev/null && {
-        entry="${id_title}"
-      }
-      echo "${id_title}" | grep TITLE: >/dev/null && {
-        entry="${entry} ${id_title}"
-        win_array+=( "${entry}" )
-      }
-    done < <(kitty @ ls | jq -r '.[]?.tabs | .[]?.windows' | jq -r '.[]' | \
-             jq -r --arg idpre "ID: " \
-                   --arg titpre "TITLE: " \
-                   --arg tipost "$newline" \
-                   '$idpre + (.id|tostring), $titpre + .title + $tipost')
+    set_win_array
 
-    win_array+=( "All Windows" "List Tabs" "Help" "Main Menu" "Quit" )
+    win_array+=( "All Windows" "Set Window Title" "List Tabs" "Help" "Main Menu" "Quit" )
     if [ "${use_fzf}" ]; then
       while true; do
         heading "Kitty Windows List" "Kitty Windows"
@@ -2059,8 +2152,12 @@ windows_menu() {
             "All Windows"*)
               show_window_info "ID: __all__"
               ;;
+            "Set Win"* | "set win"*)
+              window_title_menu
+              break
+              ;;
             "List Tab"* | "list tab"* | "K")
-              tab_menu
+              tabs_menu
               break
               ;;
             *)
@@ -2092,7 +2189,7 @@ windows_menu() {
               show_window_info "ID: __all__"
               ;;
           "List Tab"*,* | *,"List Tab"* | "list tab"*,* | *,"list tab"*)
-            tab_menu
+            tabs_menu
             break 2
             ;;
           *,*)
@@ -2970,7 +3067,7 @@ select_with_fzf() {
           prompt_more
           ;;
         "List Tab"* | "list tab"* | "K")
-          tab_menu
+          tabs_menu
           ;;
         "List Win"* | "list win"* | "L")
           windows_menu
@@ -3221,7 +3318,7 @@ show_menu() {
         break
         ;;
       "List Tab"*,* | *,"List Tab"* | "list tab"*,* | *,"list tab"* | "k",* | *,"k")
-        tab_menu
+        tabs_menu
         break
         ;;
       "List Win"*,* | *,"List Win"* | "list win"*,* | *,"list win"* | "w",* | *,"w")
@@ -3585,11 +3682,15 @@ while [[ $1 ]]; do
         shift 2
       else
         if [ "${have_jq}" ]; then
-          kitty @ ${SOCKET} ls ${OPTS} | jq --color-output '.[]'
+          if [ "$2" == "tabs" ]; then
+            kitty @ ${SOCKET} ls ${OPTS} | jq --color-output '.[]?.tabs'
+          else
+            kitty @ ${SOCKET} ls ${OPTS} | jq --color-output '.[]'
+          fi
         else
           kitty @ ${SOCKET} ls ${OPTS}
         fi
-        shift
+        shift 2
       fi
       ;;
     ls|--ls)
@@ -3602,11 +3703,15 @@ while [[ $1 ]]; do
         shift 2
       else
         if [ "${have_jq}" ]; then
-          list_windows
+          if [ "$2" == "tabs" ]; then
+            list_tabs
+          else
+            list_windows
+          fi
         else
           kitty @ ${SOCKET} ls ${OPTS}
         fi
-        shift
+        shift 2
       fi
       ;;
     load|reload|--load|--reload)
