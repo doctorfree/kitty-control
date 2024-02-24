@@ -20,7 +20,7 @@ In particular, scripted *kitty* actions enables quick and easy switching between
 The **kitty-control** command can be used to:
 
 - Easily switch a running *kitty* instance configuration without restart
-- Set various *kitty* configuration options on the fly including font size, background, foreground, window size, and more
+- Set various *kitty* configuration options on the fly including font size, background, foreground, window size
 - Diff files or folders, selections are performed using the *ranger* file manager and *fzf* fuzzy finder
 - Quickly and easily toggle fullscreen display of the *kitty* terminal window
 - Set the *kitty* theme on the fly using the *kitty* **themes** *kitten*
