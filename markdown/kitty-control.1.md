@@ -9,12 +9,30 @@ date: February 06, 2024
 **kitty-control** - Control the Kitty terminal emulator from the command line
 
 # SYNOPSIS
-**kitty-control** [**-a**] [**back** color] [**-c** command] [-d] [**dark**] [**diff** [opts] path1 path2] [**-e**] [**-f**] [**font** [num]] [**fore** color] [**-i** /path/to/image] [**layout** layout-name] [**load** [subdir]] [**-m|t** match] [**-s** /path/to/socket] [**-u|h|v**] [size w h] [**term**] [**theme**] [**tools**] [**icat** [opts] image] [**list|ls**] [**man**] [**menu**] [**title** title] [**transparent** [opacity]] [**unicode**] [**upgrade**]
+**kitty-control** [**-a**] [**back** color] [**-c** command] [-d] [**dark**] [**diff** [opts] path1 path2] [**-e**] [**-f**] [**font** [num]] [**fore** color] [**-i** /path/to/image] [**layout** layout-name] [**load** [subdir]] [**-m|t** match] [**-o** doc] [**-s** /path/to/socket] [**-u|h|v**] [size w h] [**term**] [**theme**] [**tools**] [**icat** [opts] image] [**list|ls**] [**man**] [**menu**] [**title** title] [**transparent** [opacity]] [**unicode**] [**upgrade**]
 
 # DESCRIPTION
 **kitty-control** acts as a wrapper for the *Kitty* terminal emulator remote control facility and *kittens* Scripting some *kitty* customization enables support for automation and provides an additional layer of convenience.
 
 In particular, scripted *kitty* actions enables quick and easy switching between preconfigured *kitty* configuration files without losing state or having to quit *kitty* and restart with another configuration. This is accomplished through the use of the **read_config.py** custom *kitten* included with *kitty-control* or the internal **load-config** kitten introduced in *kitty 0.32.2*.
+
+# FEATURES
+The **kitty-control** command can be used to:
+
+- Easily switch a running *kitty* instance configuration without restart
+- Set various *kitty* configuration options on the fly including font size, background, foreground, window size, and more
+- Diff files or folders, selections are performed using the *ranger* file manager and *fzf* fuzzy finder
+- Quickly and easily toggle fullscreen display of the *kitty* terminal window
+- Set the *kitty* theme on the fly using the *kitty* **themes** *kitten*
+- List colors, tabs, and windows
+- Open an interactive menu system to easily browse *kitty-control* features and capabilities
+- Display system and terminal information
+- Set the level of opacity/transparency on the fly
+- Input Unicode characters using the *kitty* **Unicode input** *kitten*
+- Select and view an image using the *kitty* **icat** *kitten*
+- Select and set a background image using *ranger* and *fzf*
+- Set the *kitty* window layout using the *kitty* **goto-layout** *kitten*
+- Browse the *kitty* documentation using the *kitty* **action** *kitten*
 
 # COMMAND LINE OPTIONS
 **-u**
@@ -24,7 +42,7 @@ In particular, scripted *kitty* actions enables quick and easy switching between
 : Sets the background color to *color* If *color* is *reset* restores foreground and background to startup value
 
 **dark**
-: Sets the Kitty background opacity to 1.0 (fully opaque). Can use **dark** or **opaque**
+: Sets the **Kitty** background opacity to 1.0 (fully opaque). Can use **dark** or **opaque**
 
 **diff [opts] 'file1|dir1' 'file2|dir2'**
 : Displays differences using the *diff* kitten. Enclose [opts] and *file1/dir1* in quotes if [opts] are provided. See ***https://sw.kovidgoyal.net/kitty/kittens/diff/#options***
@@ -41,24 +59,24 @@ In particular, scripted *kitty* actions enables quick and easy switching between
 : Sets the foreground color to *color*. If *color* is *reset* restores foreground and background to startup value
 
 **icat [opts] 'image'**
-: Displays *image* using the Kitty *icat* kitten.
+: Displays *image* using the **Kitty** *icat* kitten.
            Enclose *[opts]* and *image* in quotes if *[opts]* are provided.
            To remove all images currently displayed on the screen:
-               kitty-control icat --clear.
+               ***kitty-control icat --clear***.
            See ***https://sw.kovidgoyal.net/kitty/kittens/icat/#options***
 
 **layout layout-name**
-: Sets the Kitty window layout to 'layout-name' where 'layout-name' can be one of
+: Sets the **Kitty** window layout to 'layout-name' where 'layout-name' can be one of
            Previous Fat Grid Horizontal Splits Stack Tall Vertical
 
 **list**
-: Displays full information on Kitty windows.
+: Displays full information on **Kitty** windows.
 
 **ls**
-: Displays abbreviated information on Kitty windows.
+: Displays abbreviated information on **Kitty** windows.
 
 **load [subdir]**
-: Reloads the Kitty configuration in *~/.config/kitty/kitty.conf*.
+: Reloads the **Kitty** configuration in *~/.config/kitty/kitty.conf*.
            Can use **load** or **reload**.
            Specify a second argument to load *~/.config/kitty/[subdir]/kitty.conf*,
            e.g. ***kitty-control load tv*** would load *~/.config/kitty/tv/kitty.conf*,
@@ -66,13 +84,13 @@ In particular, scripted *kitty* actions enables quick and easy switching between
            ***kitty-control load --help*** displays a help message for the load command.
 
 **man**
-: Displays the kitty-control manual
+: Displays the **kitty-control** manual
 
 **menu**
-: Displays the kitty-control interactive menu system
+: Displays the **kitty-control** interactive menu system
 
 **size w h**
-: Increases/decreases the Kitty window size, **w** specifies width adjustment and **h** height
+: Increases/decreases the **Kitty** window size, **w** specifies width adjustment and **h** height
 
 **term**
 : Displays information about the terminal using the *query_terminal* kitten
@@ -81,7 +99,7 @@ In particular, scripted *kitty* actions enables quick and easy switching between
 : Displays the interactive theme selection kitten
 
 **title 'tab title'**
-: Sets the Kitty tab title to *tab title*.
+: Sets the **Kitty** tab title to *tab title*.
           Quote tab titles which contain spaces, e.g. "This Is My Tab Title".
           Use **-m match** to specify the tab to match.
 
@@ -89,7 +107,7 @@ In particular, scripted *kitty* actions enables quick and easy switching between
 : Installs *figlet* *jq* *lolcat* *neofetch* and *ranger* if not already present (administrative privilege required)
 
 **tran [opacity]**
-: Sets the Kitty background opacity to 0.8.
+: Sets the **Kitty** background opacity to 0.8.
            Can use **tran**, **opacity**, **trans** or **transparent**.
            Specify a second argument to set a custom background opacity:
            e.g. ***kitty-control transparent 0.9***.
@@ -98,13 +116,13 @@ In particular, scripted *kitty* actions enables quick and easy switching between
 : Displays the Unicode input kitten
 
 **upgrade**
-: Upgrades Kitty and kitty-control to the latest version
+: Upgrades **Kitty** and **kitty-control** to the latest version
 
 **-a**
 : Indicates modify all windows rather than just the currently active OS window
 
 **-c command**
-: Specifies a Kitty command to run (enclose command and arguments in quotes).
+: Specifies a **Kitty** command to run (enclose command and arguments in quotes).
         Can be used to run arbitrary commands, e.g. ***kitty-control -c get-colors***.
 
 **-d**
@@ -123,7 +141,7 @@ In particular, scripted *kitty* actions enables quick and easy switching between
 : Displays a full usage message and exits
 
 **-i /path/to/image**
-: Sets the background image for the specified Kitty windows.
+: Sets the background image for the specified **Kitty** windows.
         If */path/to/image* is *none* then any existing image will be removed.
 
 **-m match**
@@ -131,23 +149,27 @@ In particular, scripted *kitty* actions enables quick and easy switching between
 
 **-t match**
 : Specifies the tab to match.
-        Window/Tab matching can be used in conjunction with most kitty-control commands.
-        If *match* is *--help* the Kitty documentation URL for matching will be displayed.
+        Window/Tab matching can be used in conjunction with most **kitty-control** commands.
+        If *match* is *--help* the **Kitty** documentation URL for matching will be displayed.
+
+**-o doc**
+: Opens the specified **Kitty** documentation in a browser. *doc* can be one of:
+        *conf* *faq* *remote* *diff* *icat* *layout* *ssh* *themes* *unicode* or *man*
 
 **-s /path/to/socket**
-: Specifies the socket Kitty is listening on if enabled.
-        If */path/to/socket* is *--help* some help on configuring a Kitty socket is provided.
-        *-s /path/...* can be used to send commands to Kitty from another terminal.
+: Specifies the socket **Kitty** is listening on if enabled.
+        If */path/to/socket* is *--help* some help on configuring a **Kitty** socket is provided.
+        *-s /path/...* can be used to send commands to **Kitty** from another terminal.
 
 **-u**
 : Displays a brief usage message and exits
 
 **-v**
-: Displays the kitty-control and kitty versions then exits
+: Displays the **kitty-control** and kitty versions then exits
 
 Without any arguments *kitty-control* displays an interactive menu system
 
-Adjusting the background opacity or font size requires the original kitty.conf that was used for this instance of Kitty to have enabled the following:
+Adjusting the background opacity or font size requires the original kitty.conf that was used for this instance of **Kitty** to have enabled the following:
 
 *dynamic_background_opacity yes* and *allow_remote_control yes*
 
@@ -194,16 +216,16 @@ then **KITTY_LISTEN_ON** would be set to *unix:/tmp/mykitty* and *kitty-control*
 : Without any arguments *kitty-control* displays an interactive menu system
 
 ***kitty-control transparent 0.9***
-: Set a transparent Kitty background with 0.9 opacity
+: Set a transparent **Kitty** background with 0.9 opacity
 
 ***kitty-control dark***
-: Set the Kitty background to fully opaque (no transparency)
+: Set the **Kitty** background to fully opaque (no transparency)
 
 ***kitty-control back black fore white***
-: Set the Kitty background color to black and foreground color to white
+: Set the **Kitty** background color to black and foreground color to white
 
 ***kitty-control load laptop***
-: Load the Kitty config in *~/.config/kitty/laptop/kitty.conf*
+: Load the **Kitty** config in *~/.config/kitty/laptop/kitty.conf*
 
 ***kitty-control font +2***
 : Increase the font size by 2 points
@@ -227,7 +249,7 @@ then **KITTY_LISTEN_ON** would be set to *unix:/tmp/mykitty* and *kitty-control*
 : Set the tab title of the tab currently titled *~/src/borg* to *Borg Backup*
 
 ***kitty-control load default***
-: Restore the original Kitty configuration
+: Restore the original **Kitty** configuration
 
 # AUTHORS
 Written by Ronald Record github@ronrecord.com

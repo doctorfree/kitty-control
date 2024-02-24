@@ -4,9 +4,18 @@
 
 ### ⚡️ Added
 
-- Use newly introduced `load-config` kitten in `kitty` version 0.32.2 if available
+### 🐞 Fixed
+
+## v1.0.9r1
+
+### ⚡️ Added
+
+- Use newly introduced `load-config` kitten in `kitty` version `0.32.2` if available
+- Add `kitty` documentation menu and command line option `-o <doc>` to open doc in browser
 
 ### 🐞 Fixed
+
+- Update `kitty-control` usage and man page
 
 ## v1.0.8r1
 

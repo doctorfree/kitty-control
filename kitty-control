@@ -74,9 +74,9 @@ brief_usage() {
   printf "\n                     [-i /path/to/image] [icat [opts] <image>] [layout <name>]"
   printf "\n                     [load [subdir|file]] [ls|list [self|colors]] [-m|t <match>]"
   if [ "${have_neo}" ]; then
-    printf "\n                     [man] [menu] [neo] [-s /path/to/socket] [term] [theme] [tools]"
+    printf "\n                     [man] [menu] [neo] [-o doc] [-s /path/to/socket] [term] [theme] [tools]"
   else
-    printf "\n                     [man] [menu] [-s /path/to/socket] [size w h] [term] [theme] [tools]"
+    printf "\n                     [man] [menu] [-o doc] [-s /path/to/socket] [size w h] [term] [theme] [tools]"
   fi
   printf "\n                     [title <title>] [transparent [opacity]] [unicode] [upgrade]${NORM}"
   [ "$1" == "noexit" ] || {
@@ -209,7 +209,7 @@ usage() {
   printf "\n    '${BOLD}title <tab title>${NORM}' Sets the Kitty tab title to \"tab title\""
   printf "\n          Quote tab titles which contain spaces, e.g. \"This Is My Tab Title\""
   printf "\n          Use '-m <match>' to specify the tab to match"
-  printf "\n    '${BOLD}tools${NORM}' Installs 'figlet' 'lolcat' 'neofetch' and 'ranger' if not already present"
+  printf "\n    '${BOLD}tools${NORM}' Installs 'figlet' 'jq' 'lolcat' 'neofetch' and 'ranger' if not already present"
   printf "\n    '${BOLD}tran [opacity]${NORM}' Sets the Kitty background opacity to 0.8"
   printf "\n           Can use 'tran', 'opacity', 'trans' or 'transparent'"
   printf "\n           Specify a second argument to set a custom background opacity:"
@@ -232,6 +232,9 @@ usage() {
   printf "\n    '${BOLD}-t <match>${NORM}' Specifies the tab to match"
   printf "\n        Window/Tab matching can be used in conjunction with most kitty-control commands"
   printf "\n        If <match> is '--help' the Kitty documentation URL for matching will be displayed"
+  printf "\n    '${BOLD}-o doc${NORM}' Opens the specified Kitty documentation in a browser"
+  printf "\n        '${BOLD}doc${NORM}' can be one of:"
+  printf "\n            'conf' 'faq' 'remote' 'diff' 'icat' 'layout' 'ssh' 'themes' 'unicode' or 'man'"
   printf "\n    '${BOLD}-s /path/to/socket${NORM}'"
     printf " Specifies the socket Kitty is listening on if enabled"
   printf "\n        If /path/to/socket is '--help' some help on configuring a Kitty socket is provided"
@@ -1004,6 +1007,10 @@ list_colors() {
       fi
     }
   }
+}
+
+open_kitty_doc() {
+  kitty @ ${SOCKET} action show_kitty_doc "$1"
 }
 
 load_config_file() {
@@ -1791,6 +1798,140 @@ show_window_info() {
   }
 }
 
+open_doc_menu() {
+  doc_array=( "Kitty Configuration" "Kitty FAQ" "Kitty Man Page" "Kitty Remote Control" "Kitty Diff Kitten" "Kitty icat Kitten" "Kitty Layouts" "Kitty SSH Kitten" "Kitty Themes Kitten" "Kitty Unicode Kitten" "Kitty-Control" "Help" "Main Menu" "Quit" )
+  if [ "${use_fzf}" ]; then
+    while true; do
+      heading "Kitty Documentation Menu" "Kitty Doc"
+      choice=$(printf "%s\n" "${doc_array[@]}" | fzf --prompt="😺 Select Doc to Open ('Esc' or 'Main Menu' to return)   " --height=18 --layout=reverse --exit-0)
+      if [ "${choice}" ]; then
+        case "${choice}" in
+          "Help")
+            show_help
+            ;;
+          "Main"*)
+            break
+            ;;
+          "Quit"*)
+            heading "Exiting kitty-control" "Farewell"
+            exit 0
+            ;;
+          "Kitty Conf"* | "kitty conf"*)
+            open_kitty_doc conf
+            ;;
+          "Kitty FAQ"* | "kitty faq"*)
+            open_kitty_doc faq
+            ;;
+          "Kitty Remote"* | "kitty remote"*)
+            open_kitty_doc remote-control
+            ;;
+          "Kitty Diff"* | "kitty diff"*)
+            open_kitty_doc kittens/diff
+            ;;
+          "Kitty icat"* | "kitty icat"*)
+            open_kitty_doc kittens/icat
+            ;;
+          "Kitty Layout"* | "kitty layout"*)
+            open_kitty_doc layouts
+            ;;
+          "Kitty SSH"* | "kitty ssh"*)
+            open_kitty_doc kittens/ssh
+            ;;
+          "Kitty Them"* | "kitty them"*)
+            open_kitty_doc kittens/themes
+            ;;
+          "Kitty Uni"* | "kitty uni"*)
+            open_kitty_doc kittens/unicode_input
+            ;;
+          "Kitty Man"* | "kitty man"*)
+            printf "\n"
+            man kitty
+            ;;
+          "Kitty-Control"* | "kitty-control"*)
+            printf "\n"
+            man kitty-control
+            ;;
+          *)
+            open_kitty_doc "${choice}"
+            ;;
+        esac
+      else
+        break
+      fi
+    done
+  else
+    while true; do
+      heading "Kitty Documentation Menu" "Kitty Doc"
+      PS3="${BOLD}Select Doc to Open (number, shortcut, or text, 'h' help): ${NORM}"
+      select subopt in "${doc_array[@]}"; do
+        case "$subopt,$REPLY" in
+        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+          show_help
+          break
+          ;;
+        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+          break 2
+          ;;
+        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          heading "Exiting kitty-control" "Farewell"
+          exit 0
+          ;;
+        "Kitty Conf"*,* | *,"Kitty Conf"* | "kitty conf"*,* | *,"kitty conf"*)
+          open_kitty_doc conf
+          break
+          ;;
+        "Kitty FAQ"*,* | *,"Kitty FAQ"* | "kitty faq"*,* | *,"kitty faq"*)
+          open_kitty_doc faq
+          break
+          ;;
+        "Kitty Remote"*,* | *,"Kitty Remote"* | "kitty remote"*,* | *,"kitty remote"*)
+          open_kitty_doc remote-control
+          break
+          ;;
+        "Kitty Diff"*,* | *,"Kitty Diff"* | "kitty diff"*,* | *,"kitty diff"*)
+          open_kitty_doc kittens/diff
+          break
+          ;;
+        "Kitty icat"*,* | *,"Kitty icat"* | "kitty icat"*,* | *,"kitty icat"*)
+          open_kitty_doc kittens/icat
+          break
+          ;;
+        "Kitty Layout"*,* | *,"Kitty Layout"* | "kitty layout"*,* | *,"kitty layout"*)
+          open_kitty_doc layouts
+          break
+          ;;
+        "Kitty SSH"*,* | *,"Kitty SSH"* | "kitty ssh"*,* | *,"kitty ssh"*)
+          open_kitty_doc kittens/ssh
+          break
+          ;;
+        "Kitty Them"*,* | *,"Kitty Them"* | "kitty them"*,* | *,"kitty them"*)
+          open_kitty_doc kittens/themes
+          break
+          ;;
+        "Kitty Uni"*,* | *,"Kitty Uni"* | "kitty uni"*,* | *,"kitty uni"*)
+          open_kitty_doc kittens/unicode_input
+          break
+          ;;
+        "Kitty Man"*,* | *,"Kitty Man"* | "kitty man"*,* | *,"kitty man"*)
+          printf "\n"
+          man kitty
+          break
+          ;;
+        "Kitty-Control"*,* | *,"Kitty-Control"* | "kitty-control"*,* | *,"kitty-control"*)
+          printf "\n"
+          man kitty-control
+          break
+          ;;
+        *,*)
+          open_kitty_doc "${subopt}"
+          break
+          ;;
+        esac
+      done
+    done
+  fi
+}
+
 tab_menu() {
   if [ "${have_jq}" ]; then
     tab_array=()
@@ -1860,8 +2001,8 @@ tab_menu() {
             exit 0
             ;;
           "All Tabs"*,* | *,"All Tabs"* | "all tabs"*,* | *,"all tabs"*)
-              show_tab_info "ID: __all__"
-              ;;
+            show_tab_info "ID: __all__"
+            ;;
           "List Win"*,* | *,"List Win"* | "list win"*,* | *,"list win"*)
             windows_menu
             break 2
@@ -2883,6 +3024,9 @@ select_with_fzf() {
           printf "\n"
           man kitty-control
           ;;
+        "Open"* | "open"* | "O")
+          open_doc_menu
+          ;;
         "Opt"* | "opt"* | "o")
           options_menu
           ;;
@@ -2949,7 +3093,11 @@ show_menu() {
     [ ${numconfs} -gt 1 ] && {
       options+=("Load Config      [l]")
     }
-    options+=("Manual Page      [m]" "Options          [o]" "Reset            [r]")
+    options+=("Manual Page      [m]")
+    [ "${USE_LOAD_CONFIG}" ] && {
+      options+=("Open Kitty Doc   [O]")
+    }
+    options+=("Options          [o]" "Reset            [r]")
     [ "${have_neo}" ] && options+=("System Info      [n]")
     options+=("Terminal Info    [I]")
     options+=("Transparent      [t]" "Unicode Input    [U]" "Usage            [u]")
@@ -3136,6 +3284,10 @@ show_menu() {
         man kitty-control
         break
         ;;
+      "Open"*,* | *,"Open"* | "open"*,* | *,"open"* | "O",* | *,"O")
+        open_doc_menu
+        break
+        ;;
       "Opt"*,* | *,"Opt"* | "opt"*,* | *,"opt"* | "o",* | *,"o")
         options_menu
         break
@@ -3266,6 +3418,41 @@ while [[ $1 ]]; do
         OPTS="${OPTS} -m ${winopts}"
       fi
       shift 2
+      ;;
+    -o | --open)
+      if [ "$2" ]; then
+        docpage=$(tolower "$2")
+        case "${docpage}" in
+          conf|faq)
+            open_kitty_doc "${docpage}"
+            ;;
+          remote)
+            open_kitty_doc remote-control
+            ;;
+          layout*)
+            open_kitty_doc layouts
+            ;;
+          diff|icat|ssh|theme*)
+            open_kitty_doc "kittens/${docpage}"
+            ;;
+          unicode*)
+            open_kitty_doc kittens/unicode_input
+            ;;
+          man*)
+            man kitty
+            ;;
+          *)
+            printf "\nERROR: unsupported Kitty documantation entry: $2"
+            printf "\nSupported documentation entries:"
+            printf "\n  conf faq remote diff icat layout ssh themes unicode man\n\n"
+            brief_usage
+            ;;
+        esac
+        shift 2
+      else
+        printf "\nERROR: -o/--open requires a documentation entry as argument\n\n"
+        brief_usage
+      fi
       ;;
     -s | --socket)
       if [ "$2" == "--help" ]; then

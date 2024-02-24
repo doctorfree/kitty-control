@@ -2,7 +2,7 @@ Usage: kitty-control [-adefhuv] [back <color>] [-c command] [dark]
                      [diff [opts] <path1> <path2>] [font [num]] [fore <color>]
                      [-i /path/to/image] [icat [opts] <image>] [layout <name>]
                      [load [subdir|file]] [ls|list [self|colors]] [-m|t <match>]
-                     [man] [menu] [neo] [-s /path/to/socket] [term] [theme] [tools]
+                     [man] [menu] [neo] [-o doc] [-s /path/to/socket] [term] [theme] [tools]
                      [title <title>] [transparent [opacity]] [unicode] [upgrade]
 Where:
     'back color' Sets the background color to 'color'
@@ -71,6 +71,9 @@ Where:
     '-t <match>' Specifies the tab to match
         Window/Tab matching can be used in conjunction with most kitty-control commands
         If <match> is '--help' the Kitty documentation URL for matching will be displayed
+    '-o doc' Opens the specified Kitty documentation in a browser
+        'doc' can be one of:
+            'conf' 'faq' 'remote' 'diff' 'icat' 'layout' 'ssh' 'themes' 'unicode' or 'man'
     '-s /path/to/socket' Specifies the socket Kitty is listening on if enabled
         If /path/to/socket is '--help' some help on configuring a Kitty socket is provided
         '-s /path/...' can be used to send commands to Kitty from another terminal
