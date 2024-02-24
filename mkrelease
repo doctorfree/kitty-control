@@ -37,7 +37,7 @@ gh release create v${VERSION}r${RELEASE} ${DRAFT} \
                   --notes-file ReleaseNotes.md \
                   install \
                   kitty-control \
-                  kitten/read_config.py \
+                  kitten/kc_read_config.py \
                   CHANGELOG.md
 
 git fetch --tags origin

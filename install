@@ -151,6 +151,17 @@ install_kitty() {
 install_config() {
   # We use $HOME/.config/kitty/kitty-control for kitty-control
   DEST="$1"
+  [ -d ${DEST} ] || mkdir -p ${DEST}
+  [ -d ${DEST}/kitty-control ] || mkdir -p ${DEST}/kitty-control
+  find ${DEST} -name kc_read_config.py -print0 | xargs -0 rm -f
+  cp "${SCRIPT_PATH}"/kitten/kc_read_config.py ${DEST}
+  chmod 644 ${DEST}/kc_read_config.py
+
+  [ -f ${DEST}/diff.conf ] || {
+    cp "${SCRIPT_PATH}"/config/diff.conf ${DEST}/diff.conf
+    chmod 644 ${DEST}/diff.conf
+  }
+
   if [ -d ${DEST}/kitty-control ]; then
     for ex in "${SCRIPT_PATH}"/config/*
     do
@@ -169,13 +180,16 @@ install_config() {
   else
     cp -a "${SCRIPT_PATH}"/config ${DEST}/kitty-control
   fi
-  # Delete the old location of the kitten
-  [ -f ${HOME}/.config/kitty/read_config.py ] && {
-    rm -f ${HOME}/.config/kitty/read_config.py
-  }
   # Link to the new location of the kitten
-  [ -f ${KCDIR}/read_config.py ] && {
-    ln -s ${KCDIR}/read_config.py ${DEST}/read_config.py
+  [ -f ${DEST}/kc_read_config.py ] && {
+    export DEST
+    find ${DEST} -name kitty.conf | while read kitty_conf
+    do
+      kcpath=$(dirname "${kitty_conf}")
+      [ -f "${kcpath}"/kc_read_config.py ] || {
+        ln -s ${DEST}/kc_read_config.py ${kcpath}/kc_read_config.py
+      }
+    done
   }
 }
 
@@ -245,43 +259,16 @@ have_kitty=$(type -p kitty)
   exit 0
 }
 
-# Copy kitty-control, read_config.py, man page
+# Copy kitty-control, kc_read_config.py, man page
 [ -d ${HOME}/.local/bin ] || mkdir -p ${HOME}/.local/bin
 cp "${SCRIPT_PATH}"/kitty-control ${HOME}/.local/bin/kitty-control
 chmod 755 ${HOME}/.local/bin/kitty-control
 
-[ -d ${HOME}/.config/kitty ] || mkdir -p ${HOME}/.config/kitty
-[ -d ${KCDIR} ] || mkdir -p ${KCDIR}
-rm -f ${KCDIR}/read_config.py
-cp "${SCRIPT_PATH}"/kitten/read_config.py ${KCDIR}
-chmod 644 ${KCDIR}/read_config.py
-
-[ -f ${HOME}/.config/kitty/diff.conf ] || {
-  cp "${SCRIPT_PATH}"/config/diff.conf ${HOME}/.config/kitty/diff.conf
-  chmod 644 ${HOME}/.config/kitty/diff.conf
-}
 install_config "${HOME}/.config/kitty"
 
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
   [ "${KITTY_CONFIG_DIRECTORY}" == "${HOME}/.config/kitty" ] || {
-    [ -d "${KITTY_CONFIG_DIRECTORY}" ] && {
-      [ -f ${KITTY_CONFIG_DIRECTORY}/read_config.py ] && {
-        rm -f ${KITTY_CONFIG_DIRECTORY}/read_config.py
-      }
-      [ -d ${KITTY_CONFIG_DIRECTORY}/kitty-control ] || {
-        mkdir -p ${KITTY_CONFIG_DIRECTORY}/kitty-control
-      }
-      rm -f ${KITTY_CONFIG_DIRECTORY}/kitty-control/read_config.py
-      cp "${SCRIPT_PATH}"/kitten/read_config.py \
-          ${KITTY_CONFIG_DIRECTORY}/kitty-control
-      chmod 644 ${KITTY_CONFIG_DIRECTORY}/kitty-control/read_config.py
-      [ -f ${KITTY_CONFIG_DIRECTORY}/diff.conf ] || {
-        cp "${SCRIPT_PATH}"/config/diff.conf \
-            ${KITTY_CONFIG_DIRECTORY}/diff.conf
-        chmod 644 ${KITTY_CONFIG_DIRECTORY}/diff.conf
-      }
-      install_config "${KITTY_CONFIG_DIRECTORY}"
-    }
+    install_config "${KITTY_CONFIG_DIRECTORY}"
   }
 }
 

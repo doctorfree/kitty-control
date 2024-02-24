@@ -1015,9 +1015,9 @@ load_config_file() {
       prompt_continue
     }
   else
-    kitty @ ${SOCKET} kitten kitty-control/read_config.py "${cfgfile}"
+    kitty @ ${SOCKET} kitten kc_read_config.py "${cfgfile}"
     [ "${debug}" ] && {
-      printf "\nDEBUG: kitty @ ${SOCKET} kitten kitty-control/read_config.py ${cfgfile}"
+      printf "\nDEBUG: kitty @ ${SOCKET} kitten kc_read_config.py ${cfgfile}"
       prompt_continue
     }
   fi

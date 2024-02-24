@@ -12,8 +12,8 @@ rloc=$(readlink ${HOME}/.local/bin/rich)
   rm -f ${HOME}/.local/bin/rich
 }
 rm -f ${HOME}/.local/bin/kitty-control
-rm -f ${KITTCONF}/read_config.py
 rm -rf ${KCDIR}
+find ${KITTCONF} -name kc_read_config.py -print0 | xargs -0 rm -f
 [ -f ${DIFFCONF} ] && {
   grep kitty-control ${DIFFCONF} | grep example >/dev/null && {
     rm -f ${DIFFCONF}
@@ -22,8 +22,8 @@ rm -rf ${KCDIR}
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
   [ "${KITTY_CONFIG_DIRECTORY}" == "${KITTCONF}" ] || {
     [ -d "${KITTY_CONFIG_DIRECTORY}" ] && {
-      rm -f ${KITTY_CONFIG_DIRECTORY}/read_config.py
       rm -rf ${KITTY_CONFIG_DIRECTORY}/kitty-control
+      find ${KITTY_CONFIG_DIRECTORY} -name kc_read_config.py -print0 | xargs -0 rm -f
       [ -f ${DIRDCONF} ] && {
         grep kitty-control ${DIRDCONF} | grep example >/dev/null && {
           rm -f ${DIRDCONF}

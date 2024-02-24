@@ -6,6 +6,9 @@
 
 ### 🐞 Fixed
 
+- Rename `read_config.py` to `kc_read_config.py` to avoid conflicts
+- Move `kc_read_config.py` up to `$HOME/.config/kitty`, link to subdirs with `kitty.conf`
+
 ## v1.0.7r4
 
 ### ⚡️ Added
