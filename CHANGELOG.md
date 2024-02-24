@@ -4,6 +4,8 @@
 
 ### ⚡️ Added
 
+- Use newly introduced `load-config` kitten in `kitty` version 0.32.2 if available
+
 ### 🐞 Fixed
 
 ## v1.0.8r1

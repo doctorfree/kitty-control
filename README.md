@@ -43,7 +43,8 @@ provides an additional layer of convenience. In particular, scripted
 `kitty` actions enables quick and easy switching between preconfigured
 `kitty` configuration files without losing state or having to quit `kitty`
 and restart with another configuration. This is accomplished through the
-use of the `read_config.py` custom `kitten` included with `kitty-control`.
+use of the `read_config.py` custom `kitten` included with `kitty-control`
+or the internal `load-config` kitten introduced in `kitty 0.32.2`.
 
 Thus we have `kitty-control`, a `bash` script that intends to
 simplify and ease those `kitty` customizations used fairly frequently.

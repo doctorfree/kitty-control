@@ -1009,9 +1009,9 @@ list_colors() {
 load_config_file() {
   cfgfile="$1"
   if [ "${USE_LOAD_CONFIG}" ]; then
-    kitty @ ${SOCKET} load-config-file "${cfgfile}"
+    kitty @ ${SOCKET} load-config "${cfgfile}"
     [ "${debug}" ] && {
-      printf "\nDEBUG: kitty @ ${SOCKET} load-config-file ${cfgfile}"
+      printf "\nDEBUG: kitty @ ${SOCKET} load-config ${cfgfile}"
       prompt_continue
     }
   else
@@ -3202,12 +3202,12 @@ set_haves
 }
 [ "${have_fzf}" ] || install_fzf
 
-# Check for new load-config-file Kitty command
-USE_LOAD_CONFIG=
-# Leave disabled for now until in Kitty release
-# if kitty @ ${SOCKET} load-config-file 2>/dev/null; then
-#   USE_LOAD_CONFIG=1
-# fi
+# Check for new load-config Kitty command introduced in 0.32.2
+kitty_install_version=$(kitty --version | awk '{ print $2 }')
+USE_LOAD_CONFIG=$(check_three_version "${kitty_install_version}" "0.32.1")
+if [ "${USE_LOAD_CONFIG}" ]; then
+  USE_LOAD_CONFIG=1
+fi
 
 # Menu tools
 use_figlet=1

@@ -12,14 +12,9 @@ date: February 06, 2024
 **kitty-control** [**-a**] [**back** color] [**-c** command] [-d] [**dark**] [**diff** [opts] path1 path2] [**-e**] [**-f**] [**font** [num]] [**fore** color] [**-i** /path/to/image] [**layout** layout-name] [**load** [subdir]] [**-m|t** match] [**-s** /path/to/socket] [**-u|h|v**] [size w h] [**term**] [**theme**] [**tools**] [**icat** [opts] image] [**list|ls**] [**man**] [**menu**] [**title** title] [**transparent** [opacity]] [**unicode**] [**upgrade**]
 
 # DESCRIPTION
-**kitty-control** acts as a wrapper for the *Kitty* terminal emulator remote
-control facility and *kittens* Scripting some *kitty* customization enables
-support for automation and provides an additional layer of convenience.
+**kitty-control** acts as a wrapper for the *Kitty* terminal emulator remote control facility and *kittens* Scripting some *kitty* customization enables support for automation and provides an additional layer of convenience.
 
-In particular, scripted *kitty* actions enables quick and easy switching between
-preconfigured *kitty* configuration files without losing state or having to quit
-*kitty* and restart with another configuration. This is accomplished through the
-use of the **read_config.py** custom *kitten* included with *kitty-control*
+In particular, scripted *kitty* actions enables quick and easy switching between preconfigured *kitty* configuration files without losing state or having to quit *kitty* and restart with another configuration. This is accomplished through the use of the **read_config.py** custom *kitten* included with *kitty-control* or the internal **load-config** kitten introduced in *kitty 0.32.2*.
 
 # COMMAND LINE OPTIONS
 **-u**
@@ -152,24 +147,16 @@ use of the **read_config.py** custom *kitten* included with *kitty-control*
 
 Without any arguments *kitty-control* displays an interactive menu system
 
-Adjusting the background opacity or font size requires the original kitty.conf
-that was used for this instance of Kitty to have enabled the following:
+Adjusting the background opacity or font size requires the original kitty.conf that was used for this instance of Kitty to have enabled the following:
 
 *dynamic_background_opacity yes* and *allow_remote_control yes*
 
 See ***https://sw.kovidgoyal.net/kitty/remote-control/#control-kitty-from-scripts***
 
 # MENU SYSTEM
-The *kitty-control* interactive menu system can be displayed with the command
-***kitty-control menu*** or by invoking ***kitty-control*** without arguments. The
-main *kitty-control* menu can be used to perform many tasks including:
+The *kitty-control* interactive menu system can be displayed with the command ***kitty-control menu*** or by invoking ***kitty-control*** without arguments. The main *kitty-control* menu can be used to perform many tasks including:
 
-Set the background color, display examples, display the manual page, set the
-window opacity, set the background image, set the font size, set options,
-open the unicode input kitten, clear the background image, set the foreground
-color, show usage and version, select and view an image, list tabs or windows,
-select a *kitty* theme, diff files or directories, list windows, show terminal
-info, load an alternate *kitty* configuration, toggle fullscreen, and more.
+Set the background color, display examples, display the manual page, set the window opacity, set the background image, set the font size, set options, open the unicode input kitten, clear the background image, set the foreground color, show usage and version, select and view an image, list tabs or windows, select a *kitty* theme, diff files or directories, list windows, show terminal info, load an alternate *kitty* configuration, toggle fullscreen, and more.
 
 Shortcuts exist to quickly select a menu option:
 
@@ -183,46 +170,24 @@ Shortcuts exist to quickly select a menu option:
 
 Enter a menu option number or shortcut to select an option.
 
-In the fuzzy selection dialogs, enter a few letters to fuzzy select from the options
-or use the *Up-Arrow* and *Down-Arrow* keys to move through the options.
-Press *Enter* to select the highlighted option.
+In the fuzzy selection dialogs, enter a few letters to fuzzy select from the options or use the *Up-Arrow* and *Down-Arrow* keys to move through the options.  Press *Enter* to select the highlighted option.
 
-Some of the main menu options bring up a submenu from which to further select.
-For example, to view detailed information on a *kitty* window, select ***w*** or
-***List Windows*** from the main menu. This brings up a submenu that lists the
-*kitty* windows along with a fuzzy selection dialog using *fzf*. Select a
-window and detailed information on that window will be displayed. A similar
-menu option exists to select a *kitty* tab for information display.
+Some of the main menu options bring up a submenu from which to further select.  For example, to view detailed information on a *kitty* window, select ***w*** or ***List Windows*** from the main menu. This brings up a submenu that lists the *kitty* windows along with a fuzzy selection dialog using *fzf*. Select a window and detailed information on that window will be displayed. A similar menu option exists to select a *kitty* tab for information display.
 
-Note that the *kitty* window and tab information display via the menu interface
-requires the *jq* JSON parsing utility. Without *jq* all window and tab info
-is displayed.
+Note that the *kitty* window and tab information display via the menu interface requires the *jq* JSON parsing utility. Without *jq* all window and tab info is displayed.
 
 # ENVIRONMENT
-Environment variables can be used to influence *kitty* behavior. See
-***https://sw.kovidgoyal.net/kitty/glossary/#environment-variables*** for
-details on environment variables *kitty* uses. The *kitty-control*
-command behavior depends on the **KITTY_LISTEN_ON** and
-**KITTY_CONFIG_DIRECTORY** environment variables.
+Environment variables can be used to influence *kitty* behavior. See ***https://sw.kovidgoyal.net/kitty/glossary/#environment-variables*** for details on environment variables *kitty* uses. The *kitty-control* command behavior depends on the **KITTY_LISTEN_ON** and **KITTY_CONFIG_DIRECTORY** environment variables.
 
-**KITTY_LISTEN_ON** is set automatically by *kitty* and specifies the
-path to the socket *kitty* is listening on if one is configured.
+**KITTY_LISTEN_ON** is set automatically by *kitty* and specifies the path to the socket *kitty* is listening on if one is configured.
 
-**KITTY_CONFIG_DIRECTORY** can be set by the user to specify the directory
-*kitty* and *kitty-control* search for configuration files and kittens.
-Setting **KITTY_CONFIG_DIRECTORY** instructs *kitty* and *kitty-control*
-to ignore files in *~/.config/kitty*.
+**KITTY_CONFIG_DIRECTORY** can be set by the user to specify the directory *kitty* and *kitty-control* search for configuration files and kittens.  Setting **KITTY_CONFIG_DIRECTORY** instructs *kitty* and *kitty-control* to ignore files in *~/.config/kitty*.
 
 For example, if *kitty* was started with the command:
 
 ***kitty --override allow_remote_control=yes --listen-on unix:/tmp/mykitty***
 
-then **KITTY_LISTEN_ON** would be set to *unix:/tmp/mykitty* and *kitty-control*
-would use that socket to communicate with *kitty*. The socket that
-*kitty-control* uses can be overridden with the *-s /path/to/socket* command
-line arguments. This can be used to tell *kitty-control* to communicate with
-another instance of *kitty* or used when running *kitty-control* from a
-non-kitty terminal or console.
+then **KITTY_LISTEN_ON** would be set to *unix:/tmp/mykitty* and *kitty-control* would use that socket to communicate with *kitty*. The socket that *kitty-control* uses can be overridden with the *-s /path/to/socket* command line arguments. This can be used to tell *kitty-control* to communicate with another instance of *kitty* or used when running *kitty-control* from a non-kitty terminal or console.
 
 # EXAMPLES
 ***kitty-control***
@@ -268,10 +233,7 @@ non-kitty terminal or console.
 Written by Ronald Record github@ronrecord.com
 
 # LICENSE
-**KITTY-CONTROL** is distributed under an Open Source license.
-See the file *LICENSE* in the **KITTY-CONTROL** source distribution
-for information on terms &amp; conditions for accessing and
-otherwise using **KITTY-CONTROL** and for a *DISCLAIMER OF ALL WARRANTIES*.
+**KITTY-CONTROL** is distributed under an Open Source license.  See the file *LICENSE* in the **KITTY-CONTROL** source distribution for information on terms &amp; conditions for accessing and otherwise using **KITTY-CONTROL** and for a *DISCLAIMER OF ALL WARRANTIES*.
 
 # BUGS
 Submit bug reports online at: ***https://gitlab.com/doctorfree/kitty-control/issues***
