@@ -4,6 +4,12 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.9r2
+
+### ⚡️ Added
+
 - Add support for selecting and setting a tab or window title
 
 ### 🐞 Fixed
