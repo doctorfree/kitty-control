@@ -6,6 +6,7 @@ have_real=$(type -p realpath)
 REPO_URL="https://github.com/doctorfree/kitty-control"
 KCDIR="${HOME}/.config/kitty/kitty-control"
 FONT_URL="https://raw.githubusercontent.com/wiki/doctorfree/workspaces-images"
+export KCKITTEN="kc_read_config.py"
 
 install_kitty() {
   if [ "${darwin}" ]; then
@@ -154,9 +155,9 @@ install_config() {
   DEST="$1"
   [ -d ${DEST} ] || mkdir -p ${DEST}
   [ -d ${DEST}/kitty-control ] || mkdir -p ${DEST}/kitty-control
-  find ${DEST} -name kc_read_config.py -print0 | xargs -0 rm -f
-  cp "${SCRIPT_PATH}"/kitten/kc_read_config.py ${DEST}
-  chmod 644 ${DEST}/kc_read_config.py
+  find ${DEST} -name ${KCKITTEN} -print0 | xargs -0 rm -f
+  cp "${SCRIPT_PATH}"/kitten/${KCKITTEN} ${DEST}
+  chmod 644 ${DEST}/${KCKITTEN}
 
   [ -f ${DEST}/diff.conf ] || {
     cp "${SCRIPT_PATH}"/config/diff.conf ${DEST}/diff.conf
@@ -182,13 +183,13 @@ install_config() {
     cp -a "${SCRIPT_PATH}"/config ${DEST}/kitty-control
   fi
   # Link to the new location of the kitten
-  [ -f ${DEST}/kc_read_config.py ] && {
+  [ -f ${DEST}/${KCKITTEN} ] && {
     export DEST
     find ${DEST} -name kitty.conf | while read kitty_conf
     do
       kcpath=$(dirname "${kitty_conf}")
-      [ -f "${kcpath}"/kc_read_config.py ] || {
-        ln -s ${DEST}/kc_read_config.py ${kcpath}/kc_read_config.py
+      [ -f "${kcpath}"/${KCKITTEN} ] || {
+        ln -s ${DEST}/${KCKITTEN} ${kcpath}/${KCKITTEN}
       }
     done
   }

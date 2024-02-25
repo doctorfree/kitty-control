@@ -7,6 +7,7 @@ KITTCONF="${HOME}/.config/kitty"
 KCDIR="${KITTCONF}/kitty-control"
 DIFFCONF="${KITTCONF}/diff.conf"
 DIRDCONF="${KITTY_CONFIG_DIRECTORY}/diff.conf"
+KCKITTEN="kc_read_config.py"
 
 rloc=$(readlink ${HOME}/.local/bin/rich)
 [ "${rloc}" == "${KCDIR}/.venv/bin/rich" ] && {
@@ -14,7 +15,9 @@ rloc=$(readlink ${HOME}/.local/bin/rich)
 }
 rm -f ${HOME}/.local/bin/kitty-control
 rm -rf ${KCDIR}
-find ${KITTCONF} -name kc_read_config.py -print0 | xargs -0 rm -f
+[ -d ${KITTCONF} ] && {
+  find ${KITTCONF} -name ${KCKITTEN} -print0 | xargs -0 rm -f
+}
 [ -f ${DIFFCONF} ] && {
   grep kitty-control ${DIFFCONF} | grep example >/dev/null && {
     rm -f ${DIFFCONF}
@@ -24,7 +27,7 @@ find ${KITTCONF} -name kc_read_config.py -print0 | xargs -0 rm -f
   [ "${KITTY_CONFIG_DIRECTORY}" == "${KITTCONF}" ] || {
     [ -d "${KITTY_CONFIG_DIRECTORY}" ] && {
       rm -rf ${KITTY_CONFIG_DIRECTORY}/kitty-control
-      find ${KITTY_CONFIG_DIRECTORY} -name kc_read_config.py -print0 | xargs -0 rm -f
+      find ${KITTY_CONFIG_DIRECTORY} -name ${KCKITTEN} -print0 | xargs -0 rm -f
       [ -f ${DIRDCONF} ] && {
         grep kitty-control ${DIRDCONF} | grep example >/dev/null && {
           rm -f ${DIRDCONF}
