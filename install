@@ -4,7 +4,8 @@ SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 have_real=$(type -p realpath)
 [ "${have_real}" ] && SCRIPT_PATH="$(realpath "$SCRIPT_PATH")"
 REPO_URL="https://github.com/doctorfree/kitty-control"
-KCDIR="${HOME}/.config/kitty/kitty-control"
+KCONF="${HOME}/.config/kitty"
+KCDIR="${KCONF}/kitty-control"
 FONT_URL="https://raw.githubusercontent.com/wiki/doctorfree/workspaces-images"
 export KCKITTEN="kc_read_config.py"
 
@@ -150,6 +151,45 @@ install_kitty() {
   }
 }
 
+fixup_shell() {
+  SFILE="$1"
+  [ -f "${SFILE}" ] || return
+  if [ -n "$($SHELL -c 'echo $ZSH_VERSION')" ]; then
+    cat ${SFILE} | sed -e "s/^#map /map /" > /tmp/kc$$
+    cp /tmp/kc$$ ${SFILE}
+    rm -f /tmp/kc$$
+  elif [ -n "$($SHELL -c 'echo $BASH_VERSION')" ]; then
+    cat ${SFILE} | \
+      sed -e "s/^#map /map /" -e "s/tab zsh/tab bash/" > /tmp/kc$$
+    cp /tmp/kc$$ ${SFILE}
+    rm -f /tmp/kc$$
+  fi
+}
+
+install_kconf() {
+  [ -d ${KCONF} ] || mkdir -p ${KCONF}
+  for py in "${SCRIPT_PATH}"/config/*.py
+  do
+    [ "${py}" == "${SCRIPT_PATH}/config/*.py" ] && continue
+    cp "${py}" ${KCONF}
+  done
+  cp "${SCRIPT_PATH}"/config/kitty.conf ${KCONF}
+  fixup_shell "${KCONF}/kitty.conf"
+}
+
+install_kicon() {
+  KICON="$1"
+  if [ "${darwin}" ]; then
+    [ -f "${SCRIPT_PATH}"/icons/kitty.app.icns ] && {
+      cp "${SCRIPT_PATH}"/icons/kitty.app.icns "${KICON}"
+    }
+  else
+    [ -f "${SCRIPT_PATH}"/icons/kitty-128.png ] && {
+      cp "${SCRIPT_PATH}"/icons/kitty-128.png "${KICON}"
+    }
+  fi
+}
+
 install_config() {
   # We use $HOME/.config/kitty/kitty-control for kitty-control
   DEST="$1"
@@ -191,6 +231,7 @@ install_config() {
       [ -f "${kcpath}"/${KCKITTEN} ] || {
         ln -s ${DEST}/${KCKITTEN} ${kcpath}/${KCKITTEN}
       }
+      fixup_shell "${kitty_conf}"
     done
   }
 }
@@ -244,6 +285,16 @@ have_tic=$(type -p tic)
 have_wget=$(type -p wget)
 have_kitty=$(type -p kitty)
 [ "${have_kitty}" ] || install_kitty
+[ -f "${KCONF}/kitty.conf" ] || install_kconf
+if [ "${darwin}" ]; then
+  [ -f "${KCONF}/kitty.app.icns" ] || {
+    install_kicon "${KCONF}"/kitty.app.icns
+    rm /var/folders/*/*/*/com.apple.dock.iconcache
+    killall Dock
+  }
+else
+  [ -f "${KCONF}"/kitty.app.png ] || install_kicon "${KCONF}"/kitty.app.png
+fi
 
 # If standalone install, clone the repository, run the install script, exit
 [ -f "${SCRIPT_PATH}"/kitty-control ] || {
@@ -271,6 +322,15 @@ install_config "${HOME}/.config/kitty"
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
   [ "${KITTY_CONFIG_DIRECTORY}" == "${HOME}/.config/kitty" ] || {
     install_config "${KITTY_CONFIG_DIRECTORY}"
+    if [ "${darwin}" ]; then
+      [ -f "${KITTY_CONFIG_DIRECTORY}/kitty.app.icns" ] || {
+        install_kicon "${KITTY_CONFIG_DIRECTORY}"/kitty.app.icns
+      }
+    else
+      [ -f "${KITTY_CONFIG_DIRECTORY}"/kitty.app.png ] || {
+        install_kicon "${KITTY_CONFIG_DIRECTORY}"/kitty.app.png
+      }
+    fi
   }
 }
 
