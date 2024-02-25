@@ -231,7 +231,9 @@ install_config() {
       [ -f "${kcpath}"/${KCKITTEN} ] || {
         ln -s ${DEST}/${KCKITTEN} ${kcpath}/${KCKITTEN}
       }
-      fixup_shell "${kitty_conf}"
+      [ "${kitty_conf}" == "${KCONF}/kitty.conf" ] || {
+        fixup_shell "${kitty_conf}"
+      }
     done
   }
 }
