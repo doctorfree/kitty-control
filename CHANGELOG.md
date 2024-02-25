@@ -6,6 +6,21 @@
 
 ### 🐞 Fixed
 
+## v1.0.9r3
+
+### ⚡️ Added
+
+- Fixup installed `kitty.conf` files with detected shell
+- Install platform specific `kitty` icon
+- Add documentation selection menu screenshot
+
+### 🐞 Fixed
+
+- Earlier versions of `macOS` have `realpath` in `coreutils`
+- Check for dir before `find` in `uninstall`
+- Restrict shell fixup to `kitty-control` installed `kitty.conf` files
+- Fix menu selections not recognized by number
+
 ## v1.0.9r2
 
 ### ⚡️ Added
