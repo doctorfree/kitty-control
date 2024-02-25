@@ -359,6 +359,10 @@ The `kitty` window information selection menu:
 
 ![Window Info](https://raw.githubusercontent.com/wiki/doctorfree/kitty-control/list-windows.png)
 
+The `kitty` documentation selection menu:
+
+![Documentation Selection](https://raw.githubusercontent.com/wiki/doctorfree/kitty-control/doc-menu.png)
+
 ## Environment
 
 Environment variables can be used to influence `kitty` behavior. See
