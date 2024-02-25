@@ -4,7 +4,11 @@
 
 ### ⚡️ Added
 
+- Add support for selecting and setting a tab or window title
+
 ### 🐞 Fixed
+
+- Fixed argument processing in command line `ls` and `list`
 
 ## v1.0.9r1
 
