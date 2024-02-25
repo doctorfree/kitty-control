@@ -1,7 +1,8 @@
 #!/bin/bash
 
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
-SCRIPT_PATH="$(realpath "$SCRIPT_PATH")"
+have_real=$(type -p realpath)
+[ "${have_real}" ] && SCRIPT_PATH="$(realpath "$SCRIPT_PATH")"
 REPO_URL="https://github.com/doctorfree/kitty-control"
 KCDIR="${HOME}/.config/kitty/kitty-control"
 FONT_URL="https://raw.githubusercontent.com/wiki/doctorfree/workspaces-images"

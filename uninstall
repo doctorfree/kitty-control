@@ -1,7 +1,8 @@
 #!/bin/bash
 
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
-SCRIPT_PATH="$(realpath "$SCRIPT_PATH")"
+have_real=$(type -p realpath)
+[ "${have_real}" ] && SCRIPT_PATH="$(realpath "$SCRIPT_PATH")"
 KITTCONF="${HOME}/.config/kitty"
 KCDIR="${KITTCONF}/kitty-control"
 DIFFCONF="${KITTCONF}/diff.conf"
