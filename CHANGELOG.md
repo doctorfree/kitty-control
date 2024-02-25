@@ -15,6 +15,7 @@
 ### 🐞 Fixed
 
 - Fixed argument processing in command line `ls` and `list`
+- Fixed some menu selection entries not recognizing selection by number
 
 ## v1.0.9r1
 

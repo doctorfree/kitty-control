@@ -3233,15 +3233,15 @@ show_menu() {
         show_help
         break
         ;;
-      "Background Color",* | *,"Background Color" | "b",* | *,"b" | "bg",* | *,"bg" | "back",* | *,"back")
+      "Background Color"*,* | *,"Background Color"* | "b",* | *,"b" | "bg",* | *,"bg" | "back",* | *,"back")
         menu_background_color
         break
         ;;
-      "Foreground Color",* | *,"Foreground Color" | "g",* | *,"g" | "fg",* | *,"fg" | "fore",* | *,"fore")
+      "Foreground Color"*,* | *,"Foreground Color"* | "g",* | *,"g" | "fg",* | *,"fg" | "fore",* | *,"fore")
         menu_foreground_color
         break
         ;;
-      "Background Image",* | *,"Background Image" | "i",* | *,"i" | "bi",* | *,"bi")
+      "Background Image"*,* | *,"Background Image"* | "i",* | *,"i" | "bi",* | *,"bi")
         FILE=
         select_file image
         [ "${FILE}" ] && {
