@@ -10,6 +10,7 @@
 
 ### ⚡️ Added
 
+- Install `kitty-control` session files in `~/.config/kitty/sessions/`
 - Fixup installed `kitty.conf` files with detected shell
 - Fixup installed `kitty` session files with detected shell
 - Install platform specific `kitty` icon
