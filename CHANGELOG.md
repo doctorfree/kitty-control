@@ -8,6 +8,8 @@
 
 ### 🐞 Fixed
 
+- Fixed argument processing in command line `ls` and `list`
+
 ## v1.0.9r1
 
 ### ⚡️ Added

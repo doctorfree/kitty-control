@@ -3677,42 +3677,70 @@ while [[ $1 ]]; do
         OPTS="--self ${OPTS}"
         shift
       }
-      if [ "$2" == "colors" ]; then
-        list_colors
-        shift 2
-      else
-        if [ "${have_jq}" ]; then
-          if [ "$2" == "tabs" ]; then
+      case "$2" in
+        colors)
+          list_colors
+          shift 2
+          ;;
+        tab*)
+          if [ "${have_jq}" ]; then
             kitty @ ${SOCKET} ls ${OPTS} | jq --color-output '.[]?.tabs'
           else
-            kitty @ ${SOCKET} ls ${OPTS} | jq --color-output '.[]'
+            kitty @ ${SOCKET} ls ${OPTS}
           fi
-        else
-          kitty @ ${SOCKET} ls ${OPTS}
-        fi
-        shift 2
-      fi
+          shift 2
+          ;;
+        window*|"")
+          if [ "${have_jq}" ]; then
+            kitty @ ${SOCKET} ls ${OPTS} | jq --color-output '.[]'
+          else
+            kitty @ ${SOCKET} ls ${OPTS}
+          fi
+          if [ "$2" ]; then
+            shift 2
+          else
+            shift
+          fi
+          ;;
+        *)
+          shift
+          ;;
+      esac
       ;;
     ls|--ls)
       [ "$2" == "self" ] && {
         OPTS="--self ${OPTS}"
         shift
       }
-      if [ "$2" == "colors" ]; then
-        list_colors brief
-        shift 2
-      else
-        if [ "${have_jq}" ]; then
-          if [ "$2" == "tabs" ]; then
+      case "$2" in
+        colors)
+          list_colors brief
+          shift 2
+          ;;
+        tab*)
+          if [ "${have_jq}" ]; then
             list_tabs
           else
-            list_windows
+            kitty @ ${SOCKET} ls ${OPTS}
           fi
-        else
-          kitty @ ${SOCKET} ls ${OPTS}
-        fi
-        shift 2
-      fi
+          shift 2
+          ;;
+        window*|"")
+          if [ "${have_jq}" ]; then
+            list_windows
+          else
+            kitty @ ${SOCKET} ls ${OPTS}
+          fi
+          if [ "$2" ]; then
+            shift 2
+          else
+            shift
+          fi
+          ;;
+        *)
+          shift
+          ;;
+      esac
       ;;
     load|reload|--load|--reload)
       if [ "$2" ]; then
