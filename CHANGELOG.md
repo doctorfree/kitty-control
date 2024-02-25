@@ -11,6 +11,7 @@
 ### ⚡️ Added
 
 - Fixup installed `kitty.conf` files with detected shell
+- Fixup installed `kitty` session files with detected shell
 - Install platform specific `kitty` icon
 - Add documentation selection menu screenshot
 
@@ -20,6 +21,7 @@
 - Check for dir before `find` in `uninstall`
 - Restrict shell fixup to `kitty-control` installed `kitty.conf` files
 - Fix menu selections not recognized by number
+- Improve removal
 
 ## v1.0.9r2
 
