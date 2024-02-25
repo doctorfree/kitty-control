@@ -18,6 +18,7 @@
 
 ### 🐞 Fixed
 
+- Check if configuration load succeeded and if not issue warning
 - Earlier versions of `macOS` have `realpath` in `coreutils`
 - Check for dir before `find` in `uninstall`
 - Restrict shell fixup to `kitty-control` installed `kitty.conf` files

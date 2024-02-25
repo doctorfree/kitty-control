@@ -290,6 +290,13 @@ prompt_more() {
   esac
 }
 
+exit_warning() {
+  printf "\nWARNING: $1"
+  printf "\n         did not return a successful exit status"
+  printf "\nVerify that 'allow_remote_control' is enabled in kitty.conf\n"
+  prompt_continue
+}
+
 tolower() {
   echo "$1" | tr '[:upper:]' '[:lower:]'
 }
@@ -1018,12 +1025,14 @@ load_config_file() {
   cfgfile="$1"
   if [ "${USE_LOAD_CONFIG}" ]; then
     kitty @ ${SOCKET} load-config "${cfgfile}"
+    [ $? -eq 0 ] || exit_warning "kitty @ ${SOCKET} load-config ${cfgfile}"
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} load-config ${cfgfile}"
       prompt_continue
     }
   else
     kitty @ ${SOCKET} kitten kc_read_config.py "${cfgfile}"
+    [ $? -eq 0 ] || exit_warning "kitty @ ${SOCKET} kitten kc_read_config.py ${cfgfile}"
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} kitten kc_read_config.py ${cfgfile}"
       prompt_continue
