@@ -4,6 +4,9 @@
 
 ### ⚡️ Added
 
+- Add requirements section to man page
+- Add note about required `kitty` settings to man page and readme
+
 ### 🐞 Fixed
 
 - If trnsparency setting fails issue warning about `dynamic_background_opacity`

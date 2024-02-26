@@ -54,16 +54,25 @@ simplify and ease those `kitty` customizations used fairly frequently.
 
 ## Requirements
 
-The `kitty-control` installation requires [git](https://github.com/git-guides/install-git).
-
-The `bash` shell is required to install and run `kitty-control`.
-
-Some functionality requires [curl](https://curl.se).
+`kitty-control` can be installed on `Linux` and `macOS` platforms
+and requires [git](https://github.com/git-guides/install-git),
+`bash`, and [curl](https://curl.se).
 
 Additional `kitty` window info listing features are enabled if the
 [jq JSON parser](https://jqlang.github.io/jq) is installed.
 
-`kitty-control` can be installed on `Linux` and `macOS` platforms.
+The `kitty` instance that is being controlled must have been started with
+`allow_remote_control` enabled. In order to set the opacity level,
+`dynamic_background_opacity` must also be enabled. These can be set in
+`~/.config/kitty/kitty.conf` or on the command line. For example:
+
+```bash
+# In ~/.config/kitty/kitt.conf
+allow_remote_control yes
+dynamic_background_opacity yes
+# On the command line
+kitty --override allow_remote_control=yes --override dynamic_background_opacity=yes ...
+```
 
 ## Install
 

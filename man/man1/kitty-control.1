@@ -47,6 +47,34 @@ This is accomplished through the use of the \f[B]read_config.py\f[R]
 custom \f[I]kitten\f[R] included with \f[I]kitty-control\f[R] or the
 internal \f[B]load-config\f[R] kitten introduced in \f[I]kitty
 0.32.2\f[R].
+.SH REQUIREMENTS
+.PP
+\f[B]kitty-control\f[R] can be installed on \f[I]Linux\f[R] and
+\f[I]macOS\f[R] platforms and requires
+git (https://github.com/git-guides/install-git), \f[I]bash\f[R], and
+curl (https://curl.se).
+.PP
+Additional \f[I]kitty\f[R] window info listing features are enabled if
+the jq JSON parser (https://jqlang.github.io/jq) is installed.
+.PP
+The \f[I]kitty\f[R] instance that is being controlled must have been
+started with \f[I]\f[BI]allow_remote_control\f[I]\f[R] enabled.
+In order to set the opacity level,
+\f[I]\f[BI]dynamic_background_opacity\f[I]\f[R] must also be enabled.
+These can be set in \f[I]\[ti]/.config/kitty/kitty.conf\f[R] or on the
+command line.
+For example:
+.IP
+.nf
+\f[C]
+# In \[ti]/.config/kitty/kitt.conf
+allow_remote_control yes
+dynamic_background_opacity yes
+# On the command line
+kitty --override allow_remote_control=yes \[rs]
+      --override dynamic_background_opacity=yes ...
+\f[R]
+.fi
 .SH FEATURES
 .PP
 The \f[B]kitty-control\f[R] command can be used to:

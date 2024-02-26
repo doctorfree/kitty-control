@@ -16,6 +16,23 @@ date: February 06, 2024
 
 In particular, scripted *kitty* actions enables quick and easy switching between preconfigured *kitty* configuration files without losing state or having to quit *kitty* and restart with another configuration. This is accomplished through the use of the **read_config.py** custom *kitten* included with *kitty-control* or the internal **load-config** kitten introduced in *kitty 0.32.2*.
 
+# REQUIREMENTS
+
+**kitty-control** can be installed on *Linux* and *macOS* platforms and requires [git](https://github.com/git-guides/install-git), *bash*, and [curl](https://curl.se).
+
+Additional *kitty* window info listing features are enabled if the [jq JSON parser](https://jqlang.github.io/jq) is installed.
+
+The *kitty* instance that is being controlled must have been started with ***allow_remote_control*** enabled. In order to set the opacity level, ***dynamic_background_opacity*** must also be enabled. These can be set in *~/.config/kitty/kitty.conf* or on the command line. For example:
+
+```bash
+# In ~/.config/kitty/kitt.conf
+allow_remote_control yes
+dynamic_background_opacity yes
+# On the command line
+kitty --override allow_remote_control=yes \
+      --override dynamic_background_opacity=yes ...
+```
+
 # FEATURES
 The **kitty-control** command can be used to:
 
