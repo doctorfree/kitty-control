@@ -6,6 +6,8 @@
 
 ### 🐞 Fixed
 
+- If trnsparency setting fails issue warning about `dynamic_background_opacity`
+
 ## v1.0.9r3
 
 ### ⚡️ Added

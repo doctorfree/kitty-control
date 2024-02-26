@@ -292,8 +292,7 @@ prompt_more() {
 
 exit_warning() {
   printf "\nWARNING: $1"
-  printf "\n         did not return a successful exit status"
-  printf "\nVerify that 'allow_remote_control' is enabled in kitty.conf\n"
+  printf "\n         did not return a successful exit status\n$2\n"
   prompt_continue
 }
 
@@ -1025,14 +1024,20 @@ load_config_file() {
   cfgfile="$1"
   if [ "${USE_LOAD_CONFIG}" ]; then
     kitty @ ${SOCKET} load-config "${cfgfile}"
-    [ $? -eq 0 ] || exit_warning "kitty @ ${SOCKET} load-config ${cfgfile}"
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} load-config ${cfgfile}" \
+                   "Verify that 'allow_remote_control' is enabled in kitty.conf"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} load-config ${cfgfile}"
       prompt_continue
     }
   else
     kitty @ ${SOCKET} kitten kc_read_config.py "${cfgfile}"
-    [ $? -eq 0 ] || exit_warning "kitty @ ${SOCKET} kitten kc_read_config.py ${cfgfile}"
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} kitten kc_read_config.py ${cfgfile}" \
+                   "Verify that 'allow_remote_control' is enabled in kitty.conf"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} kitten kc_read_config.py ${cfgfile}"
       prompt_continue
@@ -1176,6 +1181,10 @@ set-layout() {
 
 set-opacity() {
   kitty @ ${SOCKET} set-background-opacity ${OPTS} $1
+  [ $? -eq 0 ] || {
+    exit_warning "kitty @ ${SOCKET} set-background-opacity ${OPTS} $1" \
+                 "Verify that 'dynamic_background_opacity' is enabled in kitty.conf"
+  }
   [ "${debug}" ] && {
     printf "\nDEBUG: kitty @ ${SOCKET} set-background-opacity ${OPTS} $1\n"
     prompt_continue
