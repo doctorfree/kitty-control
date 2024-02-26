@@ -4,11 +4,14 @@
 
 ### ⚡️ Added
 
+- Check exit status of all `kitty` remote commands and issue warning on failure
+- In menu mode ignore subsequent exit failures after the first is reported
 - Add requirements section to man page
 - Add note about required `kitty` settings to man page and readme
 
 ### 🐞 Fixed
 
+- Improve exit failure warning
 - If trnsparency setting fails issue warning about `dynamic_background_opacity`
 
 ## v1.0.9r3

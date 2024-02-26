@@ -291,9 +291,50 @@ prompt_more() {
 }
 
 exit_warning() {
-  printf "\nWARNING: $1"
-  printf "\n         did not return a successful exit status\n$2\n"
-  prompt_continue
+  WARN=
+  SUBW=
+  PROMPT=1
+  [ ${warning_issued} -lt 4 ] && {
+    if [ "$2" ]; then
+      [ ${warning_issued} -eq 3 ] || {
+        WARN="$2"
+        if [ ${warning_issued} -eq 1 ]; then
+          PROMPT=
+        else
+          SUBW="Subsequent exit failures of this type will be ignored"
+        fi
+      }
+      if [ ${warning_issued} -eq 2 ]; then
+        warning_issued=4
+      else
+        warning_issued=3
+      fi
+    else
+      [ ${warning_issued} -eq 2 ] || {
+        WARN="Verify that 'allow_remote_control' is enabled in kitty.conf"
+        if [ ${warning_issued} -eq 1 ]; then
+          PROMPT=
+        else
+          SUBW="Subsequent exit failures of this type will be ignored"
+        fi
+      }
+      if [ ${warning_issued} -eq 3 ]; then
+        warning_issued=4
+      else
+        warning_issued=2
+      fi
+    fi
+    [ "${WARN}" ] && {
+      printf "\nWARNING: %s" "$1"
+      printf "\n         did not return a successful exit status\n%s\n" "${WARN}"
+      if [ ${warning_issued} -eq 4 ]; then
+        printf "\nSubsequent exit failures will be ignored\n"
+      else
+        [ "${SUBW}" ] && printf "\n%s\n" "${SUBW}"
+      fi
+      [ "${PROMPT}" ] && prompt_continue
+    }
+  }
 }
 
 tolower() {
@@ -693,12 +734,18 @@ kitty-fontminus() {
   first_size=${size::1}
   if [[ "${first_size}" == "-" ]]; then
     kitty @ ${SOCKET} set-font-size ${OPTS} -- $size
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} set-font-size ${OPTS} -- $size"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} set-font-size ${OPTS} -- $size\n"
       prompt_continue
     }
   else
     kitty @ ${SOCKET} set-font-size ${OPTS} -- -$size
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} set-font-size ${OPTS} -- -$size"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} set-font-size ${OPTS} -- -$size\n"
       prompt_continue
@@ -711,12 +758,18 @@ kitty-fontplus() {
   first_size=${size::1}
   if [[ "${first_size}" == "+" ]]; then
     kitty @ ${SOCKET} set-font-size ${OPTS} $size
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} set-font-size ${OPTS} $size"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} set-font-size ${OPTS} $size\n"
       prompt_continue
     }
   else
     kitty @ ${SOCKET} set-font-size ${OPTS} +$size
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} set-font-size ${OPTS} +$size"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} set-font-size ${OPTS} +$size\n"
       prompt_continue
@@ -729,12 +782,18 @@ kitty-fontsize() {
   first_size=${size::1}
   if [[ "${first_size}" == "-" ]]; then
     kitty @ ${SOCKET} set-font-size ${OPTS} -- $size
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} set-font-size ${OPTS} -- $size"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} set-font-size ${OPTS} -- $size\n"
       prompt_continue
     }
   else
     kitty @ ${SOCKET} set-font-size ${OPTS} $size
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} set-font-size ${OPTS} $size"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} set-font-size ${OPTS} $size\n"
       prompt_continue
@@ -1018,6 +1077,9 @@ list_colors() {
 
 open_kitty_doc() {
   kitty @ ${SOCKET} action show_kitty_doc "$1"
+  [ $? -eq 0 ] || {
+    exit_warning "kitty @ ${SOCKET} action show_kitty_doc $1"
+  }
 }
 
 load_config_file() {
@@ -1025,8 +1087,7 @@ load_config_file() {
   if [ "${USE_LOAD_CONFIG}" ]; then
     kitty @ ${SOCKET} load-config "${cfgfile}"
     [ $? -eq 0 ] || {
-      exit_warning "kitty @ ${SOCKET} load-config ${cfgfile}" \
-                   "Verify that 'allow_remote_control' is enabled in kitty.conf"
+      exit_warning "kitty @ ${SOCKET} load-config ${cfgfile}"
     }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} load-config ${cfgfile}"
@@ -1035,8 +1096,7 @@ load_config_file() {
   else
     kitty @ ${SOCKET} kitten kc_read_config.py "${cfgfile}"
     [ $? -eq 0 ] || {
-      exit_warning "kitty @ ${SOCKET} kitten kc_read_config.py ${cfgfile}" \
-                   "Verify that 'allow_remote_control' is enabled in kitty.conf"
+      exit_warning "kitty @ ${SOCKET} kitten kc_read_config.py ${cfgfile}"
     }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} kitten kc_read_config.py ${cfgfile}"
@@ -1113,6 +1173,9 @@ set-bg-image() {
   image="$1"
   if [ "${image}" == "none" ]; then
     kitty @ ${SOCKET} set-background-image --no-response ${OPTS} none
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} set-background-image --no-response ${OPTS} none"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} set-background-image --no-response ${OPTS} none\n"
       prompt_continue
@@ -1120,10 +1183,13 @@ set-bg-image() {
   else
     if [ -f "${image}" ]; then
       kitty @ ${SOCKET} set-background-image --layout scaled ${OPTS} "${image}"
-    [ "${debug}" ] && {
+      [ $? -eq 0 ] || {
+        exit_warning "kitty @ ${SOCKET} set-background-image --layout scaled ${OPTS} ${image}"
+      }
+      [ "${debug}" ] && {
         printf "\nDEBUG: kitty @ ${SOCKET} set-background-image --layout scaled ${OPTS} ${image}"
-      prompt_continue
-    }
+        prompt_continue
+      }
     else
       printf "\nSpecified Kitty background image ${image} not found\n"
       prompt_continue
@@ -1134,12 +1200,18 @@ set-bg-image() {
 set-background() {
   if [ "$1" == "reset" ]; then
     kitty @ ${SOCKET} set-colors ${OPTS} --reset
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} set-colors ${OPTS} --reset"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} set-colors ${OPTS} --reset\n"
       prompt_continue
     }
   else
     kitty @ ${SOCKET} set-colors ${OPTS} background="$1" tab_bar_background="$1"
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} set-colors ${OPTS} background=$1 tab_bar_background=$1"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} set-colors ${OPTS} background=$1 tab_bar_background=$1\n"
       prompt_continue
@@ -1150,12 +1222,18 @@ set-background() {
 set-foreground() {
   if [ "$1" == "reset" ]; then
     kitty @ ${SOCKET} set-colors ${OPTS} --reset
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} set-colors ${OPTS} --reset"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} set-colors ${OPTS} --reset\n"
       prompt_continue
     }
   else
     kitty @ ${SOCKET} set-colors ${OPTS} foreground="$1"
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} set-colors ${OPTS} foreground=$1"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} set-colors ${OPTS} foreground=$1\n"
       prompt_continue
@@ -1166,12 +1244,18 @@ set-foreground() {
 set-layout() {
   if [ "$1" == "Previous" ]; then
     kitty @ ${SOCKET} last-used-layout ${OPTS}
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} last-used-layout ${OPTS}"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} last-used-layout ${OPTS}\n"
       prompt_continue
     }
   else
     kitty @ ${SOCKET} goto-layout ${OPTS} $1
+    [ $? -eq 0 ] || {
+      exit_warning "kitty @ ${SOCKET} goto-layout ${OPTS} $1"
+    }
     [ "${debug}" ] && {
       printf "\nDEBUG: kitty @ ${SOCKET} goto-layout ${OPTS} $1\n"
       prompt_continue
@@ -1193,6 +1277,11 @@ set-opacity() {
 
 set-window-size() {
   kitty @ ${SOCKET} resize-os-window --action resize --incremental --width "$1" --height "$2" ${OPTS}
+  [ $? -eq 0 ] || {
+    exit_warning "kitty @ ${SOCKET} resize-os-window --action resize --incremental --width $1 --height $2 ${OPTS}" \
+    'Verify that "allow_remote_control" is enabled in kitty.conf.
+Some systems do not support window resize.'
+  }
   [ "${debug}" ] && {
     printf "\nDEBUG: kitty @ ${SOCKET} resize-os-window --incremental --action resize --width $1 --height $2 ${OPTS}\n"
     prompt_continue
@@ -1201,6 +1290,9 @@ set-window-size() {
 
 toggle-fullscreen() {
   kitty @ ${SOCKET} resize-os-window --action toggle-fullscreen ${OPTS}
+  [ $? -eq 0 ] || {
+    exit_warning "kitty @ ${SOCKET} resize-os-window --action toggle-fullscreen ${OPTS}"
+  }
   [ "${debug}" ] && {
     printf "\nDEBUG: kitty @ ${SOCKET} resize-os-window --action toggle-fullscreen ${OPTS}\n"
     prompt_continue
@@ -2012,6 +2104,9 @@ tab_title_menu() {
           [ "${tabtitle}" == "q" ] && break
           [ "${tabtitle}" ] || break
           kitty @ ${SOCKET} set-tab-title --match id:${tabnum} "${tabtitle}"
+          [ $? -eq 0 ] || {
+            exit_warning "kitty @ ${SOCKET} set-tab-title --match id:${tabnum} ${tabtitle}"
+          }
           break
           ;;
       esac
@@ -2052,6 +2147,9 @@ window_title_menu() {
           [ "${wintitle}" == "q" ] && break
           [ "${wintitle}" ] || break
           kitty @ ${SOCKET} set-window-title --temporary --match id:${winnum} "${wintitle}"
+          [ $? -eq 0 ] || {
+            exit_warning "kitty @ ${SOCKET} set-window-title --temporary --match id:${winnum} ${wintitle}"
+          }
           break
           ;;
       esac
@@ -2513,6 +2611,9 @@ menu_font_size() {
           ;;
         "default"*)
           kitty @ ${SOCKET} set-font-size ${OPTS} 0
+          [ $? -eq 0 ] || {
+            exit_warning "kitty @ ${SOCKET} set-font-size ${OPTS} 0"
+          }
           break
           ;;
         "quit"*)
@@ -2540,6 +2641,9 @@ menu_font_size() {
           ;;
         "Default"*,* | *,"Default"* | "default"*,* | *,"default"* | "d",* | *,"d")
           kitty @ ${SOCKET} set-font-size ${OPTS} 0
+          [ $? -eq 0 ] || {
+            exit_warning "kitty @ ${SOCKET} set-font-size ${OPTS} 0"
+          }
           break 2
           ;;
         "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
@@ -3180,6 +3284,7 @@ select_with_fzf() {
 }
 
 show_menu() {
+  warning_issued=0
   set_haves
   while true; do
     clear_screen
@@ -3505,6 +3610,7 @@ tabopts=
 width=
 height=
 winopts=
+warning_issued=1
 while [[ $1 ]]; do
   case "$1" in
     -a | --all)
@@ -3705,6 +3811,9 @@ while [[ $1 ]]; do
             kitty @ ${SOCKET} ls ${OPTS} | jq --color-output '.[]?.tabs'
           else
             kitty @ ${SOCKET} ls ${OPTS}
+            [ $? -eq 0 ] || {
+              exit_warning "kitty @ ${SOCKET} ls ${OPTS}"
+            }
           fi
           shift 2
           ;;
@@ -3713,6 +3822,9 @@ while [[ $1 ]]; do
             kitty @ ${SOCKET} ls ${OPTS} | jq --color-output '.[]'
           else
             kitty @ ${SOCKET} ls ${OPTS}
+            [ $? -eq 0 ] || {
+              exit_warning "kitty @ ${SOCKET} ls ${OPTS}"
+            }
           fi
           if [ "$2" ]; then
             shift 2
@@ -3740,6 +3852,9 @@ while [[ $1 ]]; do
             list_tabs
           else
             kitty @ ${SOCKET} ls ${OPTS}
+            [ $? -eq 0 ] || {
+              exit_warning "kitty @ ${SOCKET} ls ${OPTS}"
+            }
           fi
           shift 2
           ;;
@@ -3748,6 +3863,9 @@ while [[ $1 ]]; do
             list_windows
           else
             kitty @ ${SOCKET} ls ${OPTS}
+            [ $? -eq 0 ] || {
+              exit_warning "kitty @ ${SOCKET} ls ${OPTS}"
+            }
           fi
           if [ "$2" ]; then
             shift 2
@@ -3826,6 +3944,9 @@ while [[ $1 ]]; do
     title|--title)
       if [ "$2" ]; then
         kitty @ ${SOCKET} set-tab-title ${OPTS} "$2"
+        [ $? -eq 0 ] || {
+          exit_warning "kitty @ ${SOCKET} set-tab-title ${OPTS} $2"
+        }
         shift 2
       else
         printf "\nERROR: title keyword requires an argument\n\n"
@@ -3931,6 +4052,11 @@ done
   set-bg-image none
   set-bg-image "${bg_image}"
 }
-[ "${kittycmd}" ] && kitty @ ${SOCKET} ${kittycmd} ${OPTS}
+[ "${kittycmd}" ] && {
+  kitty @ ${SOCKET} ${kittycmd} ${OPTS}
+  [ $? -eq 0 ] || {
+    exit_warning "kitty @ ${SOCKET} ${kittycmd} ${OPTS}"
+  }
+}
 [ "${show_neo}" ] && [ "${have_neo}" ] && show_neofetch proceed
 [ "${set_menu}" ] && show_menu
