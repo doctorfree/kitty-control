@@ -4,6 +4,12 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.9r4
+
+### ⚡️ Added
+
 - Check exit status of all `kitty` remote commands and issue warning on failure
 - In menu mode ignore subsequent exit failures after the first is reported
 - Add requirements section to man page
