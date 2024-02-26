@@ -9,9 +9,11 @@ Control some aspects of the Kitty terminal emulator from the command line
 - [Overview](#overview)
 - [Requirements](#requirements)
 - [Install](#install)
+- [Features](#features)
+  - [Tools](#tools)
+  - [Aliases](#aliases)
 - [Usage](#usage)
   - [Menus](#menus)
-  - [Features](#features)
 - [Screenshots](#screenshots)
 - [Environment](#environment)
 - [Examples](#examples)
@@ -92,6 +94,25 @@ chmod 755 /tmp/ins$$
 /tmp/ins$$
 rm -f /tmp/ins$$
 ```
+
+## Features
+
+The `kitty-control` command can be used to:
+
+- Easily switch a running `kitty` instance configuration without restart
+- Set various `kitty` configuration options on the fly including font size, background, foreground, window size
+- Diff files or folders, selections are performed using the `ranger` file manager and `fzf` fuzzy finder
+- Quickly and easily toggle fullscreen display of the `kitty` terminal window
+- Set the `kitty` theme on the fly using the `kitty` **themes** `kitten`
+- List colors, tabs, and windows
+- Open an interactive menu system to easily browse `kitty-control` features and capabilities
+- Display system and terminal information
+- Set the level of opacity/transparency on the fly
+- Input Unicode characters using the `kitty` **Unicode input** `kitten`
+- Select and view an image using the `kitty` **icat** `kitten`
+- Select and set a background image using `ranger` and `fzf`
+- Set the `kitty` window layout using the `kitty` **goto-layout** `kitten`
+- Browse the `kitty` documentation using the `kitty` **action** `kitten`
 
 ### Tools
 
@@ -321,25 +342,6 @@ menu option exists to select a `kitty` tab for information display.
 Note that the `kitty` window and tab information display via the menu interface
 requires the `jq` JSON parsing utility. Without `jq` all window and tab info
 is displayed.
-
-### Features
-
-The `kitty-control` command can be used to:
-
-- Easily switch a running `kitty` instance configuration without restart
-- Set various `kitty` configuration options on the fly including font size, background, foreground, window size
-- Diff files or folders, selections are performed using the `ranger` file manager and `fzf` fuzzy finder
-- Quickly and easily toggle fullscreen display of the `kitty` terminal window
-- Set the `kitty` theme on the fly using the `kitty` **themes** `kitten`
-- List colors, tabs, and windows
-- Open an interactive menu system to easily browse `kitty-control` features and capabilities
-- Display system and terminal information
-- Set the level of opacity/transparency on the fly
-- Input Unicode characters using the `kitty` **Unicode input** `kitten`
-- Select and view an image using the `kitty` **icat** `kitten`
-- Select and set a background image using `ranger` and `fzf`
-- Set the `kitty` window layout using the `kitty` **goto-layout** `kitten`
-- Browse the `kitty` documentation using the `kitty` **action** `kitten`
 
 ## Screenshots
 
