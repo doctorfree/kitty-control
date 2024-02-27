@@ -4,6 +4,8 @@
 
 ### ⚡️ Added
 
+- Add `apple-logo.png` for use with `neofetch` on `macOS`
+
 ### 🐞 Fixed
 
 ## v1.0.9r5

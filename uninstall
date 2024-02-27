@@ -124,5 +124,19 @@ else
     rm -f ${icon}.bak
   }
 fi
+ICON_DIR="${HOME}/.local/share/icons/hicolor/512x512/apps"
+for extra_icon in apple-logo.png tux.png
+do
+  ex_icon="${ICON_DIR}/${extra_icon}"
+  kc_icon="${SCRIPT_PATH}"/icons/${extra_icon}
+  [ -f "${kc_icon}" ] && [ -f "${ex_icon}" ] && {
+    diff "${kc_icon}" "${ex_icon}" >/dev/null && rm -f "${ex_icon}"
+  }
+done
+ex_icon="${ICON_DIR}/kitty.png"
+kc_icon="${SCRIPT_PATH}"/icons/kitty-512.png
+[ -f "${kc_icon}" ] && [ -f "${ex_icon}" ] && {
+  diff "${kc_icon}" "${ex_icon}" >/dev/null && rm -f "${ex_icon}"
+}
 
 printf "Removal of kitty-control complete\n\n"

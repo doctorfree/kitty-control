@@ -451,6 +451,10 @@ show_layout_help() {
 
 show_neofetch() {
   IMG="${HOME}/.local/share/icons/hicolor/512x512/apps/kitty.png"
+  [ "${darwin}" ] && {
+    AMG="${HOME}/.local/share/icons/hicolor/512x512/apps/apple-logo.png"
+    [ -f "${AMG}" ] && IMG="${AMG}"
+  }
   clear_screen
   if [ -f "${IMG}" ]; then
     neofetch --kitty auto --source "${IMG}"
