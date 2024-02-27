@@ -4,8 +4,15 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.0.9r5
+
+### ⚡️ Added
+
 - Add window size to terminal info output
 - Format terminal info output with `rich` if available
+- Add another example `config/paul/kitty.conf` along with its color theme and `vim` script
 
 ### 🐞 Fixed
 

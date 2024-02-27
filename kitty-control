@@ -9,7 +9,7 @@
 # Written February, 2024 by Ronald Joe Record <ronaldrecord@gmail.com>
 #
 VERSION=1.0.9
-RELEASE=4
+RELEASE=5
 # The Kitty configuration directory
 CONFDIR="${HOME}/.config/kitty"
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
@@ -2064,7 +2064,6 @@ open_doc_menu() {
 
 set_win_array() {
   while read id_title; do
-    entry=
     [ "${id_title}" ] || continue
     echo "${id_title}" | grep ID: >/dev/null && {
       entry="${id_title}"
@@ -2082,7 +2081,6 @@ set_win_array() {
 
 set_tab_array() {
   while read id_title; do
-    entry=
     [ "${id_title}" ] || continue
     echo "${id_title}" | grep ID: >/dev/null && {
       entry="${id_title}"
