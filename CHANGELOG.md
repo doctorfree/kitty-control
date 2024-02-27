@@ -5,6 +5,7 @@
 ### ⚡️ Added
 
 - Add window size to terminal info output
+- Format terminal info output with `rich` if available
 
 ### 🐞 Fixed
 

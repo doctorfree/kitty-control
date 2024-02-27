@@ -337,6 +337,29 @@ exit_warning() {
   }
 }
 
+show_term_info() {
+  w_size=$(kitty +kitten icat --print-window-size)
+  if [ "${have_rich}" ]; then
+    printf "\n"
+    rich "[cyan]window_size:[/] [yellow]${w_size}[/]" -p
+    kitty +kitten query_terminal | while read i
+    do
+      label=$(echo "$i" | awk -F ':' '{ print $1 }')
+      value=$(echo "$i" | awk -F ':' '{ print $2 }')
+      rich "[cyan]${label}:[/] [yellow]${value}[/]" -p
+    done
+  else
+    printf "\n${BOLD}window_size:${NORM} %s" "${w_size}"
+    kitty +kitten query_terminal | while read i
+    do
+      label=$(echo "$i" | awk -F ':' '{ print $1 }')
+      value=$(echo "$i" | awk -F ':' '{ print $2 }')
+      printf "\n${BOLD}%s:${NORM}%s" "${label}" "${value}"
+    done
+  fi
+  printf "\n"
+}
+
 tolower() {
   echo "$1" | tr '[:upper:]' '[:lower:]'
 }
@@ -3225,10 +3248,7 @@ select_with_fzf() {
           kitty +kitten themes
           ;;
         "Term"* | "term"* | "info" | "i")
-          printf "\nwindow_size: "
-          kitty +kitten icat --print-window-size
-          printf "\n"
-          kitty +kitten query_terminal
+          show_term_info
           prompt_continue
           ;;
         "Tran"* | "tran"* | "t")
@@ -3472,10 +3492,7 @@ show_menu() {
         break
         ;;
       "Term"*,* | *,"Term"* | "term"*,* | *,"term"* | "info",* | *,"info" | "I",* | *,"I")
-        printf "\nwindow_size: "
-        kitty +kitten icat --print-window-size
-        printf "\n"
-        kitty +kitten query_terminal
+        show_term_info
         prompt_continue
         break
         ;;
@@ -3970,10 +3987,7 @@ while [[ $1 ]]; do
       setopcty="${OPACITY}"
       ;;
     term*|--term*|info*|--info*)
-      printf "\nwindow_size: "
-      kitty +kitten icat --print-window-size
-      printf "\n"
-      kitty +kitten query_terminal
+      show_term_info
       shift
       ;;
     theme*|--theme*)
