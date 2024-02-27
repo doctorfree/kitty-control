@@ -27,13 +27,29 @@ Control some aspects of the Kitty terminal emulator from the command line
 
 `Kitty Control` is a command line tool to control some aspects of the `kitty`
 terminal emulator. For example, with the alias `kc` for `kitty-control`, switch
-`kitty` configurations depending on which monitor is being used (`kc load tv` or
-`kc load laptop`), increase or decrease the font pointsize (`kc font +4` or
-`kc font -2`). Many other aspects of `kitty` can be controlled using `kitty-control`.
+`kitty` configurations depending on which monitor is being used:
 
-Scripting the `Kitty` remote control facility enables many possibilities. Detect
-the environment and automatically configure `kitty` from the command line or in
-a script.
+```bash
+# A convenience alias can be set in a shell initialization file (e.g. ~/.aliases)
+alias kc='kitty-control'
+# Switch to a Kitty configuration tailored for use on a larger monitor/tv
+kc load tv
+# Switch to a Kitty configuration tailored for use on a smaller monitor/laptop
+kc load laptop
+```
+
+Increase or decrease the font pointsize:
+
+```bash
+# Increase the font pointsize by 4 points
+kc font +4
+# Decrease the font pointsize by 2 points
+kc font -2
+```
+
+Many other aspects of `kitty` can be controlled using `kitty-control`. Scripting
+the `Kitty` remote control facility enables many possibilities. Detect the
+environment and automatically configure `kitty` from the command line or in a script.
 
 ### Background
 
