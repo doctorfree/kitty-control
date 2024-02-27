@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# vim -c 'nnoremap q :q!<CR>' -c 'map $ g_' -c ':silent! %s#\($\n\s*\)\+\%$##' '+$' -
+
+cat - | awk '/^$/ {nlstack=nlstack "\n";next;} {printf "%s",nlstack; nlstack=""; print;}' > /tmp/buff
+vim -c 'term tail -n 200 /tmp/buff' -c ':only' -c 'nnoremap q :q!<CR>' -c 'map $ g_' < /dev/tty
+
+# TODO: create unique file and remove at the end
