@@ -4,7 +4,11 @@
 
 ### ⚡️ Added
 
+- Add window size to terminal info output
+
 ### 🐞 Fixed
+
+- Add `Summary` and `Background` subsections to `Overview` in `README`
 
 ## v1.0.9r4
 

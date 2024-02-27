@@ -23,6 +23,20 @@ Control some aspects of the Kitty terminal emulator from the command line
 
 ## Overview
 
+### Summary
+
+`Kitty Control` is a command line tool to control some aspects of the `kitty`
+terminal emulator. For example, with the alias `kc` for `kitty-control`, switch
+`kitty` configurations depending on which monitor is being used (`kc load tv` or
+`kc load laptop`), increase or decrease the font pointsize (`kc font +4` or
+`kc font -2`). Many other aspects of `kitty` can be controlled using `kitty-control`.
+
+Scripting the `Kitty` remote control facility enables many possibilities. Detect
+the environment and automatically configure `kitty` from the command line or in
+a script.
+
+### Background
+
 The [Kitty terminal emulator](https://sw.kovidgoyal.net/kitty) has a very
 powerful system that allows remote control from the shell prompt, even
 over SSH. You can change colors, fonts, open new windows, tabs, set their

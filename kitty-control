@@ -2041,6 +2041,7 @@ open_doc_menu() {
 
 set_win_array() {
   while read id_title; do
+    entry=
     [ "${id_title}" ] || continue
     echo "${id_title}" | grep ID: >/dev/null && {
       entry="${id_title}"
@@ -2058,6 +2059,7 @@ set_win_array() {
 
 set_tab_array() {
   while read id_title; do
+    entry=
     [ "${id_title}" ] || continue
     echo "${id_title}" | grep ID: >/dev/null && {
       entry="${id_title}"
@@ -2553,8 +2555,9 @@ menu_diff_folder() {
 menu_window_size() {
   wnopts=( "${winsizes[@]}" )
   wnopts+=( "main menu" "quit" )
+  w_size=$(kitty +kitten icat --print-window-size)
   if [ "${use_fzf}" ]; then
-    heading "Window Size" "Window Size"
+    heading "Window Size (${w_size})" "Window Size"
     choice=$(printf "%s\n" "${wnopts[@]}" | fzf --prompt="😺 Select Window Size Adjustment ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
     [ "${choice}" ] && {
       case "${choice}" in
@@ -3222,6 +3225,8 @@ select_with_fzf() {
           kitty +kitten themes
           ;;
         "Term"* | "term"* | "info" | "i")
+          printf "\nwindow_size: "
+          kitty +kitten icat --print-window-size
           printf "\n"
           kitty +kitten query_terminal
           prompt_continue
@@ -3467,6 +3472,8 @@ show_menu() {
         break
         ;;
       "Term"*,* | *,"Term"* | "term"*,* | *,"term"* | "info",* | *,"info" | "I",* | *,"I")
+        printf "\nwindow_size: "
+        kitty +kitten icat --print-window-size
         printf "\n"
         kitty +kitten query_terminal
         prompt_continue
@@ -3962,7 +3969,10 @@ while [[ $1 ]]; do
       fi
       setopcty="${OPACITY}"
       ;;
-    term*|--term*)
+    term*|--term*|info*|--info*)
+      printf "\nwindow_size: "
+      kitty +kitten icat --print-window-size
+      printf "\n"
       kitty +kitten query_terminal
       shift
       ;;
