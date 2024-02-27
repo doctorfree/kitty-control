@@ -272,7 +272,7 @@ pathadd() {
 }
 
 prompt_continue() {
-  printf "\nPress <Enter> to continue ... "
+  printf "\nPress ${BOLD}<Enter>${NORM} to continue ... "
   read -r yn
 }
 
@@ -356,8 +356,8 @@ show_term_info() {
       value=$(echo "$i" | awk -F ':' '{ print $2 }')
       printf "\n${BOLD}%s:${NORM}%s" "${label}" "${value}"
     done
+    printf "\n"
   fi
-  printf "\n"
 }
 
 tolower() {
@@ -3988,6 +3988,7 @@ while [[ $1 ]]; do
       ;;
     term*|--term*|info*|--info*)
       show_term_info
+      printf "\n"
       shift
       ;;
     theme*|--theme*)
