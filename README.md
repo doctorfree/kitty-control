@@ -153,6 +153,9 @@ The `kitty-control` command can be used to:
 - Set the `kitty` window layout using the `kitty` **goto-layout** `kitten`
 - Browse the `kitty` documentation using the `kitty` **action** `kitten`
 
+The `kitty-control` installation also installs the `nfetch` command. This is a simple
+wrapper script for `neofetch` to invoke `neofetch` with the `kitty` image display protocol.
+
 ### Tools
 
 The `kitty-control` menu system uses `fzf`, `jq`, `ranger`, `neofetch`,
