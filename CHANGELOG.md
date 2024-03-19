@@ -4,9 +4,18 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.1.0r1
+
+### ⚡️ Added
+
 - Add `apple-logo.png` for use with `neofetch` on `macOS`
+- Add `nfetch` convenience script to invoke `neofetch` with `kitty` image display
 
 ### 🐞 Fixed
+
+- Add `-c` to `set-colors` options to set configured colors for new windows
 
 ## v1.0.9r5
 
