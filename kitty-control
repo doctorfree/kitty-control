@@ -8,8 +8,8 @@
 #
 # Written February, 2024 by Ronald Joe Record <ronaldrecord@gmail.com>
 #
-VERSION=1.0.9
-RELEASE=5
+VERSION=1.1.0
+RELEASE=1
 # The Kitty configuration directory
 CONFDIR="${HOME}/.config/kitty"
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
@@ -1235,12 +1235,12 @@ set-background() {
       prompt_continue
     }
   else
-    kitty @ ${SOCKET} set-colors ${OPTS} background="$1" tab_bar_background="$1"
+    kitty @ ${SOCKET} set-colors ${OPTS} -c background="$1" tab_bar_background="$1"
     [ $? -eq 0 ] || {
-      exit_warning "kitty @ ${SOCKET} set-colors ${OPTS} background=$1 tab_bar_background=$1"
+      exit_warning "kitty @ ${SOCKET} set-colors ${OPTS} -c background=$1 tab_bar_background=$1"
     }
     [ "${debug}" ] && {
-      printf "\nDEBUG: kitty @ ${SOCKET} set-colors ${OPTS} background=$1 tab_bar_background=$1\n"
+      printf "\nDEBUG: kitty @ ${SOCKET} set-colors ${OPTS} -c background=$1 tab_bar_background=$1\n"
       prompt_continue
     }
   fi
@@ -1257,12 +1257,12 @@ set-foreground() {
       prompt_continue
     }
   else
-    kitty @ ${SOCKET} set-colors ${OPTS} foreground="$1"
+    kitty @ ${SOCKET} set-colors ${OPTS} -c foreground="$1"
     [ $? -eq 0 ] || {
-      exit_warning "kitty @ ${SOCKET} set-colors ${OPTS} foreground=$1"
+      exit_warning "kitty @ ${SOCKET} set-colors ${OPTS} -c foreground=$1"
     }
     [ "${debug}" ] && {
-      printf "\nDEBUG: kitty @ ${SOCKET} set-colors ${OPTS} foreground=$1\n"
+      printf "\nDEBUG: kitty @ ${SOCKET} set-colors ${OPTS} -c foreground=$1\n"
       prompt_continue
     }
   fi

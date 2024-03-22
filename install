@@ -340,6 +340,20 @@ fi
 [ -d ${HOME}/.local/bin ] || mkdir -p ${HOME}/.local/bin
 cp "${SCRIPT_PATH}"/kitty-control ${HOME}/.local/bin/kitty-control
 chmod 755 ${HOME}/.local/bin/kitty-control
+# Fixup and copy nfetch script
+[ -f "${SCRIPT_PATH}"/neofetch/nfetch ] && {
+  if [ "${darwin}" ]; then
+    icon_size="512"
+    icon_name="apple-logo"
+  else
+    icon_size="256"
+    icon_name="kitty"
+  fi
+  cat "${SCRIPT_PATH}"/neofetch/nfetch | \
+    sed -e "s/__SIZE__/${icon_size}/g" \
+        -e "s/__PLATFORM__/${icon_name}/" > ${HOME}/.local/bin/nfetch
+  chmod 755 ${HOME}/.local/bin/nfetch
+}
 
 install_config "${HOME}/.config/kitty"
 

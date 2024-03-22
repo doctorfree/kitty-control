@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+IMG="${HOME}/.local/share/icons/hicolor/__SIZE__x__SIZE__/apps/__PLATFORM__.png"
+
+have_neo=$(type -p neofetch)
+[ "${have_neo}" ] || {
+  printf "\nERROR: neofetch not found in PATH"
+  printf "\nInstall neofetch and rerun this command"
+  printf "\nExiting\n"
+  exit 1
+}
+
+tput clear
+export TERM=xterm-kitty
+
+neofetch --kitty "${IMG}"
