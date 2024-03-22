@@ -6,6 +6,8 @@
 
 ### 🐞 Fixed
 
+- Set `open_url_with` to `default` in all `kitty.conf`
+
 ## v1.1.0r1
 
 ### ⚡️ Added
