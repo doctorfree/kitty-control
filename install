@@ -541,12 +541,15 @@ JB_FONT="NerdFonts/JetBrains Mono Bold Nerd Font Complete.ttf"
 
 # Neofetch configuration
 NEOF_DIR="${HOME}/.config/neofetch"
-[ -f "${NEOF_DIR}"/config.conf ] || {
-  [ -d "${NEOF_DIR}" ] || mkdir -p "${NEOF_DIR}"
-  [ -f "${SCRIPT_PATH}"/neofetch/config.conf ] && {
-    cp "${SCRIPT_PATH}"/neofetch/config.conf "${NEOF_DIR}"/config.conf
+[ -d "${NEOF_DIR}" ] || mkdir -p "${NEOF_DIR}"
+for ncfg in config config-noip
+do
+  [ -f "${NEOF_DIR}"/${ncfg}.conf ] || {
+    [ -f "${SCRIPT_PATH}"/neofetch/${ncfg}.conf ] && {
+      cp "${SCRIPT_PATH}"/neofetch/${ncfg}.conf "${NEOF_DIR}"/${ncfg}.conf
+    }
   }
-}
+done
 
 printf "\nInstallation of kitty-control complete ✨ 🌟 ✨\n"
 printf "\nSee ${REPO_URL}#readme\n\n"
