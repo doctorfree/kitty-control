@@ -15,28 +15,29 @@
 # 	-u displays this usage messge and exits
 
 IMG="${HOME}/.local/share/icons/hicolor/__SIZE__x__SIZE__/apps/__PLATFORM__.png"
+FETCHARGS=
+
 me=$(basename "$0")
 have_fastfetch=$(type -p fastfetch)
 have_neofetch=$(type -p neofetch)
 if [ "${me}" == "nfetch" ]; then
-  FETCH="neofetch"
-  FETCHARGS="--kitty ${IMG}"
-  [ "${have_neofetch}" ] || {
+  if [ "${have_neofetch}" ]; then
+    FETCH="neofetch"
+    [ -f "${IMG}" ] && FETCHARGS="--kitty ${IMG}"
+  else
     if [ "${have_fastfetch}" ]; then
       FETCH="fastfetch"
-      FETCHARGS=
     else
       printf "\nCannot locate neofetch. Exiting.\n\n"
       exit 1
     fi
-  }
+  fi
 else
   FETCH="fastfetch"
-  FETCHARGS=
   [ "${have_fastfetch}" ] || {
     if [ "${have_neofetch}" ]; then
       FETCH="neofetch"
-      FETCHARGS="--kitty ${IMG}"
+      [ -f "${IMG}" ] && FETCHARGS="--kitty ${IMG}"
     else
       printf "\nCannot locate fastfetch. Exiting.\n\n"
       exit 1
@@ -47,8 +48,9 @@ fi
 CONFDIR="${XDG_CONFIG_HOME:-${HOME}/.config}/${FETCH}"
 
 usage() {
-  printf "\nUsage: ${me} [-c config] [-r] [-u]"
+  printf "\nUsage: ${me} [-a] [-c config] [-r] [-u]"
   printf "\nWhere:"
+  printf "\n\t-a indicates use ascii logo with neofetch"
   printf "\n\t-c 'config' specifies a configuration file to use"
   printf "\n\t   'config' can be the full path or name of a configuration"
   printf "\n\t-r indicates select configuration file randomly"
@@ -72,13 +74,16 @@ get_rand() {
 
 USE_RANDOM=
 USE_CONFIG=
-while getopts ":c:ru" flag; do
+while getopts ":ac:ru" flag; do
   case $flag in
-    r)
-      USE_RANDOM=1
+    a)
+      FETCHARGS=
       ;;
     c)
       USE_CONFIG="$OPTARG"
+      ;;
+    r)
+      USE_RANDOM=1
       ;;
     u)
       usage

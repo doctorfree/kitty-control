@@ -6,6 +6,17 @@
 
 ### 🐞 Fixed
 
+## v1.1.0r3
+
+### ⚡️ Added
+
+- Add `ubuntu-jammy.png` logo to icons
+- Add `-a` option to `nfetch` to use ascii logo
+
+### 🐞 Fixed
+
+- Improved logo selection for `neofetch` system info display
+
 ## v1.1.0r2
 
 ### ⚡️ Added

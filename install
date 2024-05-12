@@ -98,7 +98,8 @@ install_kitty() {
       }
     }
     # Update the paths to the kitty and its icon in the kitty.desktop file(s)
-    for desktop in "${HOME}"/.local/share/applications/kitty*.desktop; do
+    for desktop in "${HOME}"/.local/share/applications/kitty*.desktop
+    do
       [ "${desktop}" == "${HOME}/.local/share/applications/kitty*.desktop" ] && continue
       [ -f ${LOCAL}/share/icons/hicolor/256x256/apps/kitty.png ] && {
         sed -i "s|Icon=kitty|Icon=${LOCAL}/share/icons/hicolor/256x256/apps/kitty.png|g" "${desktop}"
@@ -298,8 +299,16 @@ have_git=$(type -p git)
 
 printf "\nInstalling kitty-control\n"
 darwin=
+ubuntu=
 platform=$(uname -s)
-[ "${platform}" == "Darwin" ] && darwin=1
+if [ "${platform}" == "Darwin" ]; then
+  darwin=1
+else
+  [ -f /etc/os-release ] && {
+    . /etc/os-release
+    [ "${ID}" == "ubuntu" ] && ubuntu=1
+  }
+fi
 
 have_curl=$(type -p curl)
 have_fzf=$(type -p fzf)
@@ -342,20 +351,23 @@ cp "${SCRIPT_PATH}"/kitty-control ${HOME}/.local/bin/kitty-control
 chmod 755 ${HOME}/.local/bin/kitty-control
 # Fixup and copy nfetch script
 [ -f "${SCRIPT_PATH}"/neofetch/nfetch ] && {
+  icon_size="512"
   if [ "${darwin}" ]; then
-    icon_size="512"
     icon_name="apple-logo"
   else
-    icon_size="256"
-    icon_name="kitty"
+    if [ "${ubuntu}" ]; then
+      icon_name="ubuntu-jammy"
+    else
+      icon_size="256"
+      icon_name="kitty"
+    fi
   fi
   cat "${SCRIPT_PATH}"/neofetch/nfetch | \
     sed -e "s/__SIZE__/${icon_size}/g" \
         -e "s/__PLATFORM__/${icon_name}/" > ${HOME}/.local/bin/nfetch
   chmod 755 ${HOME}/.local/bin/nfetch
-  [ -f ${HOME}/.local/bin/ffetch ] || {
-    ln -s ${HOME}/.local/bin/nfetch ${HOME}/.local/bin/ffetch
-  }
+  rm -f ${HOME}/.local/bin/ffetch
+  ln -s ${HOME}/.local/bin/nfetch ${HOME}/.local/bin/ffetch
 }
 
 install_config "${HOME}/.config/kitty"
@@ -525,7 +537,8 @@ ICON_DIR="${HOME}/.local/share/icons/hicolor/512x512/apps"
     cp "${SCRIPT_PATH}"/icons/kitty-512.png "${ICON_DIR}"/kitty.png
   }
 }
-for icon in apple-logo.png tux.png; do
+for icon in apple-logo.png tux.png ubuntu-jammy.png
+do
   [ -f "${SCRIPT_PATH}"/icons/${icon} ] && {
     [ -f "${ICON_DIR}"/${icon} ] || {
       cp "${SCRIPT_PATH}"/icons/${icon} "${ICON_DIR}"/${icon}
