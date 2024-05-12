@@ -169,7 +169,11 @@ fixup_conf_shell() {
     cp /tmp/kc$$ ${SFILE}
     rm -f /tmp/kc$$
   fi
-} install_kconf() { [ -d ${KCONF} ] || mkdir -p ${KCONF} for py in "${SCRIPT_PATH}"/config/*.py
+}
+
+install_kconf() {
+  [ -d ${KCONF} ] || mkdir -p ${KCONF}
+  for py in "${SCRIPT_PATH}"/config/*.py
   do
     [ "${py}" == "${SCRIPT_PATH}/config/*.py" ] && continue
     cp "${py}" ${KCONF}
