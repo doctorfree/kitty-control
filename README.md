@@ -157,6 +157,30 @@ The `kitty-control` installation also installs the `nfetch` command. This is a
 wrapper script for `neofetch` and `fastfetch` to invoke `neofetch` or `fastfetch`
 with the `kitty` image display protocol and one of several configurations.
 
+Usage message for `nfetch`:
+
+```
+Usage: nfetch [-a] [-c config] [-i /path/to/logo] [-r] [-u]
+Where:
+	-a indicates use ascii logo with neofetch
+	-c 'config' specifies a configuration file to use
+	   'config' can be the full path or name of a configuration
+	-i '/path/to/logo' specifies an image for neofetch to use
+	-r indicates select configuration file randomly
+	-u displays this usage messge and exits
+```
+
+When invoked as `ffetch` it serves as a front-end to `fastfetch` with usage:
+
+```
+Usage: ffetch [-c config] [-r] [-u]
+Where:
+	-c 'config' specifies a configuration file to use
+	   'config' can be the full path or name of a configuration
+	-r indicates select configuration file randomly
+	-u displays this usage messge and exits
+```
+
 ### Tools
 
 The `kitty-control` menu system uses `fzf`, `jq`, `ranger`,
