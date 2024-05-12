@@ -9,7 +9,7 @@
 # Written February, 2024 by Ronald Joe Record <ronaldrecord@gmail.com>
 #
 VERSION=1.1.1
-RELEASE=1
+RELEASE=2
 # The Kitty configuration directory
 CONFDIR="${HOME}/.config/kitty"
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
@@ -452,19 +452,33 @@ show_neofetch() {
   if [ "${have_nfetch}" ]; then
     nfetch
   else
-    IMG="${HOME}/.local/share/icons/hicolor/512x512/apps/kitty.png"
+    IMG="${HOME}/.local/share/icons/hicolor/256x256/apps/kitty.png"
+    icon_name=
+    icon_size="512"
     if [ "${darwin}" ]; then
-      AMG="${HOME}/.local/share/icons/hicolor/512x512/apps/apple-logo.png"
-      [ -f "${AMG}" ] && IMG="${AMG}"
+      icon_name="apple-logo"
     else
       [ -f /etc/os-release ] && {
         . /etc/os-release
-        [ "${ID}" == "ubuntu" ] && {
-          AMG="${HOME}/.local/share/icons/hicolor/512x512/apps/ubuntu-jammy.png"
-          [ -f "${AMG}" ] && IMG="${AMG}"
-        }
+        [ "${ID}" == "fedora" ] && icon_name="fedora"
+        if [ "${ID}" == "ubuntu" ]; then
+          icon_name="ubuntu-jammy"
+        else
+          [ "${ID}" == "debian" ] || [ "${ID_LIKE}" == "debian" ] && icon_name="debian"
+        fi
+        [ "${ID}" == "arch" ] || [ "${ID_LIKE}" == "arch" ] && icon_name="arch"
+        [ "${ID}" == "alpine" ] && icon_name="alpine"
+        [ "${ID}" == "centos" ] && icon_name="centos"
+        [ "${ID}" == "opensuse" ] && icon_name="opensuse"
+        [ "${ID}" == "void" ] && icon_name="void"
       }
     fi
+    [ "${icon_name}" ] || {
+      icon_size="256"
+      icon_name="kitty"
+    }
+    AMG="${HOME}/.local/share/icons/hicolor/${icon_size}x${icon_size}/apps/${icon_name}.png"
+    [ -f "${AMG}" ] && IMG="${AMG}"
     clear_screen
     if [ -f "${IMG}" ]; then
       neofetch --kitty auto --source "${IMG}"

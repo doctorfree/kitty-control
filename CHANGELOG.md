@@ -6,6 +6,14 @@
 
 ### 🐞 Fixed
 
+## v1.1.1r2
+
+### ⚡️ Added
+
+- Add `neofetch` logo images for multiple Linux distributions
+
+### 🐞 Fixed
+
 ## v1.1.1r1
 
 ### ⚡️ Added
