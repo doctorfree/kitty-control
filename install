@@ -9,6 +9,10 @@ KCDIR="${KCONF}/kitty-control"
 FONT_URL="https://raw.githubusercontent.com/wiki/doctorfree/workspaces-images"
 export KCKITTEN="kc_read_config.py"
 
+# Use './install --force' to overwrite any existing neofetch/fastfetch configs
+force=
+[ "$1" == "--force" ] && force=1
+
 install_kitty() {
   if [ "${darwin}" ]; then
     KTAPP="/Applications/kitty.app"
@@ -165,11 +169,7 @@ fixup_conf_shell() {
     cp /tmp/kc$$ ${SFILE}
     rm -f /tmp/kc$$
   fi
-}
-
-install_kconf() {
-  [ -d ${KCONF} ] || mkdir -p ${KCONF}
-  for py in "${SCRIPT_PATH}"/config/*.py
+} install_kconf() { [ -d ${KCONF} ] || mkdir -p ${KCONF} for py in "${SCRIPT_PATH}"/config/*.py
   do
     [ "${py}" == "${SCRIPT_PATH}/config/*.py" ] && continue
     cp "${py}" ${KCONF}
@@ -548,9 +548,7 @@ for icon in alpine.png apple-logo.png arch.png centos.png debian.png \
             fedora.png opensuse.png rocky.png tux.png ubuntu-jammy.png void.png
 do
   [ -f "${SCRIPT_PATH}"/icons/${icon} ] && {
-    [ -f "${ICON_DIR}"/${icon} ] || {
-      cp "${SCRIPT_PATH}"/icons/${icon} "${ICON_DIR}"/${icon}
-    }
+    cp "${SCRIPT_PATH}"/icons/${icon} "${ICON_DIR}"/${icon}
   }
 done
 
@@ -570,10 +568,15 @@ for cfg in ${SCRIPT_PATH}/fastfetch/config*
 do
   [ "${cfg}" == "${SCRIPT_PATH}/fastfetch/config*" ] && continue
   ncfg=$(basename "${cfg}")
-  [ -f "${FAST_DIR}"/${ncfg} ] || {
+  if [ -f "${FAST_DIR}"/${ncfg} ]; then
+    [ "${force}" ] && {
+      cat "${SCRIPT_PATH}"/fastfetch/${ncfg} | \
+        sed -e "s/__PLATFORM__/${icon_name}/" > "${FAST_DIR}"/${ncfg}
+    }
+  else
     cat "${SCRIPT_PATH}"/fastfetch/${ncfg} | \
       sed -e "s/__PLATFORM__/${icon_name}/" > "${FAST_DIR}"/${ncfg}
-  }
+  fi
 done
 # Neofetch configuration
 NEOF_DIR="${HOME}/.config/neofetch"
@@ -582,9 +585,13 @@ for cfg in ${SCRIPT_PATH}/neofetch/config*
 do
   [ "${cfg}" == "${SCRIPT_PATH}/neofetch/config*" ] && continue
   ncfg=$(basename "${cfg}")
-  [ -f "${NEOF_DIR}"/${ncfg} ] || {
+  if [ -f "${NEOF_DIR}"/${ncfg} ]; then
+    [ "${force}" ] && {
+      cp "${SCRIPT_PATH}"/neofetch/${ncfg} "${NEOF_DIR}"/${ncfg}
+    }
+  else
     cp "${SCRIPT_PATH}"/neofetch/${ncfg} "${NEOF_DIR}"/${ncfg}
-  }
+  fi
 done
 
 printf "\nInstallation of kitty-control complete ✨ 🌟 ✨\n"
