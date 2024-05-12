@@ -1,0 +1,123 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "padding": {
+      "left": 4,
+      "top": 4
+    },
+    "type": "kitty",
+    "source": "~/.local/share/icons/hicolor/384x384/apps/apple-logo.png"
+  },
+  "display": {
+    "separator": "",
+    "keyWidth": 14
+  },
+  "modules": [
+    {
+      "key": "╭───────────╮",
+      "type": "custom"
+    },
+    {
+      // draw borders first to make colors of left and right border consistant
+      "key": "│           │\u001b[11D\u001b[31m user",
+      "type": "title",
+      "format": "{1}"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[32m󰌢 host",
+      "type": "host"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[33m distro",
+      "type": "os"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[34m󰏖 package",
+      "type": "packages",
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[35m desktop",
+      "type": "de"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[36m window",
+      "type": "wm"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[31m term",
+      "type": "terminal"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[32m font",
+      "type": "terminalfont"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[33m shell",
+      "type": "shell"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[34m󰍛 cpu",
+      "type": "cpu"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[35m󰉉 disk",
+      "type": "disk",
+      "folders": "/"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[36m󰑭 memory",
+      "type": "memory"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[31m󰩟 network",
+      "type": "localip",
+      "format": "{1} ({4})"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[32m󰩠 public",
+      "type": "publicip",
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[33m wifi",
+      "type": "wifi",
+      "format": "{4}",
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[34m󰍹 display",
+      "type": "display"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[35m󰅐 uptime",
+      "type": "uptime"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[36m battery",
+      "type": "battery"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[31m sound",
+      "type": "sound",
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[32m󰥠 player",
+      "type": "player"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[33m󰝚 media",
+      "type": "media",
+    },
+    {
+      "key": "├───────────┤",
+      "type": "custom"
+    },
+    {
+      "key": "│           │\u001b[11D\u001b[m󰍛 colors",
+      "type": "colors",
+      "symbol": "circle"
+    },
+    {
+      "key": "╰───────────╯",
+      "type": "custom"
+    }
+  ]
+}

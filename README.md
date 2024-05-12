@@ -153,18 +153,20 @@ The `kitty-control` command can be used to:
 - Set the `kitty` window layout using the `kitty` **goto-layout** `kitten`
 - Browse the `kitty` documentation using the `kitty` **action** `kitten`
 
-The `kitty-control` installation also installs the `nfetch` command. This is a simple
-wrapper script for `neofetch` to invoke `neofetch` with the `kitty` image display protocol.
+The `kitty-control` installation also installs the `nfetch` command. This is a
+wrapper script for `neofetch` and `fastfetch` to invoke `neofetch` or `fastfetch`
+with the `kitty` image display protocol and one of several configurations.
 
 ### Tools
 
-The `kitty-control` menu system uses `fzf`, `jq`, `ranger`, `neofetch`,
-`lolcat`, and `figlet` if installed.
+The `kitty-control` menu system uses `fzf`, `jq`, `ranger`,
+`fastfetch/neofetch`, `lolcat`, and `figlet` if installed.
 
 The [Ranger](https://github.com/ranger/ranger) file manager,
 [Fzf](https://github.com/junegunn/fzf) fuzzy finder,
 [jq](https://jqlang.github.io/jq) JSON processor,
-[Neofetch](https://github.com/dylanaraps/neofetch) system info,
+[Fastfetch](https://github.com/fastfetch-cli/fastfetch) system info,
+[Neofetch](https://github.com/LorenDB/neofetch) system info,
 [Lolcat](https://github.com/busyloop/lolcat) rainbow coloring tool,
 and [FIGlet](http://www.figlet.org) font text display programs are *NOT*
 required by `kitty-control`. However, some additional features are enabled

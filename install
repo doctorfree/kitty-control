@@ -353,6 +353,9 @@ chmod 755 ${HOME}/.local/bin/kitty-control
     sed -e "s/__SIZE__/${icon_size}/g" \
         -e "s/__PLATFORM__/${icon_name}/" > ${HOME}/.local/bin/nfetch
   chmod 755 ${HOME}/.local/bin/nfetch
+  [ -f ${HOME}/.local/bin/ffetch ] || {
+    ln -s ${HOME}/.local/bin/nfetch ${HOME}/.local/bin/ffetch
+  }
 }
 
 install_config "${HOME}/.config/kitty"
@@ -539,15 +542,26 @@ fi
 JB_FONT="NerdFonts/JetBrains Mono Bold Nerd Font Complete.ttf"
 [ -f "${usr_font_dir}/${JB_FONT}" ] || install_fonts
 
+# Fastfetch configuration
+FAST_DIR="${HOME}/.config/fastfetch"
+[ -d "${FAST_DIR}" ] || mkdir -p "${FAST_DIR}"
+for cfg in ${SCRIPT_PATH}/fastfetch/config*
+do
+  [ "${cfg}" == "${SCRIPT_PATH}/fastfetch/config*" ] && continue
+  ncfg=$(basename "${cfg}")
+  [ -f "${FAST_DIR}"/${ncfg} ] || {
+    cp "${SCRIPT_PATH}"/fastfetch/${ncfg} "${FAST_DIR}"/${ncfg}
+  }
+done
 # Neofetch configuration
 NEOF_DIR="${HOME}/.config/neofetch"
 [ -d "${NEOF_DIR}" ] || mkdir -p "${NEOF_DIR}"
-for ncfg in config config-noip
+for cfg in ${SCRIPT_PATH}/neofetch/config*
 do
-  [ -f "${NEOF_DIR}"/${ncfg}.conf ] || {
-    [ -f "${SCRIPT_PATH}"/neofetch/${ncfg}.conf ] && {
-      cp "${SCRIPT_PATH}"/neofetch/${ncfg}.conf "${NEOF_DIR}"/${ncfg}.conf
-    }
+  [ "${cfg}" == "${SCRIPT_PATH}/neofetch/config*" ] && continue
+  ncfg=$(basename "${cfg}")
+  [ -f "${NEOF_DIR}"/${ncfg} ] || {
+    cp "${SCRIPT_PATH}"/neofetch/${ncfg} "${NEOF_DIR}"/${ncfg}
   }
 done
 

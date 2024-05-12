@@ -9,7 +9,7 @@
 # Written February, 2024 by Ronald Joe Record <ronaldrecord@gmail.com>
 #
 VERSION=1.1.0
-RELEASE=1
+RELEASE=2
 # The Kitty configuration directory
 CONFDIR="${HOME}/.config/kitty"
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
@@ -25,7 +25,7 @@ OPACITY="0.8"
 # Leave blank if no listen socket configured
 # Can be overridden with -s /path/to/socket
 if [ "${KITTY_LISTEN_ON}" ]; then
-    SOCKET="--to ${KITTY_LISTEN_ON}"
+  SOCKET="--to ${KITTY_LISTEN_ON}"
 else
   SOCKET=
 fi
@@ -59,8 +59,8 @@ export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
   --marker=">" --pointer="◆" --separator="─" --scrollbar="│"
   --layout="reverse"'
 # Use tput to get the bold and normal text sequence
-BOLD=$(tput bold 2>/dev/null)
-NORM=$(tput sgr0 2>/dev/null)
+BOLD=$(tput bold 2> /dev/null)
+NORM=$(tput sgr0 2> /dev/null)
 
 # Colors
 primary_colors=("reset" "custom" "black" "white" "red" "green" "yellow" "blue" "magenta" "cyan" "gray" "maroon" "navy" "purple")
@@ -81,7 +81,7 @@ brief_usage() {
   printf "\n                     [title <title>] [transparent [opacity]] [unicode] [upgrade]${NORM}"
   [ "$1" == "noexit" ] || {
     printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
-      printf " displays an interactive menu system"
+    printf " displays an interactive menu system"
     printf "\nFor a brief usage message run '${BOLD}kitty-control -u${NORM}'"
     printf "\nFor a full usage message run '${BOLD}kitty-control -h${NORM}'"
     printf "\nTo display several examples run '${BOLD}kitty-control -e${NORM}'\n\n"
@@ -151,7 +151,7 @@ show_examples() {
   printf "\nTo restore the original Kitty configuration:"
   printf "\n\t${BOLD}kitty-control load default${NORM}"
   printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
-    printf " displays an interactive menu system\n"
+  printf " displays an interactive menu system\n"
   [ "$1" == "noexit" ] || exit 1
 }
 
@@ -163,7 +163,7 @@ usage() {
   printf "\n    '${BOLD}dark${NORM}' Sets the Kitty background opacity to 1.0 (fully opaque)"
   printf "\n           Can use 'dark' or 'opaque'"
   printf "\n    '${BOLD}diff [opts] <file1|dir1> <file2|dir2>${NORM}'"
-    printf " Displays differences using the 'diff' kitten"
+  printf " Displays differences using the 'diff' kitten"
   printf "\n           Enclose [opts] and <file1/dir1> in quotes if [opts] are provided"
   printf "\n           See https://sw.kovidgoyal.net/kitty/kittens/diff/#options"
   printf "\n    '${BOLD}font num${NORM}' Sets the font pointsize to 'num'"
@@ -188,7 +188,7 @@ usage() {
   printf "\n        Sets the Kitty window layout to '<name>' where '<name>' can be one of:"
   printf "\n          Previous Fat Grid Horizontal Splits Stack Tall Vertical"
   printf "\n    '${BOLD}load [subdir|file]${NORM}'"
-    printf " Reloads the Kitty configuration in ~/.config/kitty/kitty.conf"
+  printf " Reloads the Kitty configuration in ~/.config/kitty/kitty.conf"
   printf "\n           Can use 'load' or 'reload'"
   printf "\n           Specify a second argument to load ~/.config/kitty/<subdir>/kitty.conf"
   printf "\n           e.g. 'kitty-control load tv' would load ~/.config/kitty/tv/kitty.conf"
@@ -205,7 +205,7 @@ usage() {
   printf "\n           The 'h' argument specifies the window height adjustment in cells"
   printf "\n           'kitty-control size 4 3' increases the window width by 4 cells and height by 3 cells"
   printf "\n    '${BOLD}term${NORM}'"
-    printf " Displays information about the terminal using the query_terminal kitten"
+  printf " Displays information about the terminal using the query_terminal kitten"
   printf "\n    '${BOLD}theme${NORM}' Displays the interactive theme selection kitten"
   printf "\n    '${BOLD}title <tab title>${NORM}' Sets the Kitty tab title to \"tab title\""
   printf "\n          Quote tab titles which contain spaces, e.g. \"This Is My Tab Title\""
@@ -218,16 +218,16 @@ usage() {
   printf "\n    '${BOLD}unicode${NORM}' Displays the Unicode input kitten"
   printf "\n    '${BOLD}upgrade${NORM}' Upgrades Kitty, Fzf, and kitty-control to the latest version"
   printf "\n    '${BOLD}-a${NORM}'"
-    printf " Indicates modify all windows rather than just the currently active OS window"
+  printf " Indicates modify all windows rather than just the currently active OS window"
   printf "\n    '${BOLD}-c command${NORM}'"
-    printf " specifies a Kitty command to run (enclose command and arguments in quotes)"
+  printf " specifies a Kitty command to run (enclose command and arguments in quotes)"
   printf "\n        Can be used to run arbitrary commands, e.g. 'kitty-control -c get-colors'"
   printf "\n    '${BOLD}-d${NORM}' Debug mode - display commands when executed"
   printf "\n    '${BOLD}-e${NORM}' Displays several example invocations and exits"
   printf "\n    '${BOLD}-f${NORM}' Indicates toggle fullscreen"
   printf "\n    '${BOLD}-h${NORM}' Displays a full usage message and exits"
   printf "\n    '${BOLD}-i /path/to/image${NORM}'"
-    printf " sets the background image for the specified Kitty windows"
+  printf " sets the background image for the specified Kitty windows"
   printf "\n        If /path/to/image is 'none' then any existing image will be removed"
   printf "\n    '${BOLD}-m <match>${NORM}' Specifies the window to match"
   printf "\n    '${BOLD}-t <match>${NORM}' Specifies the tab to match"
@@ -237,17 +237,17 @@ usage() {
   printf "\n        '${BOLD}doc${NORM}' can be one of:"
   printf "\n            'conf' 'faq' 'remote' 'diff' 'icat' 'layout' 'ssh' 'themes' 'unicode' or 'man'"
   printf "\n    '${BOLD}-s /path/to/socket${NORM}'"
-    printf " Specifies the socket Kitty is listening on if enabled"
+  printf " Specifies the socket Kitty is listening on if enabled"
   printf "\n        If /path/to/socket is '--help' some help on configuring a Kitty socket is provided"
   printf "\n        '-s /path/...' can be used to send commands to Kitty from another terminal"
   printf "\n    '${BOLD}-u${NORM}' Displays a brief usage message and exits"
   printf "\n    '${BOLD}-v${NORM}' Displays the kitty-control and kitty versions then exits"
   printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
-    printf " displays an interactive menu system"
+  printf " displays an interactive menu system"
   printf "\nAdjusting the background opacity or font size requires the original kitty.conf"
   printf "\nthat was used for this instance of Kitty to have enabled the following:"
   printf "\n    '${BOLD}dynamic_background_opacity yes${NORM}'"
-    printf " and '${BOLD}allow_remote_control yes${NORM}'"
+  printf " and '${BOLD}allow_remote_control yes${NORM}'"
   printf "\nSee https://sw.kovidgoyal.net/kitty/remote-control/#control-kitty-from-scripts\n"
   [ "$1" == "examples" ] && show_examples
   [ "$1" == "noexit" ] || exit 1
@@ -280,7 +280,7 @@ prompt_more() {
   printf "\nPress <Enter> to view the full list of color names, 'q' to return ... "
   read -r yn
   case "${yn}" in
-    q*|Q*)
+    q* | Q*)
       return
       ;;
     *)
@@ -342,16 +342,14 @@ show_term_info() {
   if [ "${have_rich}" ]; then
     printf "\n"
     rich "[cyan]window_size:[/] [yellow]${w_size}[/]" -p
-    kitty +kitten query_terminal | while read i
-    do
+    kitty +kitten query_terminal | while read i; do
       label=$(echo "$i" | awk -F ':' '{ print $1 }')
       value=$(echo "$i" | awk -F ':' '{ print $2 }')
       rich "[cyan]${label}:[/] [yellow]${value}[/]" -p
     done
   else
     printf "\n${BOLD}window_size:${NORM} %s" "${w_size}"
-    kitty +kitten query_terminal | while read i
-    do
+    kitty +kitten query_terminal | while read i; do
       label=$(echo "$i" | awk -F ':' '{ print $1 }')
       value=$(echo "$i" | awk -F ':' '{ print $2 }')
       printf "\n${BOLD}%s:${NORM}%s" "${label}" "${value}"
@@ -623,9 +621,9 @@ install_figlet() {
   if [ "${have_make}" ]; then
     printf "\nInstalling figlet\n"
     HERE=$(pwd)
-    git clone https://github.com/cmatsuoka/figlet /tmp/figlet$$ >/dev/null 2>&1
+    git clone https://github.com/cmatsuoka/figlet /tmp/figlet$$ > /dev/null 2>&1
     cd /tmp/figlet$$
-    ${SUDO} make install >/dev/null 2>&1
+    ${SUDO} make install > /dev/null 2>&1
     cd "${HERE}"
     ${SUDO} rm -rf /tmp/figlet$$
     have_figlet=$(type -p figlet)
@@ -644,9 +642,9 @@ install_fzf() {
   }
   [ -d ${HOME}/.fzf ] && mv ${HOME}/.fzf ${HOME}/.fzf$$
   git clone --depth 1 https://github.com/junegunn/fzf.git \
-    ${HOME}/.fzf >/dev/null 2>&1
+    ${HOME}/.fzf > /dev/null 2>&1
   [ -f ${HOME}/.fzf/install ] && chmod 755 ${HOME}/.fzf/install
-  [ -x ${HOME}/.fzf/install ] && ${HOME}/.fzf/install --all >/dev/null 2>&1
+  [ -x ${HOME}/.fzf/install ] && ${HOME}/.fzf/install --all > /dev/null 2>&1
   [ -d ${HOME}/.fzf/bin ] && pathadd "${HOME}/.fzf/bin"
   if [ -f ${HOME}/.fzf/bin/fzf ]; then
     ln -s ${HOME}/.fzf/bin/fzf ${HOME}/.local/bin/fzf
@@ -663,43 +661,67 @@ install_fzf() {
 install_lolcat() {
   printf "\nInstalling lolcat\n"
   if [ "${darwin}" ]; then
-    [ "${have_brew}" ] && brew install lolcat >/dev/null 2>&1
+    [ "${have_brew}" ] && brew install lolcat > /dev/null 2>&1
   else
     have_snap=$(type -p snap)
-    [ "${have_snap}" ] && ${SUDO} snap install lolcat >/dev/null 2>&1
+    [ "${have_snap}" ] && ${SUDO} snap install lolcat > /dev/null 2>&1
   fi
   have_lolcat=$(type -p lolcat)
+}
+
+install_neofetch() {
+  have_git=$(type -p git)
+  [ "${have_git}" ] && {
+    git clone https://github.com/LorenDB/neofetch /tmp/neofetch$$
+    [ -f /tmp/neofetch$$/neofetch ] && {
+      [ -d ${HOME}/.local/bin ] || {
+        mkdir -p ${HOME}/.local/bin
+        pathadd "${HOME}/.local/bin"
+      }
+      cp /tmp/neofetch$$/neofetch ${HOME}/.local/bin/neofetch
+      chmod 755 ${HOME}/.local/bin/neofetch
+      [ -f /tmp/neofetch$$/neofetch.1 ] && {
+        [ -d ${HOME}/.local/share/man/man1 ] || {
+          mkdir -p ${HOME}/.local/share/man/man1
+        }
+        cp /tmp/neofetch$$/neofetch.1 ${HOME}/.local/share/man/man1/neofetch.1
+        chmod 644 ${HOME}/.local/share/man/man1/neofetch.1
+      }
+    }
+    rm -rf /tmp/neofetch$$
+  }
+  have_neo=$(type -p neofetch)
 }
 
 install_package() {
   pkg="$1"
   printf "\nInstalling ${pkg}\n"
   if [ "${darwin}" ]; then
-    [ "${have_brew}" ] && brew install ${pkg} >/dev/null 2>&1
+    [ "${have_brew}" ] && brew install ${pkg} > /dev/null 2>&1
   else
     have_apt=$(type -p apt)
     if [ "${have_apt}" ]; then
-      ${SUDO} apt install ${pkg} >/dev/null 2>&1
+      ${SUDO} apt install ${pkg} > /dev/null 2>&1
     else
       have_pac=$(type -p pacman)
       if [ "${have_pac}" ]; then
-        ${SUDO} pacman -S ${pkg} >/dev/null 2>&1
+        ${SUDO} pacman -S ${pkg} > /dev/null 2>&1
       else
         have_apk=$(type -p apk)
         if [ "${have_apk}" ]; then
-          ${SUDO} apk add ${pkg} >/dev/null 2>&1
+          ${SUDO} apk add ${pkg} > /dev/null 2>&1
         else
           have_dnf=$(type -p dnf)
           if [ "${have_dnf}" ]; then
-            ${SUDO} dnf install ${pkg} >/dev/null 2>&1
+            ${SUDO} dnf install ${pkg} > /dev/null 2>&1
           else
             have_xbps=$(type -p xbps-install)
             if [ "${have_xbps}" ]; then
-              ${SUDO} xbps-install -S ${pkg} >/dev/null 2>&1
+              ${SUDO} xbps-install -S ${pkg} > /dev/null 2>&1
             else
               have_zypp=$(type -p zypper)
               [ "${have_zypp}" ] && {
-                ${SUDO} zypper install ${pkg} >/dev/null 2>&1
+                ${SUDO} zypper install ${pkg} > /dev/null 2>&1
               }
             fi
           fi
@@ -714,10 +736,10 @@ install_ranger() {
   if [ "${have_make}" ]; then
     printf "\nInstalling ranger\n"
     HERE=$(pwd)
-    git clone https://github.com/ranger/ranger /tmp/ranger$$ >/dev/null 2>&1
+    git clone https://github.com/ranger/ranger /tmp/ranger$$ > /dev/null 2>&1
     cd /tmp/ranger$$
-    git checkout stable >/dev/null 2>&1
-    ${SUDO} make install >/dev/null 2>&1
+    git checkout stable > /dev/null 2>&1
+    ${SUDO} make install > /dev/null 2>&1
     cd "${HERE}"
     ${SUDO} rm -rf /tmp/ranger$$
     have_ranger=$(type -p ranger)
@@ -727,22 +749,20 @@ install_ranger() {
       mv ${HOME}/.config/ranger ${HOME}/.config/ranger.bak$$
     }
     git clone https://github.com/doctorfree/ranger \
-              ${HOME}/.config/ranger >/dev/null 2>&1
+      ${HOME}/.config/ranger > /dev/null 2>&1
     rm -rf ${HOME}/.config/ranger/.git
     [ -f ${HOME}/.config/ranger/scope.sh ] && {
       chmod 755 ${HOME}/.config/ranger/scope.sh
     }
     [ -d ${HOME}/.config/ranger.bak$$ ] && {
       diff -srq ${HOME}/.config/ranger.bak$$ \
-                ${HOME}/.config/ranger \
+        ${HOME}/.config/ranger \
         | grep identical | grep ^File \
-        | while read dupline
-          do
-            dup=$(echo "${dupline}" | awk '{ print $2 }')
-            rm -f "${dup}"
-          done
-      for plugindir in ${HOME}/.config/ranger.bak$$/plugins/*
-      do
+        | while read dupline; do
+          dup=$(echo "${dupline}" | awk '{ print $2 }')
+          rm -f "${dup}"
+        done
+      for plugindir in ${HOME}/.config/ranger.bak$$/plugins/*; do
         [ "${plugindir}" == "${HOME}/.config/ranger.bak$$/plugins/*" ] && continue
         rmdir --ignore-fail-on-non-empty "${plugindir}"
       done
@@ -831,13 +851,13 @@ kitty-fontsize() {
 # This is why we have standards
 map_colors() {
   case "$1" in
-    black|red|green|yellow|blue|magenta|cyan|white|purple|orchid|tan|violet)
+    black | red | green | yellow | blue | magenta | cyan | white | purple | orchid | tan | violet)
       printf "$1"
       ;;
-    chartreuse|cornsilk|gold|thistle|pink|wheat|orange|plum|salmon)
+    chartreuse | cornsilk | gold | thistle | pink | wheat | orange | plum | salmon)
       printf "%s1" "$1"
       ;;
-    navy|navyblue)
+    navy | navyblue)
       printf "navy_blue"
       ;;
     darkblue)
@@ -909,13 +929,13 @@ map_colors() {
     dodgerblue)
       printf "dodger_blue1"
       ;;
-    darkred|maroon)
+    darkred | maroon)
       printf "dark_red"
       ;;
     darkmagenta)
       printf "dark_magenta"
       ;;
-    gray|grey)
+    gray | grey)
       printf "grey66"
       ;;
     goldenrod)
@@ -951,13 +971,13 @@ map_colors() {
     lightsalmon)
       printf "light_salmon1"
       ;;
-    slategray|slategrey)
+    slategray | slategrey)
       printf "dark_slate_gray1"
       ;;
-    darkslategray|darkslategrey)
+    darkslategray | darkslategrey)
       printf "dark_slate_gray2"
       ;;
-    lightslategray|lightslategrey)
+    lightslategray | lightslategrey)
       printf "light_slate_grey"
       ;;
     darkolivegreen)
@@ -1049,7 +1069,7 @@ list_colors() {
   fi
   for color_name in "${cols[@]}"; do
     case "${color_name}" in
-      custom|reset)
+      custom | reset)
         continue
         ;;
       *)
@@ -1185,14 +1205,31 @@ load-config() {
 # }
 # Using tput
 man() {
-  LESS_TERMCAP_md=$(tput bold; tput setaf 6) \
-    LESS_TERMCAP_me=$(tput sgr0) \
-    LESS_TERMCAP_so=$(tput bold; tput setaf 3; tput setab 57) \
-    LESS_TERMCAP_se=$(tput rmso; tput sgr0) \
-    LESS_TERMCAP_us=$(tput smul; tput bold; tput setaf 4) \
-    LESS_TERMCAP_ue=$(tput rmul; tput sgr0) \
-    LESS_TERMCAP_mr=$(tput rev) \
-    LESS_TERMCAP_mh=$(tput dim) \
+  LESS_TERMCAP_md=$(
+    tput bold
+    tput setaf 6
+  ) \
+  LESS_TERMCAP_me=$(tput sgr0) \
+  LESS_TERMCAP_so=$(
+    tput bold
+    tput setaf 3
+    tput setab 57
+  ) \
+  LESS_TERMCAP_se=$(
+    tput rmso
+    tput sgr0
+  ) \
+  LESS_TERMCAP_us=$(
+    tput smul
+    tput bold
+    tput setaf 4
+  ) \
+  LESS_TERMCAP_ue=$(
+    tput rmul
+    tput sgr0
+  ) \
+  LESS_TERMCAP_mr=$(tput rev) \
+  LESS_TERMCAP_mh=$(tput dim) \
     command man "$@"
 }
 
@@ -1294,7 +1331,7 @@ set-opacity() {
   kitty @ ${SOCKET} set-background-opacity ${OPTS} $1
   [ $? -eq 0 ] || {
     exit_warning "kitty @ ${SOCKET} set-background-opacity ${OPTS} $1" \
-                 "Verify that 'dynamic_background_opacity' is enabled in kitty.conf"
+      "Verify that 'dynamic_background_opacity' is enabled in kitty.conf"
   }
   [ "${debug}" ] && {
     printf "\nDEBUG: kitty @ ${SOCKET} set-background-opacity ${OPTS} $1\n"
@@ -1306,7 +1343,7 @@ set-window-size() {
   kitty @ ${SOCKET} resize-os-window --action resize --incremental --width "$1" --height "$2" ${OPTS}
   [ $? -eq 0 ] || {
     exit_warning "kitty @ ${SOCKET} resize-os-window --action resize --incremental --width $1 --height $2 ${OPTS}" \
-    'Verify that "allow_remote_control" is enabled in kitty.conf.
+      'Verify that "allow_remote_control" is enabled in kitty.conf.
 Some systems do not support window resize.'
   }
   [ "${debug}" ] && {
@@ -1342,16 +1379,16 @@ install_kitty() {
   fi
   printf "\n\tInstalling/Upgrading Kitty terminal emulator ..."
   installer_url="https://sw.kovidgoyal.net/kitty/installer.sh"
-  curl --silent --location ${installer_url} >/tmp/kitty-$$.sh
+  curl --silent --location ${installer_url} > /tmp/kitty-$$.sh
   [ $? -eq 0 ] || {
     rm -f /tmp/kitty-$$.sh
-    curl --insecure --silent --location ${installer_url} >/tmp/kitty-$$.sh
-    cat /tmp/kitty-$$.sh | sed -e "s/curl -/curl -k/" >/tmp/k$$
+    curl --insecure --silent --location ${installer_url} > /tmp/kitty-$$.sh
+    cat /tmp/kitty-$$.sh | sed -e "s/curl -/curl -k/" > /tmp/k$$
     cp /tmp/k$$ /tmp/kitty-$$.sh
     rm -f /tmp/k$$
   }
   if [ -s /tmp/kitty-$$.sh ]; then
-    sh /tmp/kitty-$$.sh launch=n >/dev/null 2>&1
+    sh /tmp/kitty-$$.sh launch=n > /dev/null 2>&1
     rm -f /tmp/kitty-$$.sh
     # Create a symbolic link to add kitty to PATH
     [ -d ~/.local/bin ] || mkdir -p ~/.local/bin
@@ -1436,7 +1473,7 @@ install_kitty() {
     have_tic=$(type -p tic)
     [ "${have_tic}" ] && {
       [ -f "${KTINFO}" ] && {
-        tic -x -o ${HOME}/.terminfo "${KTINFO}" >/dev/null 2>&1
+        tic -x -o ${HOME}/.terminfo "${KTINFO}" > /dev/null 2>&1
       }
     }
     [ -f "${KITERM}" ] || [ -f "${MATERM}" ] || {
@@ -1454,16 +1491,16 @@ install_kitty() {
 }
 
 upgrade_fzf() {
-  [ -d ${HOME}/.fzf/.git ] && git -C ${HOME}/.fzf pull >/dev/null 2>&1
+  [ -d ${HOME}/.fzf/.git ] && git -C ${HOME}/.fzf pull > /dev/null 2>&1
   if [ -d ${HOME}/.fzf ]; then
     if [ -f ${HOME}/.fzf/install ]; then
       chmod 755 ${HOME}/.fzf/install
-      ${HOME}/.fzf/install --all >/dev/null 2>&1
+      ${HOME}/.fzf/install --all > /dev/null 2>&1
     else
       install_fzf
     fi
   else
-    [ "${have_brew}" ] && brew uninstall fzf >/dev/null 2>&1
+    [ "${have_brew}" ] && brew uninstall fzf > /dev/null 2>&1
     install_fzf
   fi
   [ -d ${HOME}/.fzf/bin ] && pathadd "${HOME}/.fzf/bin"
@@ -1471,7 +1508,7 @@ upgrade_fzf() {
 
 upgrade_kitty_control() {
   KC_REPO="https://github.com/doctorfree/kitty-control"
-  git clone ${KC_REPO} /tmp/kctmp$$ >/dev/null 2>&1
+  git clone ${KC_REPO} /tmp/kctmp$$ > /dev/null 2>&1
   [ -f /tmp/kctmp$$/install ] || {
     rm -rf /tmp/kctmp$$
     printf "\nERROR: unable to download kitty-control repository\n"
@@ -1548,7 +1585,7 @@ select_file() {
   if [ "${selectedFile}" ]; then
     if [ "${keyword}" ]; then
       thisfile=
-      file -L "${selectedFile}" | grep -i "${keyword}" >/dev/null && thisfile=1
+      file -L "${selectedFile}" | grep -i "${keyword}" > /dev/null && thisfile=1
     else
       thisfile=1
     fi
@@ -1635,9 +1672,9 @@ show_figlet() {
   USE_FONT=${fonts[$RANDOM % ${#fonts[@]}]}
   [ "${USE_FONT}" ] || USE_FONT="Standard"
   if [ "${have_lolcat}" ]; then
-    figlet -c -d "${FONTDIR}" -f "${USE_FONT}" -k -t ${FIG_TEXT} 2>/dev/null | ${LOLCAT}
+    figlet -c -d "${FONTDIR}" -f "${USE_FONT}" -k -t ${FIG_TEXT} 2> /dev/null | ${LOLCAT}
   else
-    figlet -c -d "${FONTDIR}" -f "${USE_FONT}" -k -t ${FIG_TEXT} 2>/dev/null
+    figlet -c -d "${FONTDIR}" -f "${USE_FONT}" -k -t ${FIG_TEXT} 2> /dev/null
   fi
 }
 
@@ -1686,35 +1723,35 @@ show_usage() {
       PS3="${BOLD}Enter a choice (number, shortcut, or text, 'h' help): ${NORM}"
       select opt in "${options[@]}"; do
         case "$opt,$REPLY" in
-        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-          show_help
-          break
-          ;;
-        "About"*,* | *,"About"* | "about"*,* | *,"about"* | "a",* | *,"a")
-          show_about
-          prompt_continue
-          break
-          ;;
-        "Exam"*,* | *,"Exam"* | "exam"*,* | *,"exam"* | "e",* | *,"e")
-          show_examples noexit | less
-          break
-          ;;
-        *"Full"*,* | *,*"Full"* | *"full"*,* | *,*"full"* | "F",* | *,"F")
-          usage noexit | less
-          break
-          ;;
-        "Main"*,* | *,"Main"* | "main"*,* | *,"main"* | "m",* | *,"m")
-          break 2
-          ;;
-        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          heading "Exiting kitty-control" "Farewell"
-          exit 0
-          ;;
-        *,*)
-          printf "\nCould not match '${REPLY}' with a menu entry."
-          printf "\nPlease try again with an exact match.\n"
-          break
-          ;;
+          "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+            show_help
+            break
+            ;;
+          "About"*,* | *,"About"* | "about"*,* | *,"about"* | "a",* | *,"a")
+            show_about
+            prompt_continue
+            break
+            ;;
+          "Exam"*,* | *,"Exam"* | "exam"*,* | *,"exam"* | "e",* | *,"e")
+            show_examples noexit | less
+            break
+            ;;
+          *"Full"*,* | *,*"Full"* | *"full"*,* | *,*"full"* | "F",* | *,"F")
+            usage noexit | less
+            break
+            ;;
+          "Main"*,* | *,"Main"* | "main"*,* | *,"main"* | "m",* | *,"m")
+            break 2
+            ;;
+          "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+            heading "Exiting kitty-control" "Farewell"
+            exit 0
+            ;;
+          *,*)
+            printf "\nCould not match '${REPLY}' with a menu entry."
+            printf "\nPlease try again with an exact match.\n"
+            break
+            ;;
         esac
         REPLY=
       done
@@ -1870,28 +1907,28 @@ get-color-input() {
 
 list_tabs() {
   printf -v newline %b "\n"
-  kitty @ ${SOCKET} ls ${OPTS} | jq -r '.[]?.tabs' | \
-          jq -r '.[]' | \
-          jq -r --color-output \
-                --arg idpre "ID: " \
-                --arg actpre "ACTIVE: " \
-                --arg pidpre "PID: " \
-                --arg titpre "TITLE: " \
-                --arg tipost "$newline" \
-                '$idpre + (.id|tostring), $actpre + (.is_active|tostring), $pidpre + (.pid|tostring), $titpre + .title + $tipost'
+  kitty @ ${SOCKET} ls ${OPTS} | jq -r '.[]?.tabs' \
+    | jq -r '.[]' \
+    | jq -r --color-output \
+      --arg idpre "ID: " \
+      --arg actpre "ACTIVE: " \
+      --arg pidpre "PID: " \
+      --arg titpre "TITLE: " \
+      --arg tipost "$newline" \
+      '$idpre + (.id|tostring), $actpre + (.is_active|tostring), $pidpre + (.pid|tostring), $titpre + .title + $tipost'
 }
 
 list_windows() {
   printf -v newline %b "\n"
-  kitty @ ${SOCKET} ls ${OPTS} | jq -r '.[]?.tabs | .[]?.windows' | \
-          jq -r '.[]' | \
-          jq -r --color-output \
-                --arg idpre "ID: " \
-                --arg actpre "ACTIVE: " \
-                --arg pidpre "PID: " \
-                --arg titpre "TITLE: " \
-                --arg tipost "$newline" \
-                '$idpre + (.id|tostring), $actpre + (.is_active|tostring), $pidpre + (.pid|tostring), $titpre + .title + $tipost'
+  kitty @ ${SOCKET} ls ${OPTS} | jq -r '.[]?.tabs | .[]?.windows' \
+    | jq -r '.[]' \
+    | jq -r --color-output \
+      --arg idpre "ID: " \
+      --arg actpre "ACTIVE: " \
+      --arg pidpre "PID: " \
+      --arg titpre "TITLE: " \
+      --arg tipost "$newline" \
+      '$idpre + (.id|tostring), $actpre + (.is_active|tostring), $pidpre + (.pid|tostring), $titpre + .title + $tipost'
 }
 
 show_tab_info() {
@@ -1904,10 +1941,10 @@ show_tab_info() {
     }
     if [ "${tab_id}" == "__all__" ]; then
       kitty @ ls | jq -r '.[]?.tabs' \
-                 | jq -r --color-output '.[]' | less
+        | jq -r --color-output '.[]' | less
     else
       kitty @ ls | jq -r '.[]?.tabs' \
-                 | jq -r --color-output --arg tabid "$tab_id" '
+        | jq -r --color-output --arg tabid "$tab_id" '
                      .[] | select((.id|tostring) == $tabid)' | less
     fi
   }
@@ -1923,17 +1960,17 @@ show_window_info() {
     }
     if [ "${window_id}" == "__all__" ]; then
       kitty @ ls | jq -r '.[]?.tabs | .[]?.windows' \
-                 | jq -r --color-output '.[]' | less
+        | jq -r --color-output '.[]' | less
     else
       kitty @ ls | jq -r '.[]?.tabs | .[]?.windows' \
-                 | jq -r --color-output --arg winid "$window_id" '
+        | jq -r --color-output --arg winid "$window_id" '
                      .[] | select((.id|tostring) == $winid)' | less
     fi
   }
 }
 
 open_doc_menu() {
-  doc_array=( "Kitty Configuration" "Kitty FAQ" "Kitty Man Page" "Kitty Remote Control" "Kitty Diff Kitten" "Kitty icat Kitten" "Kitty Layouts" "Kitty SSH Kitten" "Kitty Themes Kitten" "Kitty Unicode Kitten" "Kitty-Control" "Help" "Main Menu" "Quit" )
+  doc_array=("Kitty Configuration" "Kitty FAQ" "Kitty Man Page" "Kitty Remote Control" "Kitty Diff Kitten" "Kitty icat Kitten" "Kitty Layouts" "Kitty SSH Kitten" "Kitty Themes Kitten" "Kitty Unicode Kitten" "Kitty-Control" "Help" "Main Menu" "Quit")
   if [ "${use_fzf}" ]; then
     while true; do
       heading "Kitty Documentation Menu" "Kitty Doc"
@@ -1999,67 +2036,67 @@ open_doc_menu() {
       PS3="${BOLD}Select Doc to Open (number, shortcut, or text, 'h' help): ${NORM}"
       select subopt in "${doc_array[@]}"; do
         case "$subopt,$REPLY" in
-        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-          show_help
-          break
-          ;;
-        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-          break 2
-          ;;
-        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          heading "Exiting kitty-control" "Farewell"
-          exit 0
-          ;;
-        "Kitty Conf"*,* | *,"Kitty Conf"* | "kitty conf"*,* | *,"kitty conf"*)
-          open_kitty_doc conf
-          break
-          ;;
-        "Kitty FAQ"*,* | *,"Kitty FAQ"* | "kitty faq"*,* | *,"kitty faq"*)
-          open_kitty_doc faq
-          break
-          ;;
-        "Kitty Remote"*,* | *,"Kitty Remote"* | "kitty remote"*,* | *,"kitty remote"*)
-          open_kitty_doc remote-control
-          break
-          ;;
-        "Kitty Diff"*,* | *,"Kitty Diff"* | "kitty diff"*,* | *,"kitty diff"*)
-          open_kitty_doc kittens/diff
-          break
-          ;;
-        "Kitty icat"*,* | *,"Kitty icat"* | "kitty icat"*,* | *,"kitty icat"*)
-          open_kitty_doc kittens/icat
-          break
-          ;;
-        "Kitty Layout"*,* | *,"Kitty Layout"* | "kitty layout"*,* | *,"kitty layout"*)
-          open_kitty_doc layouts
-          break
-          ;;
-        "Kitty SSH"*,* | *,"Kitty SSH"* | "kitty ssh"*,* | *,"kitty ssh"*)
-          open_kitty_doc kittens/ssh
-          break
-          ;;
-        "Kitty Them"*,* | *,"Kitty Them"* | "kitty them"*,* | *,"kitty them"*)
-          open_kitty_doc kittens/themes
-          break
-          ;;
-        "Kitty Uni"*,* | *,"Kitty Uni"* | "kitty uni"*,* | *,"kitty uni"*)
-          open_kitty_doc kittens/unicode_input
-          break
-          ;;
-        "Kitty Man"*,* | *,"Kitty Man"* | "kitty man"*,* | *,"kitty man"*)
-          printf "\n"
-          man kitty
-          break
-          ;;
-        "Kitty-Control"*,* | *,"Kitty-Control"* | "kitty-control"*,* | *,"kitty-control"*)
-          printf "\n"
-          man kitty-control
-          break
-          ;;
-        *,*)
-          open_kitty_doc "${subopt}"
-          break
-          ;;
+          "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+            show_help
+            break
+            ;;
+          "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+            break 2
+            ;;
+          "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+            heading "Exiting kitty-control" "Farewell"
+            exit 0
+            ;;
+          "Kitty Conf"*,* | *,"Kitty Conf"* | "kitty conf"*,* | *,"kitty conf"*)
+            open_kitty_doc conf
+            break
+            ;;
+          "Kitty FAQ"*,* | *,"Kitty FAQ"* | "kitty faq"*,* | *,"kitty faq"*)
+            open_kitty_doc faq
+            break
+            ;;
+          "Kitty Remote"*,* | *,"Kitty Remote"* | "kitty remote"*,* | *,"kitty remote"*)
+            open_kitty_doc remote-control
+            break
+            ;;
+          "Kitty Diff"*,* | *,"Kitty Diff"* | "kitty diff"*,* | *,"kitty diff"*)
+            open_kitty_doc kittens/diff
+            break
+            ;;
+          "Kitty icat"*,* | *,"Kitty icat"* | "kitty icat"*,* | *,"kitty icat"*)
+            open_kitty_doc kittens/icat
+            break
+            ;;
+          "Kitty Layout"*,* | *,"Kitty Layout"* | "kitty layout"*,* | *,"kitty layout"*)
+            open_kitty_doc layouts
+            break
+            ;;
+          "Kitty SSH"*,* | *,"Kitty SSH"* | "kitty ssh"*,* | *,"kitty ssh"*)
+            open_kitty_doc kittens/ssh
+            break
+            ;;
+          "Kitty Them"*,* | *,"Kitty Them"* | "kitty them"*,* | *,"kitty them"*)
+            open_kitty_doc kittens/themes
+            break
+            ;;
+          "Kitty Uni"*,* | *,"Kitty Uni"* | "kitty uni"*,* | *,"kitty uni"*)
+            open_kitty_doc kittens/unicode_input
+            break
+            ;;
+          "Kitty Man"*,* | *,"Kitty Man"* | "kitty man"*,* | *,"kitty man"*)
+            printf "\n"
+            man kitty
+            break
+            ;;
+          "Kitty-Control"*,* | *,"Kitty-Control"* | "kitty-control"*,* | *,"kitty-control"*)
+            printf "\n"
+            man kitty-control
+            break
+            ;;
+          *,*)
+            open_kitty_doc "${subopt}"
+            break
+            ;;
         esac
       done
     done
@@ -2069,35 +2106,35 @@ open_doc_menu() {
 set_win_array() {
   while read id_title; do
     [ "${id_title}" ] || continue
-    echo "${id_title}" | grep ID: >/dev/null && {
+    echo "${id_title}" | grep ID: > /dev/null && {
       entry="${id_title}"
     }
-    echo "${id_title}" | grep TITLE: >/dev/null && {
+    echo "${id_title}" | grep TITLE: > /dev/null && {
       entry="${entry} ${id_title}"
-      win_array+=( "${entry}" )
+      win_array+=("${entry}")
     }
-  done < <(kitty @ ls | jq -r '.[]?.tabs | .[]?.windows' | jq -r '.[]' | \
-           jq -r --arg idpre "ID: " \
-                 --arg titpre "TITLE: " \
-                 --arg tipost "$newline" \
-                 '$idpre + (.id|tostring), $titpre + .title + $tipost')
+  done < <(kitty @ ls | jq -r '.[]?.tabs | .[]?.windows' | jq -r '.[]' \
+    | jq -r --arg idpre "ID: " \
+      --arg titpre "TITLE: " \
+      --arg tipost "$newline" \
+      '$idpre + (.id|tostring), $titpre + .title + $tipost')
 }
 
 set_tab_array() {
   while read id_title; do
     [ "${id_title}" ] || continue
-    echo "${id_title}" | grep ID: >/dev/null && {
+    echo "${id_title}" | grep ID: > /dev/null && {
       entry="${id_title}"
     }
-    echo "${id_title}" | grep TITLE: >/dev/null && {
+    echo "${id_title}" | grep TITLE: > /dev/null && {
       entry="${entry} ${id_title}"
-      tab_array+=( "${entry}" )
+      tab_array+=("${entry}")
     }
-  done < <(kitty @ ls | jq -r '.[]?.tabs' | jq -r '.[]' | \
-           jq -r --arg idpre "ID: " \
-                 --arg titpre "TITLE: " \
-                 --arg tipost "$newline" \
-                 '$idpre + (.id|tostring), $titpre + .title + $tipost')
+  done < <(kitty @ ls | jq -r '.[]?.tabs' | jq -r '.[]' \
+    | jq -r --arg idpre "ID: " \
+      --arg titpre "TITLE: " \
+      --arg tipost "$newline" \
+      '$idpre + (.id|tostring), $titpre + .title + $tipost')
 }
 
 tab_title_menu() {
@@ -2105,7 +2142,7 @@ tab_title_menu() {
   printf -v newline %b "\n"
   set_tab_array
 
-  tab_array+=( "List Windows" "Help" "Main Menu" "Quit" )
+  tab_array+=("List Windows" "Help" "Main Menu" "Quit")
   while true; do
     heading "Select Tab to Title" "Select Tab"
     choice=$(printf "%s\n" "${tab_array[@]}" | fzf --prompt="😺 Select Tab to Title ('Esc' or 'Main Menu' to return)   " --height=18 --layout=reverse --exit-0)
@@ -2148,7 +2185,7 @@ window_title_menu() {
   printf -v newline %b "\n"
   set_win_array
 
-  win_array+=( "List Tabs" "Help" "Main Menu" "Quit" )
+  win_array+=("List Tabs" "Help" "Main Menu" "Quit")
   while true; do
     heading "Select Window to Title" "Select Window"
     choice=$(printf "%s\n" "${win_array[@]}" | fzf --prompt="😺 Select Window to Title ('Esc' or 'Main Menu' to return)   " --height=18 --layout=reverse --exit-0)
@@ -2192,7 +2229,7 @@ tabs_menu() {
     printf -v newline %b "\n"
     set_tab_array
 
-    tab_array+=( "All Tabs" "Set Tab Title" "List Windows" "Help" "Main Menu" "Quit" )
+    tab_array+=("All Tabs" "Set Tab Title" "List Windows" "Help" "Main Menu" "Quit")
     if [ "${use_fzf}" ]; then
       while true; do
         heading "Kitty Tabs/Windows List" "Tabs/Windows"
@@ -2234,32 +2271,32 @@ tabs_menu() {
         PS3="${BOLD}Select Tab (number, shortcut, or text, 'h' help): ${NORM}"
         select subopt in "${tab_array[@]}"; do
           case "$subopt,$REPLY" in
-          "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-            show_help
-            break
-            ;;
-          "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-            break 2
-            ;;
-          "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-            heading "Exiting kitty-control" "Farewell"
-            exit 0
-            ;;
-          "All Tabs"*,* | *,"All Tabs"* | "all tabs"*,* | *,"all tabs"*)
-            show_tab_info "ID: __all__"
-            ;;
-          "Set Tab"*,* | *,"Set Tab"* | "set tab"*,* | *,"set tab"*)
-            tab_title_menu
-            break 2
-            ;;
-          "List Win"*,* | *,"List Win"* | "list win"*,* | *,"list win"*)
-            windows_menu
-            break 2
-            ;;
-          *,*)
-            show_tab_info "${subopt}"
-            break
-            ;;
+            "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+              show_help
+              break
+              ;;
+            "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+              break 2
+              ;;
+            "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+              heading "Exiting kitty-control" "Farewell"
+              exit 0
+              ;;
+            "All Tabs"*,* | *,"All Tabs"* | "all tabs"*,* | *,"all tabs"*)
+              show_tab_info "ID: __all__"
+              ;;
+            "Set Tab"*,* | *,"Set Tab"* | "set tab"*,* | *,"set tab"*)
+              tab_title_menu
+              break 2
+              ;;
+            "List Win"*,* | *,"List Win"* | "list win"*,* | *,"list win"*)
+              windows_menu
+              break 2
+              ;;
+            *,*)
+              show_tab_info "${subopt}"
+              break
+              ;;
           esac
         done
       done
@@ -2275,7 +2312,7 @@ windows_menu() {
     printf -v newline %b "\n"
     set_win_array
 
-    win_array+=( "All Windows" "Set Window Title" "List Tabs" "Help" "Main Menu" "Quit" )
+    win_array+=("All Windows" "Set Window Title" "List Tabs" "Help" "Main Menu" "Quit")
     if [ "${use_fzf}" ]; then
       while true; do
         heading "Kitty Windows List" "Kitty Windows"
@@ -2317,28 +2354,28 @@ windows_menu() {
         PS3="${BOLD}Select Window (number, shortcut, or text, 'h' help): ${NORM}"
         select subopt in "${win_array[@]}"; do
           case "$subopt,$REPLY" in
-          "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-            show_help
-            break
-            ;;
-          "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-            break 2
-            ;;
-          "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-            heading "Exiting kitty-control" "Farewell"
-            exit 0
-            ;;
-          "All Windows"*,* | *,"All Windows"* | "all windows"*,* | *,"all windows"*)
+            "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+              show_help
+              break
+              ;;
+            "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+              break 2
+              ;;
+            "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+              heading "Exiting kitty-control" "Farewell"
+              exit 0
+              ;;
+            "All Windows"*,* | *,"All Windows"* | "all windows"*,* | *,"all windows"*)
               show_window_info "ID: __all__"
               ;;
-          "List Tab"*,* | *,"List Tab"* | "list tab"*,* | *,"list tab"*)
-            tabs_menu
-            break 2
-            ;;
-          *,*)
-            show_window_info "${subopt}"
-            break
-            ;;
+            "List Tab"*,* | *,"List Tab"* | "list tab"*,* | *,"list tab"*)
+              tabs_menu
+              break 2
+              ;;
+            *,*)
+              show_window_info "${subopt}"
+              break
+              ;;
           esac
         done
       done
@@ -2394,8 +2431,8 @@ try_foreground() {
 }
 
 menu_background_color() {
-  bgopts=( "${colors[@]}" )
-  bgopts+=( "main menu" "quit" )
+  bgopts=("${colors[@]}")
+  bgopts+=("main menu" "quit")
   if [ "${use_fzf}" ]; then
     while true; do
       heading "Background Color" "Background"
@@ -2437,31 +2474,31 @@ menu_background_color() {
       PS3="${BOLD}Select Background Color (number, shortcut, or text, 'h' help): ${NORM}"
       select subopt in "${bgopts[@]}"; do
         case "$subopt,$REPLY" in
-        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-          show_help
-          break
-          ;;
-        "Custom",* | *,"Custom" | "custom",* | *,"custom")
-          prompt-color-input
-          color_choice=$(get-color-input)
-          [ "${color_choice}" ] && try_background "${color_choice}"
-          break 2
-          ;;
-        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-          break 2
-          ;;
-        "Reset"*,* | *,"Reset"* | "reset"*,* | *,"reset"* | "r",* | *,"r")
-          set-background reset
-          break 2
-          ;;
-        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          heading "Exiting kitty-control" "Farewell"
-          exit 0
-          ;;
-        *,*)
-          try_background "${subopt}"
-          break 2
-          ;;
+          "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+            show_help
+            break
+            ;;
+          "Custom",* | *,"Custom" | "custom",* | *,"custom")
+            prompt-color-input
+            color_choice=$(get-color-input)
+            [ "${color_choice}" ] && try_background "${color_choice}"
+            break 2
+            ;;
+          "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+            break 2
+            ;;
+          "Reset"*,* | *,"Reset"* | "reset"*,* | *,"reset"* | "r",* | *,"r")
+            set-background reset
+            break 2
+            ;;
+          "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+            heading "Exiting kitty-control" "Farewell"
+            exit 0
+            ;;
+          *,*)
+            try_background "${subopt}"
+            break 2
+            ;;
         esac
       done
     done
@@ -2469,8 +2506,8 @@ menu_background_color() {
 }
 
 menu_foreground_color() {
-  fgopts=( "${colors[@]}" )
-  fgopts+=( "help" "main menu" "quit" )
+  fgopts=("${colors[@]}")
+  fgopts+=("help" "main menu" "quit")
   if [ "${use_fzf}" ]; then
     while true; do
       heading "Foreground Color" "Foreground"
@@ -2512,31 +2549,31 @@ menu_foreground_color() {
       PS3="${BOLD}Select Foreground Color (number, shortcut, or text, 'h' help): ${NORM}"
       select subopt in "${fgopts[@]}"; do
         case "$subopt,$REPLY" in
-        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-          show_help
-          break
-          ;;
-        "Custom",* | *,"Custom" | "custom",* | *,"custom")
-          prompt-color-input
-          color_choice=$(get-color-input)
-          [ "${color_choice}" ] && try_foreground "${color_choice}"
-          break 2
-          ;;
-        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-          break 2
-          ;;
-        "Reset"*,* | *,"Reset"* | "reset"*,* | *,"reset"* | "r",* | *,"r")
-          set-foreground reset
-          break 2
-          ;;
-        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          heading "Exiting kitty-control" "Farewell"
-          exit 0
-          ;;
-        *,*)
-          try_foreground "${subopt}"
-          break 2
-          ;;
+          "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+            show_help
+            break
+            ;;
+          "Custom",* | *,"Custom" | "custom",* | *,"custom")
+            prompt-color-input
+            color_choice=$(get-color-input)
+            [ "${color_choice}" ] && try_foreground "${color_choice}"
+            break 2
+            ;;
+          "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+            break 2
+            ;;
+          "Reset"*,* | *,"Reset"* | "reset"*,* | *,"reset"* | "r",* | *,"r")
+            set-foreground reset
+            break 2
+            ;;
+          "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+            heading "Exiting kitty-control" "Farewell"
+            exit 0
+            ;;
+          *,*)
+            try_foreground "${subopt}"
+            break 2
+            ;;
         esac
       done
     done
@@ -2578,8 +2615,8 @@ menu_diff_folder() {
 }
 
 menu_window_size() {
-  wnopts=( "${winsizes[@]}" )
-  wnopts+=( "main menu" "quit" )
+  wnopts=("${winsizes[@]}")
+  wnopts+=("main menu" "quit")
   w_size=$(kitty +kitten icat --print-window-size)
   if [ "${use_fzf}" ]; then
     heading "Window Size (${w_size})" "Window Size"
@@ -2605,21 +2642,21 @@ menu_window_size() {
       PS3="${BOLD}Select Window Size Adjustment (number, shortcut, or text, 'h' help): ${NORM}"
       select subopt in "${wnopts[@]}"; do
         case "$subopt,$REPLY" in
-        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-          show_help
-          break
-          ;;
-        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-          break 2
-          ;;
-        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          heading "Exiting kitty-control" "Farewell"
-          exit 0
-          ;;
-        *,*)
-          set-window-size "${subopt}" "${subopt}"
-          break 2
-          ;;
+          "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+            show_help
+            break
+            ;;
+          "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+            break 2
+            ;;
+          "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+            heading "Exiting kitty-control" "Farewell"
+            exit 0
+            ;;
+          *,*)
+            set-window-size "${subopt}" "${subopt}"
+            break 2
+            ;;
         esac
       done
     done
@@ -2627,8 +2664,8 @@ menu_window_size() {
 }
 
 menu_font_size() {
-  fnopts=( "${fontsizes[@]}" )
-  fnopts+=( "main menu" "quit" )
+  fnopts=("${fontsizes[@]}")
+  fnopts+=("main menu" "quit")
   if [ "${use_fzf}" ]; then
     heading "Font Size" "Font Size"
     choice=$(printf "%s\n" "${fnopts[@]}" | fzf --prompt="😺 Select Font Size Adjustment ('Esc' or 'main menu' to return)  " --height=18 --layout=reverse --exit-0)
@@ -2660,28 +2697,28 @@ menu_font_size() {
       PS3="${BOLD}Select Font Size Adjustment (number, shortcut, or text, 'h' help): ${NORM}"
       select subopt in "${fnopts[@]}"; do
         case "$subopt,$REPLY" in
-        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-          show_help
-          break
-          ;;
-        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-          break 2
-          ;;
-        "Default"*,* | *,"Default"* | "default"*,* | *,"default"* | "d",* | *,"d")
-          kitty @ ${SOCKET} set-font-size ${OPTS} 0
-          [ $? -eq 0 ] || {
-            exit_warning "kitty @ ${SOCKET} set-font-size ${OPTS} 0"
-          }
-          break 2
-          ;;
-        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          heading "Exiting kitty-control" "Farewell"
-          exit 0
-          ;;
-        *,*)
-          kitty-fontsize "${subopt}"
-          break 2
-          ;;
+          "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+            show_help
+            break
+            ;;
+          "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+            break 2
+            ;;
+          "Default"*,* | *,"Default"* | "default"*,* | *,"default"* | "d",* | *,"d")
+            kitty @ ${SOCKET} set-font-size ${OPTS} 0
+            [ $? -eq 0 ] || {
+              exit_warning "kitty @ ${SOCKET} set-font-size ${OPTS} 0"
+            }
+            break 2
+            ;;
+          "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+            heading "Exiting kitty-control" "Farewell"
+            exit 0
+            ;;
+          *,*)
+            kitty-fontsize "${subopt}"
+            break 2
+            ;;
         esac
       done
     done
@@ -2690,7 +2727,7 @@ menu_font_size() {
 
 menu_load_config() {
   cfopts=("$@")
-  cfopts+=( "Enter kitty config to load" "Help" "Main Menu" "Quit" )
+  cfopts+=("Enter kitty config to load" "Help" "Main Menu" "Quit")
   if [ "${use_fzf}" ]; then
     while true; do
       heading "Select Kitty Configuration" "Configuration"
@@ -2734,33 +2771,33 @@ menu_load_config() {
       PS3="${BOLD}Select Kitty Configuration (number, shortcut, or text, 'h' help): ${NORM}"
       select subopt in "${cfopts[@]}"; do
         case "$subopt,$REPLY" in
-        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-          show_help
-          break
-          ;;
-        "Enter"*,* | *,"Enter"* | "enter"*,* | *,"enter"*)
-          FILE=
-          select_file
-          [ "${FILE}" ] && load-config "${FILE}"
-          break 2
-          ;;
-        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-          break 2
-          ;;
-        "Default"*,* | *,"Default"* | "default"*,* | *,"default"* | "d",* | *,"d")
-          load-config "default"
-          break 2
-          ;;
-        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          heading "Exiting kitty-control" "Farewell"
-          exit 0
-          ;;
-        *,*)
-          subdir=$(echo "${subopt}" | awk -F '/' '{ printf $(NF - 1) }')
-          subsub=$(echo "${subopt}" | awk -F '/' '{ printf $(NF - 2)"/"$(NF - 1) }')
-          load-config "${subdir}" "${subsub}"
-          break 2
-          ;;
+          "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+            show_help
+            break
+            ;;
+          "Enter"*,* | *,"Enter"* | "enter"*,* | *,"enter"*)
+            FILE=
+            select_file
+            [ "${FILE}" ] && load-config "${FILE}"
+            break 2
+            ;;
+          "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+            break 2
+            ;;
+          "Default"*,* | *,"Default"* | "default"*,* | *,"default"* | "d",* | *,"d")
+            load-config "default"
+            break 2
+            ;;
+          "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+            heading "Exiting kitty-control" "Farewell"
+            exit 0
+            ;;
+          *,*)
+            subdir=$(echo "${subopt}" | awk -F '/' '{ printf $(NF - 1) }')
+            subsub=$(echo "${subopt}" | awk -F '/' '{ printf $(NF - 2)"/"$(NF - 1) }')
+            load-config "${subdir}" "${subsub}"
+            break 2
+            ;;
         esac
       done
     done
@@ -2769,7 +2806,7 @@ menu_load_config() {
 
 menu_set_layout() {
   lyopts=("Previous" "Fat" "Grid" "Horizontal" "Splits" "Stack" "Tall" "Vertical")
-  lyopts+=( "Help" "Main Menu" "Quit" )
+  lyopts+=("Help" "Main Menu" "Quit")
   if [ "${use_fzf}" ]; then
     while true; do
       heading "Select Window Layout" "Window Layout"
@@ -2786,7 +2823,7 @@ menu_set_layout() {
             heading "Exiting kitty-control" "Farewell"
             exit 0
             ;;
-          "Previous"|"Fat"|"Grid"|"Horizontal"|"Splits"|"Stack"|"Tall"|"Vertical")
+          "Previous" | "Fat" | "Grid" | "Horizontal" | "Splits" | "Stack" | "Tall" | "Vertical")
             set-layout "${choice}"
             break
             ;;
@@ -2804,26 +2841,26 @@ menu_set_layout() {
       PS3="${BOLD}Select Window Layout (number, shortcut, or text, 'h' help): ${NORM}"
       select subopt in "${lyopts[@]}"; do
         case "$subopt,$REPLY" in
-        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-          show_layout_help
-          break
-          ;;
-        "Previous",*|*,"Previous"|"Fat",*|*,"Fat"|"Grid",*|*,"Grid"|"Horizontal",*|*,"Horizontal"|"Splits",*|*,"Splits"|"Stack",*|*,"Stack"|"Tall",*|*,"Tall"|"Vertical",*|*,"Vertical")
-          set-layout "${subopt}"
-          break 2
-          ;;
-        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-          break 2
-          ;;
-        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          heading "Exiting kitty-control" "Farewell"
-          exit 0
-          ;;
-        *,*)
-          printf "\nCould not match '${REPLY}' with a menu entry."
-          printf "\nPlease try again with an exact match.\n"
-          break
-          ;;
+          "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+            show_layout_help
+            break
+            ;;
+          "Previous",* | *,"Previous" | "Fat",* | *,"Fat" | "Grid",* | *,"Grid" | "Horizontal",* | *,"Horizontal" | "Splits",* | *,"Splits" | "Stack",* | *,"Stack" | "Tall",* | *,"Tall" | "Vertical",* | *,"Vertical")
+            set-layout "${subopt}"
+            break 2
+            ;;
+          "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+            break 2
+            ;;
+          "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+            heading "Exiting kitty-control" "Farewell"
+            exit 0
+            ;;
+          *,*)
+            printf "\nCould not match '${REPLY}' with a menu entry."
+            printf "\nPlease try again with an exact match.\n"
+            break
+            ;;
         esac
         REPLY=
       done
@@ -2832,8 +2869,8 @@ menu_set_layout() {
 }
 
 menu_set_trans() {
-  tropts=( "${translevels[@]}" )
-  tropts+=( "main menu" "quit" )
+  tropts=("${translevels[@]}")
+  tropts+=("main menu" "quit")
   if [ "${use_fzf}" ]; then
     while true; do
       heading "Transparency Opacity" "Transparency"
@@ -2866,30 +2903,30 @@ menu_set_trans() {
       PS3="${BOLD}Select Transparency Opacity (number, shortcut, or text, 'h' help): ${NORM}"
       select subopt in "${tropts[@]}"; do
         case "$subopt,$REPLY" in
-        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-          show_help
-          break
-          ;;
-        "default"*,* | *,"default"*)
-          set-opacity "${OPACITY}"
-          break 2
-          ;;
-        [0-9].[0-9]*,* | *,[0-9].[0-9]*)
-          set-opacity "${subopt}"
-          break 2
-          ;;
-        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-          break 2
-          ;;
-        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          heading "Exiting kitty-control" "Farewell"
-          exit 0
-          ;;
-        *,*)
-          printf "\nCould not match '${REPLY}' with a menu entry."
-          printf "\nPlease try again with an exact match.\n"
-          break
-          ;;
+          "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+            show_help
+            break
+            ;;
+          "default"*,* | *,"default"*)
+            set-opacity "${OPACITY}"
+            break 2
+            ;;
+          [0-9].[0-9]*,* | *,[0-9].[0-9]*)
+            set-opacity "${subopt}"
+            break 2
+            ;;
+          "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+            break 2
+            ;;
+          "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+            heading "Exiting kitty-control" "Farewell"
+            exit 0
+            ;;
+          *,*)
+            printf "\nCould not match '${REPLY}' with a menu entry."
+            printf "\nPlease try again with an exact match.\n"
+            break
+            ;;
         esac
         REPLY=
       done
@@ -3032,90 +3069,90 @@ options_menu() {
       PS3="${BOLD}Enter a choice (number, shortcut, or text, 'h' help): ${NORM}"
       select opt in "${kc_options[@]}"; do
         case "$opt,$REPLY" in
-        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-          show_help
-          break
-          ;;
-        "All"*,* | *,"All"* | "all"*,* | *,"all"*)
-          if [ "${allopts}" ]; then
-            OPTS=$(echo "${OPTS}" | sed -e "s/ -a//")
-            allopts=
-          else
-            OPTS="${OPTS} -a"
-            allopts=1
-          fi
-          break
-          ;;
-        "Debug"*,* | *,"Debug"* | "debug"*,* | *,"debug"*)
-          if [ "${debug}" ]; then
-            debug=
-          else
-            debug=1
-          fi
-          break
-          ;;
-        "Tab"*,* | *,"Tab"* | "tab"*,* | *,"tab"*)
-          if [ "${tabopts}" ]; then
-            OPTS=$(echo "${OPTS}" | sed -e "s/ -t ${tabopts}//")
-            prompt-match-input
-            tabopts=$(get_tabopts "${tabopts}")
-            [ "${tabopts}" ] && OPTS="${OPTS} -t ${tabopts}"
-          else
-            prompt-match-input
-            tabopts=$(get_tabopts)
-            [ "${tabopts}" ] && OPTS="${OPTS} -t ${tabopts}"
-          fi
-          break
-          ;;
-        "Win"*,* | *,"Win"* | "win"*,* | *,"win"*)
-          if [ "${winopts}" ]; then
-            OPTS=$(echo "${OPTS}" | sed -e "s/ -m ${winopts}//")
-            prompt-match-input
-            winopts=$(get_winopts "${winopts}")
-            [ "${winopts}" ] && OPTS="${OPTS} -m ${winopts}"
-          else
-            prompt-match-input
-            winopts=$(get_winopts)
-            [ "${winopts}" ] && OPTS="${OPTS} -m ${winopts}"
-          fi
-          break
-          ;;
-        "Use Figlet"*,* | *,"Use Figlet"* | "use figlet"*,* | *,"use figlet"*)
-          if [ "${use_figlet}" ]; then
-            use_figlet=
-          else
-            use_figlet=1
-          fi
-          break
-          ;;
-        "Use Fzf"*,* | *,"Use Fzf"* | "use fzf"*,* | *,"use fzf"*)
-          if [ "${use_fzf}" ]; then
-            use_fzf=
-          else
-            use_fzf=1
-          fi
-          break
-          ;;
-        "Use Ranger"*,* | *,"Use Ranger"* | "use ranger"*,* | *,"use ranger"*)
-          if [ "${use_ranger}" ]; then
-            use_ranger=
-          else
-            use_ranger=1
-          fi
-          break
-          ;;
-        "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
-          break 2
-          ;;
-        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-          heading "Exiting kitty-control" "Farewell"
-          exit 0
-          ;;
-        *,*)
-          printf "\nCould not match '${REPLY}' with a menu entry."
-          printf "\nPlease try again with an exact match.\n"
-          break
-          ;;
+          "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+            show_help
+            break
+            ;;
+          "All"*,* | *,"All"* | "all"*,* | *,"all"*)
+            if [ "${allopts}" ]; then
+              OPTS=$(echo "${OPTS}" | sed -e "s/ -a//")
+              allopts=
+            else
+              OPTS="${OPTS} -a"
+              allopts=1
+            fi
+            break
+            ;;
+          "Debug"*,* | *,"Debug"* | "debug"*,* | *,"debug"*)
+            if [ "${debug}" ]; then
+              debug=
+            else
+              debug=1
+            fi
+            break
+            ;;
+          "Tab"*,* | *,"Tab"* | "tab"*,* | *,"tab"*)
+            if [ "${tabopts}" ]; then
+              OPTS=$(echo "${OPTS}" | sed -e "s/ -t ${tabopts}//")
+              prompt-match-input
+              tabopts=$(get_tabopts "${tabopts}")
+              [ "${tabopts}" ] && OPTS="${OPTS} -t ${tabopts}"
+            else
+              prompt-match-input
+              tabopts=$(get_tabopts)
+              [ "${tabopts}" ] && OPTS="${OPTS} -t ${tabopts}"
+            fi
+            break
+            ;;
+          "Win"*,* | *,"Win"* | "win"*,* | *,"win"*)
+            if [ "${winopts}" ]; then
+              OPTS=$(echo "${OPTS}" | sed -e "s/ -m ${winopts}//")
+              prompt-match-input
+              winopts=$(get_winopts "${winopts}")
+              [ "${winopts}" ] && OPTS="${OPTS} -m ${winopts}"
+            else
+              prompt-match-input
+              winopts=$(get_winopts)
+              [ "${winopts}" ] && OPTS="${OPTS} -m ${winopts}"
+            fi
+            break
+            ;;
+          "Use Figlet"*,* | *,"Use Figlet"* | "use figlet"*,* | *,"use figlet"*)
+            if [ "${use_figlet}" ]; then
+              use_figlet=
+            else
+              use_figlet=1
+            fi
+            break
+            ;;
+          "Use Fzf"*,* | *,"Use Fzf"* | "use fzf"*,* | *,"use fzf"*)
+            if [ "${use_fzf}" ]; then
+              use_fzf=
+            else
+              use_fzf=1
+            fi
+            break
+            ;;
+          "Use Ranger"*,* | *,"Use Ranger"* | "use ranger"*,* | *,"use ranger"*)
+            if [ "${use_ranger}" ]; then
+              use_ranger=
+            else
+              use_ranger=1
+            fi
+            break
+            ;;
+          "Main"*,* | *,"Main"* | "main"*,* | *,"main"*)
+            break 2
+            ;;
+          "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+            heading "Exiting kitty-control" "Farewell"
+            exit 0
+            ;;
+          *,*)
+            printf "\nCould not match '${REPLY}' with a menu entry."
+            printf "\nPlease try again with an exact match.\n"
+            break
+            ;;
         esac
         REPLY=
       done
@@ -3137,13 +3174,13 @@ select_with_fzf() {
     done
     [ "${keepit}" ] && {
       entry=$(echo "${fzopts[i]}" | sed -e "s/ \[.\]//")
-      tmp_array+=( "${entry}" )
+      tmp_array+=("${entry}")
     }
   done
   fzopts=("${tmp_array[@]}")
   unset tmp_array
 
-  fzopts+=( "Help" "Main Menu" )
+  fzopts+=("Help" "Main Menu")
   while true; do
     heading "Kitty Control Fuzzy Select" "Kitty Control"
     choice=$(printf "%s\n" "${fzopts[@]}" | fzf -m --prompt="😺 Select Menu Option ('Main Menu' or 'Esc' to return)  " --height=18 --layout=reverse --exit-0)
@@ -3206,8 +3243,7 @@ select_with_fzf() {
           install_lolcat
           ;;
         "Install Neofetch"*)
-          install_package neofetch
-          have_neo=$(type -p neofetch)
+          install_neofetch
           ;;
         "Install Ranger"*)
           install_ranger
@@ -3225,8 +3261,7 @@ select_with_fzf() {
         "Load"* | "load"* | "l")
           numconfs=1
           configs=("default")
-          for kconf in ${CONFDIR}/*/kitty.conf ${CONFDIR}/*/*/kitty.conf
-          do
+          for kconf in ${CONFDIR}/*/kitty.conf ${CONFDIR}/*/*/kitty.conf; do
             [ "${kconf}" == "${CONFDIR}/*/kitty.conf" ] && continue
             [ "${kconf}" == "${CONFDIR}/*/*/kitty.conf" ] && continue
             ((numconfs++))
@@ -3325,8 +3360,7 @@ show_menu() {
     PS3="${BOLD}Enter a choice (number, shortcut, or text, 'h' help): ${NORM}"
     numconfs=1
     configs=("default")
-    for kconf in ${CONFDIR}/*/kitty.conf ${CONFDIR}/*/*/kitty.conf
-    do
+    for kconf in ${CONFDIR}/*/kitty.conf ${CONFDIR}/*/*/kitty.conf; do
       [ "${kconf}" == "${CONFDIR}/*/kitty.conf" ] && continue
       [ "${kconf}" == "${CONFDIR}/*/*/kitty.conf" ] && continue
       ((numconfs++))
@@ -3379,191 +3413,190 @@ show_menu() {
     set_show_shortcuts
     select opt in "${options[@]}"; do
       case "$opt,$REPLY" in
-      "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
-        show_help
-        break
-        ;;
-      "Background Color"*,* | *,"Background Color"* | "b",* | *,"b" | "bg",* | *,"bg" | "back",* | *,"back")
-        menu_background_color
-        break
-        ;;
-      "Foreground Color"*,* | *,"Foreground Color"* | "g",* | *,"g" | "fg",* | *,"fg" | "fore",* | *,"fore")
-        menu_foreground_color
-        break
-        ;;
-      "Background Image"*,* | *,"Background Image"* | "i",* | *,"i" | "bi",* | *,"bi")
-        FILE=
-        select_file image
-        [ "${FILE}" ] && {
+        "h",* | *,"h" | "H",* | *,"H" | "help",* | *,"help" | "Help",* | *,"Help")
+          show_help
+          break
+          ;;
+        "Background Color"*,* | *,"Background Color"* | "b",* | *,"b" | "bg",* | *,"bg" | "back",* | *,"back")
+          menu_background_color
+          break
+          ;;
+        "Foreground Color"*,* | *,"Foreground Color"* | "g",* | *,"g" | "fg",* | *,"fg" | "fore",* | *,"fore")
+          menu_foreground_color
+          break
+          ;;
+        "Background Image"*,* | *,"Background Image"* | "i",* | *,"i" | "bi",* | *,"bi")
+          FILE=
+          select_file image
+          [ "${FILE}" ] && {
+            set-bg-image none
+            set-bg-image "${FILE}"
+          }
+          break
+          ;;
+        "Clear"*,* | *,"Clear"* | "clear"*,* | *,"clear"* | "c",* | *,"c")
           set-bg-image none
-          set-bg-image "${FILE}"
-        }
-        break
-        ;;
-      "Clear"*,* | *,"Clear"* | "clear"*,* | *,"clear"* | "c",* | *,"c")
-        set-bg-image none
-        break
-        ;;
-      "Dark"*,* | *,"Dark"* | "dark"*,* | *,"dark"* | "B",* | *,"B")
-        set-opacity "1.0"
-        break
-        ;;
-      "Diff File"*,* | *,"Diff File"* | "diff file"*,* | *,"diff file"* | "d",* | *,"d")
-        menu_diff_file
-        break
-        ;;
-      "Diff Fold"*,* | *,"Diff Fold"* | "diff fold"*,* | *,"diff fold"* | "D",* | *,"D")
-        menu_diff_folder
-        break
-        ;;
-      "Exam"*,* | *,"Exam"* | "exam"*,* | *,"exam"* | "e",* | *,"e")
-        show_examples noexit | less
-        break
-        ;;
-      "Font"*,* | *,"Font"* | "font"*,* | *,"font"* | "f",* | *,"f")
-        menu_font_size
-        break
-        ;;
-      *"Layout"*,* | *,*"Layout"* | *"layout"*,* | *,*"layout"* | "L",* | *,"L")
-        menu_set_layout
-        break
-        ;;
-      "Window"*,* | *,"Window"* | "window"*,* | *,"window"* | "W",* | *,"W")
-        menu_window_size
-        break
-        ;;
-      "z",*|*,"z"|"Fzf",*|*,"Fzf"|"fzf",*|*,"fzf"|"Fuzzy"*,*|*,"Fuzzy"*|"fuzzy"*,*|*,"fuzzy"*)
-        [ "${have_fzf}" ] && select_with_fzf "${options[@]}"
-        break
-        ;;
-      "Install Figlet",* | *,"Install Figlet")
-        install_figlet
-        break
-        ;;
-      "Install Fzf",* | *,"Install Fzf")
-        install_fzf
-        break
-        ;;
-      "Install jq",* | *,"Install jq")
-        install_package jq
-        have_jq=$(type -p jq)
-        break
-        ;;
-      "Install Lolcat",* | *,"Install Lolcat")
-        install_lolcat
-        break
-        ;;
-      "Install Neofetch",* | *,"Install Neofetch")
-        install_package neofetch
-        have_neo=$(type -p neofetch)
-        break
-        ;;
-      "Install Ranger",* | *,"Install Ranger")
-        install_ranger
-        break
-        ;;
-      "List Col"*,* | *,"List Col"* | "list col"*,* | *,"list col"* | "C",* | *,"C")
-        list_colors brief more
-        prompt_more
-        break
-        ;;
-      "List Tab"*,* | *,"List Tab"* | "list tab"*,* | *,"list tab"* | "k",* | *,"k")
-        tabs_menu
-        break
-        ;;
-      "List Win"*,* | *,"List Win"* | "list win"*,* | *,"list win"* | "w",* | *,"w")
-        windows_menu
-        break
-        ;;
-      "Load"*,* | *,"Load"* | "load"*,* | *,"load"* | "l",* | *,"l")
-        menu_load_config "${configs[@]}"
-        break
-        ;;
-      "View"*,* | *,"View"* | "view"*,* | *,"view"* | "v",* | *,"v")
-        FILE=
-        select_file image
-        [ "${FILE}" ] && {
-          kitty +kitten icat ${FILE}
-          printf "\nTo view this image use: kitty +kitten icat ${FILE}\n"
+          break
+          ;;
+        "Dark"*,* | *,"Dark"* | "dark"*,* | *,"dark"* | "B",* | *,"B")
+          set-opacity "1.0"
+          break
+          ;;
+        "Diff File"*,* | *,"Diff File"* | "diff file"*,* | *,"diff file"* | "d",* | *,"d")
+          menu_diff_file
+          break
+          ;;
+        "Diff Fold"*,* | *,"Diff Fold"* | "diff fold"*,* | *,"diff fold"* | "D",* | *,"D")
+          menu_diff_folder
+          break
+          ;;
+        "Exam"*,* | *,"Exam"* | "exam"*,* | *,"exam"* | "e",* | *,"e")
+          show_examples noexit | less
+          break
+          ;;
+        "Font"*,* | *,"Font"* | "font"*,* | *,"font"* | "f",* | *,"f")
+          menu_font_size
+          break
+          ;;
+        *"Layout"*,* | *,*"Layout"* | *"layout"*,* | *,*"layout"* | "L",* | *,"L")
+          menu_set_layout
+          break
+          ;;
+        "Window"*,* | *,"Window"* | "window"*,* | *,"window"* | "W",* | *,"W")
+          menu_window_size
+          break
+          ;;
+        "z",* | *,"z" | "Fzf",* | *,"Fzf" | "fzf",* | *,"fzf" | "Fuzzy"*,* | *,"Fuzzy"* | "fuzzy"*,* | *,"fuzzy"*)
+          [ "${have_fzf}" ] && select_with_fzf "${options[@]}"
+          break
+          ;;
+        "Install Figlet",* | *,"Install Figlet")
+          install_figlet
+          break
+          ;;
+        "Install Fzf",* | *,"Install Fzf")
+          install_fzf
+          break
+          ;;
+        "Install jq",* | *,"Install jq")
+          install_package jq
+          have_jq=$(type -p jq)
+          break
+          ;;
+        "Install Lolcat",* | *,"Install Lolcat")
+          install_lolcat
+          break
+          ;;
+        "Install Neofetch",* | *,"Install Neofetch")
+          install_neofetch
+          break
+          ;;
+        "Install Ranger",* | *,"Install Ranger")
+          install_ranger
+          break
+          ;;
+        "List Col"*,* | *,"List Col"* | "list col"*,* | *,"list col"* | "C",* | *,"C")
+          list_colors brief more
+          prompt_more
+          break
+          ;;
+        "List Tab"*,* | *,"List Tab"* | "list tab"*,* | *,"list tab"* | "k",* | *,"k")
+          tabs_menu
+          break
+          ;;
+        "List Win"*,* | *,"List Win"* | "list win"*,* | *,"list win"* | "w",* | *,"w")
+          windows_menu
+          break
+          ;;
+        "Load"*,* | *,"Load"* | "load"*,* | *,"load"* | "l",* | *,"l")
+          menu_load_config "${configs[@]}"
+          break
+          ;;
+        "View"*,* | *,"View"* | "view"*,* | *,"view"* | "v",* | *,"v")
+          FILE=
+          select_file image
+          [ "${FILE}" ] && {
+            kitty +kitten icat ${FILE}
+            printf "\nTo view this image use: kitty +kitten icat ${FILE}\n"
+            prompt_continue
+          }
+          break
+          ;;
+        *"Theme"*,* | *,*"Theme"* | *"theme"*,* | *,*"theme"* | "T",* | *,"T")
+          kitty +kitten themes
+          break
+          ;;
+        "Term"*,* | *,"Term"* | "term"*,* | *,"term"* | "info",* | *,"info" | "I",* | *,"I")
+          show_term_info
           prompt_continue
-        }
-        break
-        ;;
-      *"Theme"*,* | *,*"Theme"* | *"theme"*,* | *,*"theme"* | "T",* | *,"T")
-        kitty +kitten themes
-        break
-        ;;
-      "Term"*,* | *,"Term"* | "term"*,* | *,"term"* | "info",* | *,"info" | "I",* | *,"I")
-        show_term_info
-        prompt_continue
-        break
-        ;;
-      "Tran"*,* | *,"Tran"* | "tran"*,* | *,"tran"* | "t",* | *,"t")
-        menu_set_trans
-        break
-        ;;
-      *"Full"*,* | *,*"Full"* | *"full"*,* | *,*"full"* | "F",* | *,"F")
-        toggle-fullscreen
-        sleep 1
-        break
-        ;;
-      "Unicode"*,* | *,"Unicode"* | "unicode"*,* | *,"unicode"* | "U",* | *,"U")
-        kitty +kitten unicode_input
-        break
-        ;;
-      "System"*,* | *,"System"* | "system"*,* | *,"system"* | "n",* | *,"n")
-        show_neofetch
-        break
-        ;;
-      "Reset"*,* | *,"Reset"* | "reset"*,* | *,"reset"* | "r",* | *,"r")
-        set-background reset
-        set-foreground reset
-        load-config "default"
-        break
-        ;;
-      "Show"*,*|*,"Show"*|"show"*,*|*,"show"*|"Usage"*,*|*,"Usage"*|"usage"*,*|*,"usage"*|"u",*|*,"u")
-        show_usage usage
-        break
-        ;;
-      "Man"*,* | *,"Man"* | "man"*,* | *,"man"* | "m",* | *,"m")
-        printf "\n"
-        man kitty-control
-        break
-        ;;
-      "Open"*,* | *,"Open"* | "open"*,* | *,"open"* | "O",* | *,"O")
-        open_doc_menu
-        break
-        ;;
-      "Opt"*,* | *,"Opt"* | "opt"*,* | *,"opt"* | "o",* | *,"o")
-        options_menu
-        break
-        ;;
-      "Upgrade kitty-control"*,* | *,"Upgrade kitty-control"* | "upgrade kitty-control"*,* | *,"upgrade kitty-control"*)
-        upgrade_kitty_control noexit
-        break
-        ;;
-      "Upgrade Kitty"*,* | *,"Upgrade Kitty"* | "upgrade kitty"*,* | *,"upgrade kitty"*)
-        install_kitty
-        break
-        ;;
-      "Upgrade Fzf"*,* | *,"Upgrade Fzf"* | "upgrade fzf"*,* | *,"upgrade fzf"*)
-        upgrade_fzf
-        break
-        ;;
-      "About"*,* | *,"About"* | "about"*,* | *,"about"* | "a",* | *,"a")
-        show_about
-        prompt_continue
-        break
-        ;;
-      "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
-        heading "Exiting kitty-control" "Farewell"
-        exit 0
-        ;;
-      *,*)
-        printf "\nCould not match '${REPLY}' with a menu entry."
-        printf "\nPlease try again with an exact match.\n"
-        break
-        ;;
+          break
+          ;;
+        "Tran"*,* | *,"Tran"* | "tran"*,* | *,"tran"* | "t",* | *,"t")
+          menu_set_trans
+          break
+          ;;
+        *"Full"*,* | *,*"Full"* | *"full"*,* | *,*"full"* | "F",* | *,"F")
+          toggle-fullscreen
+          sleep 1
+          break
+          ;;
+        "Unicode"*,* | *,"Unicode"* | "unicode"*,* | *,"unicode"* | "U",* | *,"U")
+          kitty +kitten unicode_input
+          break
+          ;;
+        "System"*,* | *,"System"* | "system"*,* | *,"system"* | "n",* | *,"n")
+          show_neofetch
+          break
+          ;;
+        "Reset"*,* | *,"Reset"* | "reset"*,* | *,"reset"* | "r",* | *,"r")
+          set-background reset
+          set-foreground reset
+          load-config "default"
+          break
+          ;;
+        "Show"*,* | *,"Show"* | "show"*,* | *,"show"* | "Usage"*,* | *,"Usage"* | "usage"*,* | *,"usage"* | "u",* | *,"u")
+          show_usage usage
+          break
+          ;;
+        "Man"*,* | *,"Man"* | "man"*,* | *,"man"* | "m",* | *,"m")
+          printf "\n"
+          man kitty-control
+          break
+          ;;
+        "Open"*,* | *,"Open"* | "open"*,* | *,"open"* | "O",* | *,"O")
+          open_doc_menu
+          break
+          ;;
+        "Opt"*,* | *,"Opt"* | "opt"*,* | *,"opt"* | "o",* | *,"o")
+          options_menu
+          break
+          ;;
+        "Upgrade kitty-control"*,* | *,"Upgrade kitty-control"* | "upgrade kitty-control"*,* | *,"upgrade kitty-control"*)
+          upgrade_kitty_control noexit
+          break
+          ;;
+        "Upgrade Kitty"*,* | *,"Upgrade Kitty"* | "upgrade kitty"*,* | *,"upgrade kitty"*)
+          install_kitty
+          break
+          ;;
+        "Upgrade Fzf"*,* | *,"Upgrade Fzf"* | "upgrade fzf"*,* | *,"upgrade fzf"*)
+          upgrade_fzf
+          break
+          ;;
+        "About"*,* | *,"About"* | "about"*,* | *,"about"* | "a",* | *,"a")
+          show_about
+          prompt_continue
+          break
+          ;;
+        "Quit"*,* | *,"Quit"* | "quit"*,* | *,"quit"* | "q",* | *,"q")
+          heading "Exiting kitty-control" "Farewell"
+          exit 0
+          ;;
+        *,*)
+          printf "\nCould not match '${REPLY}' with a menu entry."
+          printf "\nPlease try again with an exact match.\n"
+          break
+          ;;
       esac
       REPLY=
     done
@@ -3670,7 +3703,7 @@ while [[ $1 ]]; do
       if [ "$2" ]; then
         docpage=$(tolower "$2")
         case "${docpage}" in
-          conf|faq)
+          conf | faq)
             open_kitty_doc "${docpage}"
             ;;
           remote)
@@ -3679,7 +3712,7 @@ while [[ $1 ]]; do
           layout*)
             open_kitty_doc layouts
             ;;
-          diff|icat|ssh|theme*)
+          diff | icat | ssh | theme*)
             open_kitty_doc "kittens/${docpage}"
             ;;
           unicode*)
@@ -3766,7 +3799,7 @@ while [[ $1 ]]; do
       show_versions
       exit 0
       ;;
-    back*|--back*)
+    back* | --back*)
       if [ "$2" ]; then
         backgrnd="$2"
         shift 2
@@ -3775,7 +3808,7 @@ while [[ $1 ]]; do
         brief_usage
       fi
       ;;
-    fore*|--fore*)
+    fore* | --fore*)
       if [ "$2" ]; then
         foregrnd="$2"
         shift 2
@@ -3784,7 +3817,7 @@ while [[ $1 ]]; do
         brief_usage
       fi
       ;;
-    diff|--diff)
+    diff | --diff)
       if [ "$2" ] && [ "$3" ]; then
         kitty +kitten diff $2 $3
         shift 3
@@ -3793,7 +3826,7 @@ while [[ $1 ]]; do
         brief_usage
       fi
       ;;
-    icat|--icat)
+    icat | --icat)
       if [ "$2" ]; then
         kitty +kitten icat $2
         shift 2
@@ -3802,11 +3835,11 @@ while [[ $1 ]]; do
         brief_usage
       fi
       ;;
-    layout|--layout)
+    layout | --layout)
       if [ "$2" ]; then
         layout=$(tolower "$2")
         case "${layout}" in
-          previous|fat|grid|horizontal|splits|stack|tall|vertical)
+          previous | fat | grid | horizontal | splits | stack | tall | vertical)
             set-layout "$2"
             ;;
           *)
@@ -3822,7 +3855,7 @@ while [[ $1 ]]; do
         brief_usage
       fi
       ;;
-    list|--list)
+    list | --list)
       [ "$2" == "self" ] && {
         OPTS="--self ${OPTS}"
         shift
@@ -3843,7 +3876,7 @@ while [[ $1 ]]; do
           fi
           shift 2
           ;;
-        window*|"")
+        window* | "")
           if [ "${have_jq}" ]; then
             kitty @ ${SOCKET} ls ${OPTS} | jq --color-output '.[]'
           else
@@ -3863,7 +3896,7 @@ while [[ $1 ]]; do
           ;;
       esac
       ;;
-    ls|--ls)
+    ls | --ls)
       [ "$2" == "self" ] && {
         OPTS="--self ${OPTS}"
         shift
@@ -3884,7 +3917,7 @@ while [[ $1 ]]; do
           fi
           shift 2
           ;;
-        window*|"")
+        window* | "")
           if [ "${have_jq}" ]; then
             list_windows
           else
@@ -3904,7 +3937,7 @@ while [[ $1 ]]; do
           ;;
       esac
       ;;
-    load|reload|--load|--reload)
+    load | reload | --load | --reload)
       if [ "$2" ]; then
         load-config "$2"
         shift 2
@@ -3913,11 +3946,11 @@ while [[ $1 ]]; do
         shift
       fi
       ;;
-    dark|opaque|--dark|--opaque)
+    dark | opaque | --dark | --opaque)
       setopcty="1.0"
       shift
       ;;
-    fontmin*|fontdec*|--fontmin*|--fontdec*)
+    fontmin* | fontdec* | --fontmin* | --fontdec*)
       if [ "$2" ]; then
         fontdown="$2"
         shift 2
@@ -3926,7 +3959,7 @@ while [[ $1 ]]; do
         shift
       fi
       ;;
-    fontplus|fontinc*|--fontplus|--fontinc*)
+    fontplus | fontinc* | --fontplus | --fontinc*)
       if [ "$2" ]; then
         fontplus="$2"
         shift 2
@@ -3935,7 +3968,7 @@ while [[ $1 ]]; do
         shift
       fi
       ;;
-    font*|--font*)
+    font* | --font*)
       if [ "$2" ]; then
         fontsize="$2"
         shift 2
@@ -3944,19 +3977,19 @@ while [[ $1 ]]; do
         shift
       fi
       ;;
-    man|--man)
+    man | --man)
       man kitty-control
       shift
       ;;
-    menu|--menu)
+    menu | --menu)
       set_menu=1
       shift
       ;;
-    neo*|--neo*)
+    neo* | --neo*)
       show_neo=1
       shift
       ;;
-    size*|--size*)
+    size* | --size*)
       if [ "$3" ]; then
         width="$2"
         height="$3"
@@ -3967,7 +4000,7 @@ while [[ $1 ]]; do
         shift 2
       fi
       ;;
-    title|--title)
+    title | --title)
       if [ "$2" ]; then
         kitty @ ${SOCKET} set-tab-title ${OPTS} "$2"
         [ $? -eq 0 ] || {
@@ -3979,7 +4012,7 @@ while [[ $1 ]]; do
         brief_usage
       fi
       ;;
-    opacity|tran*|--opacity|--tran*)
+    opacity | tran* | --opacity | --tran*)
       if [ "$2" ]; then
         OPACITY="$2"
         shift 2
@@ -3988,26 +4021,23 @@ while [[ $1 ]]; do
       fi
       setopcty="${OPACITY}"
       ;;
-    term*|--term*|info*|--info*)
+    term* | --term* | info* | --info*)
       show_term_info
       printf "\n"
       shift
       ;;
-    theme*|--theme*)
+    theme* | --theme*)
       kitty +kitten themes
       shift
       ;;
-    tool*|--tool*)
+    tool* | --tool*)
       set_haves
       [ "${have_jq}" ] || {
         install_package jq
         have_jq=$(type -p jq)
       }
       [ "${have_lolcat}" ] || install_lolcat
-      [ "${have_neo}" ] || {
-        install_package neofetch
-        have_neo=$(type -p neofetch)
-      }
+      [ "${have_neo}" ] || install_neofetch
       if [ "${have_make}" ]; then
         [ "${have_figlet}" ] || {
           if [ "${have_gcc}" ]; then
@@ -4021,11 +4051,11 @@ while [[ $1 ]]; do
         printf "\nInstallation of tools requires 'make' but 'make' not found."
       fi
       ;;
-    unicode|--unicode)
+    unicode | --unicode)
       kitty +kitten unicode_input
       shift
       ;;
-    upgrade|--upgrade)
+    upgrade | --upgrade)
       if [ "${have_fzf}" ]; then
         fzf_release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
         fzf_install_version=$(fzf --version | awk '{ print $1 }')

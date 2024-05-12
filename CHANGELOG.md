@@ -6,6 +6,15 @@
 
 ### 🐞 Fixed
 
+## v1.1.0r2
+
+### ⚡️ Added
+
+- Add `fastfetch` configs
+- Update `nfetch` to work with either `neofetch` or `fastfetch`
+
+### 🐞 Fixed
+
 - Set `open_url_with` to `default` in all `kitty.conf`
 
 ## v1.1.0r1
