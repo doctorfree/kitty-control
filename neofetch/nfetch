@@ -126,7 +126,7 @@ export TERM=xterm-kitty
 
 # Use exec to pickup the user's login shell
 if [ "${USE_CONFIG}" ]; then
-  exec ${FETCH} ${FETCHARGS} --config ${USE_CONFIG} $*
+  exec ${FETCH} --config ${USE_CONFIG} ${FETCHARGS} $*
 else
   exec ${FETCH} ${FETCHARGS} $*
 fi

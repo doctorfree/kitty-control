@@ -6,6 +6,16 @@
 
 ### 🐞 Fixed
 
+## v1.1.0r4
+
+### ⚡️ Added
+
+- Add several new `neofetch` configurations
+
+### 🐞 Fixed
+
+- Pass `neofetch` config argument before logo and other args
+
 ## v1.1.0r3
 
 ### ⚡️ Added
