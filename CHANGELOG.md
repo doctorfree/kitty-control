@@ -6,6 +6,18 @@
 
 ### 🐞 Fixed
 
+## v1.1.1r1
+
+### ⚡️ Added
+
+- Add option to `nfetch` to specify `neofetch` logo image file
+- Add support for `Fedora` in `nfetch/ffetch`
+
+### 🐞 Fixed
+
+- Update `neofetch` config file `config-03.conf`
+- Set image filename for `fastfetch` configs in `install`
+
 ## v1.1.0r4
 
 ### ⚡️ Added

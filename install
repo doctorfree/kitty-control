@@ -299,6 +299,7 @@ have_git=$(type -p git)
 
 printf "\nInstalling kitty-control\n"
 darwin=
+fedora=
 ubuntu=
 platform=$(uname -s)
 if [ "${platform}" == "Darwin" ]; then
@@ -307,6 +308,7 @@ else
   [ -f /etc/os-release ] && {
     . /etc/os-release
     [ "${ID}" == "ubuntu" ] && ubuntu=1
+    [ "${ID}" == "fedora" ] && fedora=1
   }
 fi
 
@@ -358,8 +360,12 @@ chmod 755 ${HOME}/.local/bin/kitty-control
     if [ "${ubuntu}" ]; then
       icon_name="ubuntu-jammy"
     else
-      icon_size="256"
-      icon_name="kitty"
+      if [ "${fedora}" ]; then
+        icon_name="fedora"
+      else
+        icon_size="256"
+        icon_name="kitty"
+      fi
     fi
   fi
   cat "${SCRIPT_PATH}"/neofetch/nfetch | \
@@ -537,7 +543,7 @@ ICON_DIR="${HOME}/.local/share/icons/hicolor/512x512/apps"
     cp "${SCRIPT_PATH}"/icons/kitty-512.png "${ICON_DIR}"/kitty.png
   }
 }
-for icon in apple-logo.png tux.png ubuntu-jammy.png
+for icon in apple-logo.png fedora.png tux.png ubuntu-jammy.png
 do
   [ -f "${SCRIPT_PATH}"/icons/${icon} ] && {
     [ -f "${ICON_DIR}"/${icon} ] || {
@@ -563,7 +569,8 @@ do
   [ "${cfg}" == "${SCRIPT_PATH}/fastfetch/config*" ] && continue
   ncfg=$(basename "${cfg}")
   [ -f "${FAST_DIR}"/${ncfg} ] || {
-    cp "${SCRIPT_PATH}"/fastfetch/${ncfg} "${FAST_DIR}"/${ncfg}
+    cat "${SCRIPT_PATH}"/fastfetch/${ncfg} | \
+      sed -e "s/__PLATFORM__/${icon_name}/" > "${FAST_DIR}"/${ncfg}
   }
 done
 # Neofetch configuration
