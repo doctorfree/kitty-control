@@ -9,7 +9,7 @@
 # Written February, 2024 by Ronald Joe Record <ronaldrecord@gmail.com>
 #
 VERSION=1.1.1
-RELEASE=2
+RELEASE=3
 # The Kitty configuration directory
 CONFDIR="${HOME}/.config/kitty"
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
@@ -470,6 +470,7 @@ show_neofetch() {
         [ "${ID}" == "alpine" ] && icon_name="alpine"
         [ "${ID}" == "centos" ] && icon_name="centos"
         [ "${ID}" == "opensuse" ] && icon_name="opensuse"
+        [ "${ID}" == "rocky" ] && icon_name="rocky"
         [ "${ID}" == "void" ] && icon_name="void"
       }
     fi

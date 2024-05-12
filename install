@@ -319,6 +319,7 @@ else
     [ "${ID}" == "alpine" ] && icon_name="alpine"
     [ "${ID}" == "centos" ] && icon_name="centos"
     [ "${ID}" == "opensuse" ] && icon_name="opensuse"
+    [ "${ID}" == "rocky" ] && icon_name="rocky"
     [ "${ID}" == "void" ] && icon_name="void"
   }
 fi
@@ -544,7 +545,7 @@ ICON_DIR="${HOME}/.local/share/icons/hicolor/512x512/apps"
   }
 }
 for icon in alpine.png apple-logo.png arch.png centos.png debian.png \
-            fedora.png opensuse.png tux.png ubuntu-jammy.png void.png
+            fedora.png opensuse.png rocky.png tux.png ubuntu-jammy.png void.png
 do
   [ -f "${SCRIPT_PATH}"/icons/${icon} ] && {
     [ -f "${ICON_DIR}"/${icon} ] || {

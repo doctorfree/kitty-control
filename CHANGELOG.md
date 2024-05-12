@@ -6,6 +6,17 @@
 
 ### 🐞 Fixed
 
+## v1.1.1r3
+
+### ⚡️ Added
+
+- Add `neofetch` logo image support for `Rocky Linux`
+- Add usage message for `nfetch/ffetch` to `README`
+
+### 🐞 Fixed
+
+- Change arch linux logo
+
 ## v1.1.1r2
 
 ### ⚡️ Added
