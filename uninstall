@@ -40,7 +40,9 @@ rm -rf ${KCDIR}
   }
 }
 
-rm -f ${HOME}/.local/share/man/man1/kitty-control*
+rm -f ${HOME}/.local/share/man/man1/kitty-control.1
+rm -f ${HOME}/.local/share/man/man1/nfetch.1
+rm -f ${HOME}/.local/share/man/man1/ffetch.1
 APP_TOP="${HOME}"/.local/share/applications/kitty-session.desktop
 [ -f "${SCRIPT_PATH}"/kitty-session.desktop ] && {
   [ -f "${APP_TOP}" ] && {

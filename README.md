@@ -14,6 +14,7 @@ Control some aspects of the Kitty terminal emulator from the command line
   - [Aliases](#aliases)
 - [Usage](#usage)
   - [Menus](#menus)
+  - [Man pages](#man-pages)
 - [Screenshots](#screenshots)
 - [Environment](#environment)
 - [Examples](#examples)
@@ -413,6 +414,12 @@ menu option exists to select a `kitty` tab for information display.
 Note that the `kitty` window and tab information display via the menu interface
 requires the `jq` JSON parsing utility. Without `jq` all window and tab info
 is displayed.
+
+### Man pages
+
+UNIX style manual pages are installed for `kitty-control`, `nfetch`, and
+`ffetch`. To view these manual pages use the `man` command: `man kitty-control`,
+`man nfetch`, and `man ffetch`.
 
 ## Screenshots
 

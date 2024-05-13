@@ -344,7 +344,7 @@ else
 fi
 
 # If standalone install, clone the repository, run the install script, exit
-[ -f "${SCRIPT_PATH}"/kitty-control ] || {
+[ -f "${SCRIPT_PATH}"/bin/kitty-control ] || {
   printf "\nCloning kitty-control repository\n"
   git clone ${REPO_URL} /tmp/kc$$ >/dev/null 2>&1
   [ -x /tmp/kc$$/install ] || {
@@ -359,13 +359,13 @@ fi
   exit 0
 }
 
-# Copy kitty-control, kc_read_config.py, man page
+# Copy kitty-control, kc_read_config.py, man pages
 [ -d ${HOME}/.local/bin ] || mkdir -p ${HOME}/.local/bin
-cp "${SCRIPT_PATH}"/kitty-control ${HOME}/.local/bin/kitty-control
+cp "${SCRIPT_PATH}"/bin/kitty-control ${HOME}/.local/bin/kitty-control
 chmod 755 ${HOME}/.local/bin/kitty-control
 # Fixup and copy nfetch script
-[ -f "${SCRIPT_PATH}"/neofetch/nfetch ] && {
-  cat "${SCRIPT_PATH}"/neofetch/nfetch | \
+[ -f "${SCRIPT_PATH}"/bin/nfetch ] && {
+  cat "${SCRIPT_PATH}"/bin/nfetch | \
     sed -e "s/__SIZE__/${icon_size}/g" \
         -e "s/__PLATFORM__/${icon_name}/" > ${HOME}/.local/bin/nfetch
   chmod 755 ${HOME}/.local/bin/nfetch

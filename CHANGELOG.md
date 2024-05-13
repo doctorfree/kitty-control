@@ -6,6 +6,15 @@
 
 ### 🐞 Fixed
 
+## v1.1.3r1
+
+### ⚡️ Added
+
+- Moved `kitty-control` and `nfetch` into `bin`
+- Add man pages for `nfetch` and `ffetch`
+
+### 🐞 Fixed
+
 ## v1.1.2r3
 
 ### ⚡️ Added
