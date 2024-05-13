@@ -212,6 +212,9 @@ Individual tools can be installed via the `kitty-control` menu interface.
 The installation of `ranger`, `jq`, `lolcat`, `neofetch`, and `figlet`
 require administrative privilege.
 
+While `neofetch` can be installed using `kitty-control`, to install
+`fastfetch` use `./fastfetch/install_fastfetch.sh`.
+
 ### Aliases
 
 For convenience, alias `kitty-control` to `kc` by adding
