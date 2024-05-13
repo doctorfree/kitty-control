@@ -123,6 +123,9 @@ cd kitty-control
 # source $HOME/.bashrc
 ```
 
+**[NOTE:]** To force copying of all `neofetch` and `fastfetch` configuration files
+regardless of whether an existing file of the same name exists, use `./install --force`
+
 ### From a release download
 
 For example, to install `kitty-control` version 1.0.2 release 3:
