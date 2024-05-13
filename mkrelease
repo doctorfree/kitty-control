@@ -36,7 +36,7 @@ gh release create v${VERSION}r${RELEASE} ${DRAFT} \
                   --title "${ANNO}" \
                   --notes-file ReleaseNotes.md \
                   install \
-                  kitty-control \
+                  bin/kitty-control \
                   CHANGELOG.md
 
 git fetch --tags origin
