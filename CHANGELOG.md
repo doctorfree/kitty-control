@@ -6,6 +6,14 @@
 
 ### 🐞 Fixed
 
+## v1.1.2r2
+
+### ⚡️ Added
+
+- Set `fastfetch` logo display type depending on OS
+
+### 🐞 Fixed
+
 ## v1.1.2r1
 
 ### ⚡️ Added

@@ -5,7 +5,7 @@
       "left": 4,
       "top": 4
     },
-    "type": "kitty",
+    "type": "__KITTY__",
     "source": "~/.local/share/icons/hicolor/__SIZE__x__SIZE__/apps/__PLATFORM__.png"
   },
   "display": {

@@ -306,11 +306,13 @@ printf "\nInstalling kitty-control\n"
 darwin=
 icon_name=
 icon_size="512"
+fast_type="kitty-direct"
 platform=$(uname -s)
 if [ "${platform}" == "Darwin" ]; then
   darwin=1
   icon_name="apple-logo"
   icon_size="384"
+  fast_type="kitty"
 else
   [ -f /etc/os-release ] && {
     . /etc/os-release
@@ -589,12 +591,14 @@ do
   if [ -f "${FAST_DIR}"/${ncfg} ]; then
     [ "${force}" ] && {
       cat "${SCRIPT_PATH}"/fastfetch/${ncfg} | \
-        sed -e "s/__SIZE__/${icon_size}/g" \
+        sed -e "s/__KITTY__/${fast_type}/" \
+            -e "s/__SIZE__/${icon_size}/g" \
             -e "s/__PLATFORM__/${icon_name}/" > "${FAST_DIR}"/${ncfg}
     }
   else
     cat "${SCRIPT_PATH}"/fastfetch/${ncfg} | \
-      sed -e "s/__SIZE__/${icon_size}/g" \
+      sed -e "s/__KITTY__/${fast_type}/" \
+          -e "s/__SIZE__/${icon_size}/g" \
           -e "s/__PLATFORM__/${icon_name}/" > "${FAST_DIR}"/${ncfg}
   fi
 done

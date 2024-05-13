@@ -9,7 +9,7 @@
 # Written February, 2024 by Ronald Joe Record <ronaldrecord@gmail.com>
 #
 VERSION=1.1.2
-RELEASE=1
+RELEASE=2
 # The Kitty configuration directory
 CONFDIR="${HOME}/.config/kitty"
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {

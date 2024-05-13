@@ -5,7 +5,7 @@
       "left": 2,
       "top": 2
     },
-    "type": "kitty",
+    "type": "__KITTY__",
     "source": "~/.local/share/icons/hicolor/__SIZE__x__SIZE__/apps/__PLATFORM__.png"
   },
   "display": {
@@ -37,8 +37,8 @@
       "keyColor": "green"
     },
     {
-      "type": "display",
-      "key": "├─󰍹",
+      "type": "battery",
+      "key": "├─",
       "keyColor": "green"
     },
     {
@@ -57,8 +57,8 @@
       "keyColor": "green"
     },
     {
-      "type": "battery",
-      "key": "╰─",
+      "type": "display",
+      "key": "╰─󰍹",
       "keyColor": "green"
     },
     {
