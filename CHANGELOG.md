@@ -6,6 +6,17 @@
 
 ### 🐞 Fixed
 
+## v1.1.1r4
+
+### ⚡️ Added
+
+- Use `install --force` to overwrite existing `neofetch/fastfetch` configs
+- Always overwrite existing logo images in `install`
+
+### 🐞 Fixed
+
+- Fix `Rocky Linux` logo
+
 ## v1.1.1r3
 
 ### ⚡️ Added
