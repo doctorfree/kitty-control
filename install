@@ -310,6 +310,7 @@ platform=$(uname -s)
 if [ "${platform}" == "Darwin" ]; then
   darwin=1
   icon_name="apple-logo"
+  icon_size="384"
 else
   [ -f /etc/os-release ] && {
     . /etc/os-release
@@ -556,6 +557,19 @@ do
   }
 done
 
+for size in "256" "384"
+do
+  ICON_DIR="${HOME}/.local/share/icons/hicolor/${size}x${size}/apps"
+  [ -d "${ICON_DIR}" ] || mkdir -p "${ICON_DIR}"
+  for icon in alpine apple-logo arch centos debian \
+              fedora opensuse rocky tux ubuntu-jammy void
+  do
+    [ -f "${SCRIPT_PATH}"/icons/${icon}-${size}.png ] && {
+      cp "${SCRIPT_PATH}"/icons/${icon}-${size}.png "${ICON_DIR}"/${icon}.png
+    }
+  done
+done
+
 # Install JetBrains Mono font
 if [ "${darwin}" ]; then
   usr_font_dir="${HOME}/Library/Fonts"
@@ -575,11 +589,13 @@ do
   if [ -f "${FAST_DIR}"/${ncfg} ]; then
     [ "${force}" ] && {
       cat "${SCRIPT_PATH}"/fastfetch/${ncfg} | \
-        sed -e "s/__PLATFORM__/${icon_name}/" > "${FAST_DIR}"/${ncfg}
+        sed -e "s/__SIZE__/${icon_size}/g" \
+            -e "s/__PLATFORM__/${icon_name}/" > "${FAST_DIR}"/${ncfg}
     }
   else
     cat "${SCRIPT_PATH}"/fastfetch/${ncfg} | \
-      sed -e "s/__PLATFORM__/${icon_name}/" > "${FAST_DIR}"/${ncfg}
+      sed -e "s/__SIZE__/${icon_size}/g" \
+          -e "s/__PLATFORM__/${icon_name}/" > "${FAST_DIR}"/${ncfg}
   fi
 done
 # Neofetch configuration

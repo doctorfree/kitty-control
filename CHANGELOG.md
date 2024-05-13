@@ -6,6 +6,16 @@
 
 ### 🐞 Fixed
 
+## v1.1.2r1
+
+### ⚡️ Added
+
+- Multiple size logos for `macOS`
+
+### 🐞 Fixed
+
+- Set logo image size depending on operating system
+
 ## v1.1.1r4
 
 ### ⚡️ Added
