@@ -6,6 +6,16 @@
 
 ### 🐞 Fixed
 
+## v1.1.3r2
+
+### ⚡️ Added
+
+- If `neofetch` is not available then use `fastfetch` if it is available
+
+### 🐞 Fixed
+
+- Change `kitty-control neo` to `kitty-control fetch` and update doc
+
 ## v1.1.3r1
 
 ### ⚡️ Added

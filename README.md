@@ -255,8 +255,8 @@ To display a usage message use `kitty-control -u`. To see several examples,
 Usage: kitty-control [-adefhuv] [back <color>] [-c command] [dark]
                      [diff [opts] <path1> <path2>] [font [num]] [fore <color>]
                      [-i /path/to/image] [icat [opts] <image>] [layout <name>]
-                     [load [subdir|file]] [ls|list [self|colors]] [-m|t <match>]
-                     [man] [menu] [neo] [-o doc] [-s /path/to/socket] [term] [theme] [tools]
+                     [load [subdir|file]] [ls|list [self|colors|tabs|windows]] [-m|t <match>]
+                     [man] [menu] [fetch] [-o doc] [-s /path/to/socket] [term] [theme] [tools]
                      [title <title>] [transparent [opacity]] [unicode] [upgrade]
 Where:
     'back color' Sets the background color to 'color'
@@ -266,6 +266,7 @@ Where:
     'diff [opts] <file1|dir1> <file2|dir2>' Displays differences using the 'diff' kitten
            Enclose [opts] and <file1/dir1> in quotes if [opts] are provided
            See https://sw.kovidgoyal.net/kitty/kittens/diff/#options
+    'fetch' Displays system information
     'font num' Sets the font pointsize to 'num'
            Can use 'font', 'fontsize', 'fontminus', or 'fontplus'
            The second argument specifies the font size, either absolute, +, or -
@@ -279,10 +280,11 @@ Where:
            To remove all images currently displayed on the screen:
                kitty-control icat --clear
            See https://sw.kovidgoyal.net/kitty/kittens/icat/#options
-    'list|ls [self|colors]' Displays information on Kitty windows/colors
+    'list|ls [self|colors|tabs|windows]' Displays info on Kitty tabs/windows/colors
         'list' displays full info, 'ls' abbreviated info
         'self' Indicates display info for this Kitty window
         'colors' Indicates display the names of the supported Kitty colors
+        'tabs|windows' Indicates display info on Kitty tabs or windows
     'layout <name>'
         Sets the Kitty window layout to '<name>' where '<name>' can be one of:
           Previous Fat Grid Horizontal Splits Stack Tall Vertical
@@ -295,7 +297,6 @@ Where:
            'kitty-control load --help' displays a help message for the load command
     'man' Displays the kitty-control manual
     'menu' Displays the kitty-control interactive menu system
-    'neo' Displays neofetch system information
     'size w h' Increases/decreases the window size 'w' and 'h' cells
            The 'w' argument specifies the window width adjustment in cells
            The 'h' argument specifies the window height adjustment in cells

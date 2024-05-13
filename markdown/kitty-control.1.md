@@ -9,7 +9,7 @@ date: February 06, 2024
 **kitty-control** - Control the Kitty terminal emulator from the command line
 
 # SYNOPSIS
-**kitty-control** [**-a**] [**back** color] [**-c** command] [-d] [**dark**] [**diff** [opts] path1 path2] [**-e**] [**-f**] [**font** [num]] [**fore** color] [**-i** /path/to/image] [**layout** layout-name] [**load** [subdir]] [**-m|t** match] [**-o** doc] [**-s** /path/to/socket] [**-u|h|v**] [size w h] [**term**] [**theme**] [**tools**] [**icat** [opts] image] [**list|ls**] [**man**] [**menu**] [**title** title] [**transparent** [opacity]] [**unicode**] [**upgrade**]
+**kitty-control** [**-a**] [**back** color] [**-c** command] [-d] [**dark**] [**diff** [opts] path1 path2] [**-e**] [**-f**] [**fetch**] [**font** [num]] [**fore** color] [**-i** /path/to/image] [**layout** layout-name] [**load** [subdir]] [**-m|t** match] [**-o** doc] [**-s** /path/to/socket] [**-u|h|v**] [size w h] [**term**] [**theme**] [**tools**] [**icat** [opts] image] [**list|ls**] [**man**] [**menu**] [**title** title] [**transparent** [opacity]] [**unicode**] [**upgrade**]
 
 # DESCRIPTION
 **kitty-control** acts as a wrapper for the *Kitty* terminal emulator remote control facility and *kittens* Scripting some *kitty* customization enables support for automation and provides an additional layer of convenience.
@@ -63,6 +63,9 @@ The **kitty-control** command can be used to:
 
 **diff [opts] 'file1|dir1' 'file2|dir2'**
 : Displays differences using the *diff* kitten. Enclose [opts] and *file1/dir1* in quotes if [opts] are provided. See ***https://sw.kovidgoyal.net/kitty/kittens/diff/#options***
+
+**fetch**
+: Displays system information using either *neofetch* or *fastfetch*.
 
 **font num**
 : Sets the font pointsize to *num*.

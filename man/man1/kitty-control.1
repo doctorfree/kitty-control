@@ -24,14 +24,15 @@ command line
 .PP
 \f[B]kitty-control\f[R] [\f[B]-a\f[R]] [\f[B]back\f[R] color]
 [\f[B]-c\f[R] command] [-d] [\f[B]dark\f[R]] [\f[B]diff\f[R] [opts]
-path1 path2] [\f[B]-e\f[R]] [\f[B]-f\f[R]] [\f[B]font\f[R] [num]]
-[\f[B]fore\f[R] color] [\f[B]-i\f[R] /path/to/image] [\f[B]layout\f[R]
-layout-name] [\f[B]load\f[R] [subdir]] [\f[B]-m|t\f[R] match]
-[\f[B]-o\f[R] doc] [\f[B]-s\f[R] /path/to/socket] [\f[B]-u|h|v\f[R]]
-[size w h] [\f[B]term\f[R]] [\f[B]theme\f[R]] [\f[B]tools\f[R]]
-[\f[B]icat\f[R] [opts] image] [\f[B]list|ls\f[R]] [\f[B]man\f[R]]
-[\f[B]menu\f[R]] [\f[B]title\f[R] title] [\f[B]transparent\f[R]
-[opacity]] [\f[B]unicode\f[R]] [\f[B]upgrade\f[R]]
+path1 path2] [\f[B]-e\f[R]] [\f[B]-f\f[R]] [\f[B]fetch\f[R]]
+[\f[B]font\f[R] [num]] [\f[B]fore\f[R] color] [\f[B]-i\f[R]
+/path/to/image] [\f[B]layout\f[R] layout-name] [\f[B]load\f[R] [subdir]]
+[\f[B]-m|t\f[R] match] [\f[B]-o\f[R] doc] [\f[B]-s\f[R] /path/to/socket]
+[\f[B]-u|h|v\f[R]] [size w h] [\f[B]term\f[R]] [\f[B]theme\f[R]]
+[\f[B]tools\f[R]] [\f[B]icat\f[R] [opts] image] [\f[B]list|ls\f[R]]
+[\f[B]man\f[R]] [\f[B]menu\f[R]] [\f[B]title\f[R] title]
+[\f[B]transparent\f[R] [opacity]] [\f[B]unicode\f[R]]
+[\f[B]upgrade\f[R]]
 .SH DESCRIPTION
 .PP
 \f[B]kitty-control\f[R] acts as a wrapper for the \f[I]Kitty\f[R]
@@ -136,6 +137,10 @@ Enclose [opts] and \f[I]file1/dir1\f[R] in quotes if [opts] are
 provided.
 See
 \f[I]\f[BI]<https://sw.kovidgoyal.net/kitty/kittens/diff/#options>\f[I]\f[R]
+.TP
+\f[B]fetch\f[R]
+Displays system information using either \f[I]neofetch\f[R] or
+\f[I]fastfetch\f[R].
 .TP
 \f[B]font num\f[R]
 Sets the font pointsize to \f[I]num\f[R].
