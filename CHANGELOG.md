@@ -6,6 +6,17 @@
 
 ### 🐞 Fixed
 
+## v1.1.2r3
+
+### ⚡️ Added
+
+- Add logo image sizes
+- Add check for logo image by same name as `ID` or `ID_LIKE` in `/etc/os-release`
+
+### 🐞 Fixed
+
+- Adjust default logo image sizes used by `ffetch` and `nfetch`
+
 ## v1.1.2r2
 
 ### ⚡️ Added

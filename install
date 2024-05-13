@@ -316,18 +316,7 @@ if [ "${platform}" == "Darwin" ]; then
 else
   [ -f /etc/os-release ] && {
     . /etc/os-release
-    [ "${ID}" == "fedora" ] && icon_name="fedora"
-    if [ "${ID}" == "ubuntu" ]; then
-      icon_name="ubuntu-jammy"
-    else
-      [ "${ID}" == "debian" ] || [ "${ID_LIKE}" == "debian" ] && icon_name="debian"
-    fi
-    [ "${ID}" == "arch" ] || [ "${ID_LIKE}" == "arch" ] && icon_name="arch"
-    [ "${ID}" == "alpine" ] && icon_name="alpine"
-    [ "${ID}" == "centos" ] && icon_name="centos"
-    [ "${ID}" == "opensuse" ] && icon_name="opensuse"
-    [ "${ID}" == "rocky" ] && icon_name="rocky"
-    [ "${ID}" == "void" ] && icon_name="void"
+    icon_name="${ID}"
   }
 fi
 [ "${icon_name}" ] || {
@@ -552,7 +541,7 @@ ICON_DIR="${HOME}/.local/share/icons/hicolor/512x512/apps"
   }
 }
 for icon in alpine.png apple-logo.png arch.png centos.png debian.png \
-            fedora.png opensuse.png rocky.png tux.png ubuntu-jammy.png void.png
+            fedora.png opensuse.png rocky.png tux.png ubuntu.png void.png
 do
   [ -f "${SCRIPT_PATH}"/icons/${icon} ] && {
     cp "${SCRIPT_PATH}"/icons/${icon} "${ICON_DIR}"/${icon}
@@ -564,7 +553,7 @@ do
   ICON_DIR="${HOME}/.local/share/icons/hicolor/${size}x${size}/apps"
   [ -d "${ICON_DIR}" ] || mkdir -p "${ICON_DIR}"
   for icon in alpine apple-logo arch centos debian \
-              fedora opensuse rocky tux ubuntu-jammy void
+              fedora opensuse rocky tux ubuntu void
   do
     [ -f "${SCRIPT_PATH}"/icons/${icon}-${size}.png ] && {
       cp "${SCRIPT_PATH}"/icons/${icon}-${size}.png "${ICON_DIR}"/${icon}.png
