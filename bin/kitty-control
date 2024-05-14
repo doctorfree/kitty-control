@@ -73,7 +73,7 @@ brief_usage() {
   printf "\n                     [diff [opts] <path1> <path2>] [font [num]] [fore <color>]"
   printf "\n                     [-i /path/to/image] [icat [opts] <image>] [layout <name>]"
   printf "\n                     [load [subdir|file]] [ls|list [self|colors|tabs|windows]] [-m|t <match>]"
-  if [ "${have_neo}" ]; then
+  if [ "${have_fetch}" ]; then
     printf "\n                     [man] [menu] [fetch] [-o doc] [-s /path/to/socket] [term] [theme] [tools]"
   else
     printf "\n                     [man] [menu] [-o doc] [-s /path/to/socket] [size w h] [term] [theme] [tools]"
@@ -166,8 +166,8 @@ usage() {
   printf " Displays differences using the 'diff' kitten"
   printf "\n           Enclose [opts] and <file1/dir1> in quotes if [opts] are provided"
   printf "\n           See https://sw.kovidgoyal.net/kitty/kittens/diff/#options"
-  [ "${have_neo}" ] && {
-    printf "\n    '${BOLD}fetch${NORM}' Displays system information"
+  [ "${have_fetch}" ] && {
+    printf "\n    '${BOLD}fetch${NORM}' Displays system information with fastfetch/neofetch"
   }
   printf "\n    '${BOLD}font num${NORM}' Sets the font pointsize to 'num'"
   printf "\n           Can use 'font', 'fontsize', 'fontminus', or 'fontplus'"
@@ -210,7 +210,7 @@ usage() {
   printf "\n    '${BOLD}title <tab title>${NORM}' Sets the Kitty tab title to \"tab title\""
   printf "\n          Quote tab titles which contain spaces, e.g. \"This Is My Tab Title\""
   printf "\n          Use '-m <match>' to specify the tab to match"
-  printf "\n    '${BOLD}tools${NORM}' Installs 'figlet' 'jq' 'lolcat' 'neofetch' and 'ranger' if not already present"
+  printf "\n    '${BOLD}tools${NORM}' Installs 'figlet' 'jq' 'lolcat' 'fastfetch' and 'ranger' if not already present"
   printf "\n    '${BOLD}tran [opacity]${NORM}' Sets the Kitty background opacity to 0.8"
   printf "\n           Can use 'tran', 'opacity', 'trans' or 'transparent'"
   printf "\n           Specify a second argument to set a custom background opacity:"
@@ -447,59 +447,56 @@ show_layout_help() {
   prompt_continue
 }
 
-show_fastfetch() {
-  have_ffetch=$(type -p ffetch)
-  if [ "${have_ffetch}" ]; then
-    ffetch
-  else
-    clear_screen
-    fastfetch
-  fi
-  [ "$1" == "proceed" ] || prompt_continue
-}
-
-show_neofetch() {
-  have_neofetch=$(type -p neofetch)
-  if [ "${have_neofetch}" ]; then
-    have_nfetch=$(type -p nfetch)
-    if [ "${have_nfetch}" ]; then
-      nfetch
+show_fetch() {
+  have_fastfetch=$(type -p fastfetch)
+  if [ "${have_fastfetch}" ]; then
+    have_ffetch=$(type -p ffetch)
+    if [ "${have_ffetch}" ]; then
+      ffetch
     else
-      IMG="${HOME}/.local/share/icons/hicolor/256x256/apps/kitty.png"
-      icon_name=
-      icon_size="512"
-      if [ "${darwin}" ]; then
-        icon_name="apple-logo"
-        icon_size="384"
+      clear_screen
+      fastfetch
+    fi
+  else
+    have_neofetch=$(type -p neofetch)
+    [ "${have_neofetch}" ] && {
+      have_nfetch=$(type -p nfetch)
+      if [ "${have_nfetch}" ]; then
+        nfetch
       else
-        [ -f /etc/os-release ] && {
-          . /etc/os-release
-          icon_name="${ID}"
-        }
-      fi
-      AMG="${HOME}/.local/share/icons/hicolor/${icon_size}x${icon_size}/apps/${icon_name}.png"
-      if [ -f "${AMG}" ]; then
-        IMG="${AMG}"
-      else
-        icon_name="${ID_LIKE}"
+        IMG="${HOME}/.local/share/icons/hicolor/256x256/apps/kitty.png"
+        icon_name=
+        icon_size="512"
+        if [ "${darwin}" ]; then
+          icon_name="apple-logo"
+          icon_size="384"
+        else
+          [ -f /etc/os-release ] && {
+            . /etc/os-release
+            icon_name="${ID}"
+          }
+        fi
         AMG="${HOME}/.local/share/icons/hicolor/${icon_size}x${icon_size}/apps/${icon_name}.png"
         if [ -f "${AMG}" ]; then
           IMG="${AMG}"
         else
-          icon_name="kitty"
-          IMG="${HOME}/.local/share/icons/hicolor/${icon_size}x${icon_size}/apps/${icon_name}.png"
+          icon_name="${ID_LIKE}"
+          AMG="${HOME}/.local/share/icons/hicolor/${icon_size}x${icon_size}/apps/${icon_name}.png"
+          if [ -f "${AMG}" ]; then
+            IMG="${AMG}"
+          else
+            icon_name="kitty"
+            IMG="${HOME}/.local/share/icons/hicolor/${icon_size}x${icon_size}/apps/${icon_name}.png"
+          fi
+        fi
+        clear_screen
+        if [ -f "${IMG}" ]; then
+          neofetch --kitty auto --source "${IMG}"
+        else
+          neofetch
         fi
       fi
-      clear_screen
-      if [ -f "${IMG}" ]; then
-        neofetch --kitty auto --source "${IMG}"
-      else
-        neofetch
-      fi
-    fi
-  else
-    have_fastfetch=$(type -p fastfetch)
-    [ "${have_fastfetch}" ] && show_fastfetch
+    }
   fi
   [ "$1" == "proceed" ] || prompt_continue
 }
@@ -656,6 +653,25 @@ show_versions() {
       printf "\nAvailable fzf version: ${release_version}\n"
     fi
   fi
+  [ "${have_fastfetch}" ] && {
+    release_version=$(get_fastfetch_release)
+    install_version=$(fastfetch --version | awk '{ print $2 }')
+    if [ "${have_rich}" ]; then
+      if [ "${install_version}" == "${release_version}" ]; then
+        rich "Installed [green]fastfetch[/] version: [yellow]${install_version}[/] ( current)" -p
+      else
+        rich "Installed [green]fastfetch[/] version: [yellow]${install_version}[/]" -p
+        rich "Available [green]fastfetch[/] version: [yellow]${release_version}[/]" -p
+      fi
+    else
+      printf "\nInstalled fastfetch version: ${install_version}"
+      if [ "${install_version}" == "${release_version}" ]; then
+        printf " ( current)\n"
+      else
+        printf "\nAvailable fastfetch version: ${release_version}\n"
+      fi
+    fi
+  }
 }
 
 install_figlet() {
@@ -711,6 +727,81 @@ install_lolcat() {
   have_lolcat=$(type -p lolcat)
 }
 
+set_fastfetch_url() {
+  OWNER=fastfetch-cli
+  PROJECT=fastfetch
+  API_URL="https://api.github.com/repos/${OWNER}/${PROJECT}/releases/latest"
+  [ "${have_curl}" ] && [ "${have_jq}" ] && {
+    DL_URL=$(curl --silent ${AUTH_HEADER} "${API_URL}" \
+      | jq --raw-output '.assets | .[]?.browser_download_url' \
+      | grep "${name}\.tar\.gz$")
+  }
+}
+
+dl_fastfetch_asset() {
+  if [ "${darwin}" ]; then
+    name="fastfetch-macos-universal"
+  else
+    if [ "${arm}" ]; then
+      name="fastfetch-linux-aarch64"
+    else
+      name="fastfetch-linux-amd64"
+    fi
+  fi
+
+  DL_URL=
+  set_fastfetch_url
+  [ "${DL_URL}" ] && {
+    [ "${have_wget}" ] && {
+      printf "\nDownloading fastfetch release asset ..."
+      TEMP_ASS="$(mktemp --suffix=.tgz)"
+      wget --quiet -O "${TEMP_ASS}" "${DL_URL}" >/dev/null 2>&1
+      chmod 644 "${TEMP_ASS}"
+      mkdir -p /tmp/fast$$
+      tar -C /tmp/fast$$ -xzf "${TEMP_ASS}"
+      [ -d /tmp/fast$$/${name} ] && {
+        cd /tmp/fast$$/${name}
+        if [ "${darwin}" ]; then
+          ${SUDO} chown -R root:wheel usr
+        else
+          ${SUDO} chown -R root:root usr
+        fi
+        ${SUDO} tar cf /tmp/fastfetch$$.tar usr
+        cd /
+        ${SUDO} tar xf /tmp/fastfetch$$.tar
+        ${SUDO} rm -f /tmp/fastfetch$$.tar
+      }
+      cd
+      rm -f "${TEMP_ASS}"
+      ${SUDO} rm -rf /tmp/fast$$
+      printf " done"
+    }
+  }
+}
+
+get_fastfetch_release() {
+  name="fastfetch-linux-amd64"
+  DL_URL=
+  set_fastfetch_url
+  echo "${DL_URL}" | awk -F '/' '{ print $8 }'
+}
+
+install_fastfetch() {
+  if [ "${darwin}" ]
+  then
+    if [ "${have_brew}" ]
+    then
+      brew install fastfetch >/dev/null 2>&1
+    else
+      dl_fastfetch_asset
+    fi
+  else
+    dl_fastfetch_asset
+  fi
+  have_fetch=$(type -p fastfetch)
+  [ "${have_fetch}" ] || have_fetch=$(type -p neofetch)
+}
+
 install_neofetch() {
   have_git=$(type -p git)
   [ "${have_git}" ] && {
@@ -732,7 +823,8 @@ install_neofetch() {
     }
     rm -rf /tmp/neofetch$$
   }
-  have_neo=$(type -p neofetch)
+  have_fetch=$(type -p fastfetch)
+  [ "${have_fetch}" ] || have_fetch=$(type -p neofetch)
 }
 
 install_package() {
@@ -1691,17 +1783,25 @@ select_folder() {
 
 set_haves() {
   have_brew=$(type -p brew)
-  have_gcc=$(type -p gcc)
-  have_fzf=$(type -p fzf)
+  have_curl=$(type -p curl)
+  have_fetch=
+  have_fastfetch=$(type -p fastfetch)
+  have_neofetch=$(type -p neofetch)
+  if [ "${have_fastfetch}" ]; then
+    have_fetch=1
+  else
+    [ "${have_neofetch}" ] && have_fetch=1
+  fi
   have_figlet=$(type -p figlet)
+  have_fzf=$(type -p fzf)
+  have_gcc=$(type -p gcc)
   have_jq=$(type -p jq)
   have_kitty=$(type -p kitty)
   have_lolcat=$(type -p lolcat)
   have_make=$(type -p make)
-  have_neo=$(type -p neofetch)
-  [ "${have_neo}" ] || have_neo=$(type -p fastfetch)
   have_ranger=$(type -p ranger)
   have_rich=$(type -p rich)
+  have_wget=$(type -p wget)
 }
 
 show_figlet() {
@@ -3285,6 +3385,9 @@ select_with_fzf() {
         "Install Lolcat"*)
           install_lolcat
           ;;
+        "Install Fastfetch"*)
+          install_fastfetch
+          ;;
         "Install Neofetch"*)
           install_neofetch
           ;;
@@ -3313,7 +3416,7 @@ select_with_fzf() {
           menu_load_config "${configs[@]}"
           ;;
         "System"* | "system"* | "n")
-          show_neofetch
+          show_fetch
           ;;
         "View"* | "view"* | "v")
           FILE=
@@ -3422,7 +3525,7 @@ show_menu() {
       options+=("Open Kitty Doc   [O]")
     }
     options+=("Options          [o]" "Reset            [r]")
-    [ "${have_neo}" ] && options+=("System Info      [n]")
+    [ "${have_fetch}" ] && options+=("System Info      [n]")
     options+=("Terminal Info    [I]")
     options+=("Transparent      [t]" "Unicode Input    [U]" "Usage            [u]")
     options+=("View an Image    [v]" "Window Layout    [L]" "Window Size      [W]")
@@ -3430,8 +3533,19 @@ show_menu() {
     [ "${have_fzf}" ] || options+=("Install Fzf")
     [ "${have_jq}" ] || options+=("Install jq")
     [ "${have_lolcat}" ] || options+=("Install Lolcat")
-    [ "${have_neo}" ] || options+=("Install Neofetch")
+    [ "${have_fetch}" ] || {
+      options+=("Install Fastfetch")
+      options+=("Install Neofetch")
+    }
     [ "${have_ranger}" ] || options+=("Install Ranger")
+    [ "${have_fastfetch}" ] && {
+      fch_release_version=$(get_fastfetch_release)
+      fch_install_version=$(fastfetch --version | awk '{ print $2 }')
+      update_fastfetch=$(check_three_version "${fch_release_version}" "${fch_install_version}")
+      [ "${update_fastfetch}" ] && {
+        options+=("Upgrade Fastfetch (${fch_install_version} -> ${fch_release_version})")
+      }
+    }
     [ "${have_fzf}" ] && {
       fzf_release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
       fzf_install_version=$(fzf --version | awk '{ print $1 }')
@@ -3530,6 +3644,10 @@ show_menu() {
           install_lolcat
           break
           ;;
+        "Install Fastfetch",* | *,"Install Fastfetch")
+          install_fastfetch
+          break
+          ;;
         "Install Neofetch",* | *,"Install Neofetch")
           install_neofetch
           break
@@ -3588,7 +3706,7 @@ show_menu() {
           break
           ;;
         "System"*,* | *,"System"* | "system"*,* | *,"system"* | "n",* | *,"n")
-          show_neofetch
+          show_fetch
           break
           ;;
         "Reset"*,* | *,"Reset"* | "reset"*,* | *,"reset"* | "r",* | *,"r")
@@ -3620,6 +3738,10 @@ show_menu() {
           ;;
         "Upgrade Kitty"*,* | *,"Upgrade Kitty"* | "upgrade kitty"*,* | *,"upgrade kitty"*)
           install_kitty
+          break
+          ;;
+        "Upgrade Fastfetch"*,* | *,"Upgrade Fastfetch"* | "upgrade fastfetch"*,* | *,"upgrade fastfetch"*)
+          install_fastfetch
           break
           ;;
         "Upgrade Fzf"*,* | *,"Upgrade Fzf"* | "upgrade fzf"*,* | *,"upgrade fzf"*)
@@ -3658,12 +3780,29 @@ else
   [ ${uid} -eq 0 ] && SUDO=
 fi
 
+arm=
 darwin=
+mach=$(uname -m)
 platform=$(uname -s)
 [ "${platform}" == "Darwin" ] && darwin=1
+[ "${mach}" == "arm64" ] && arm=1
 
 [ -d ${HOME}/.local/bin ] && pathadd "${HOME}/.local/bin"
 [ -d ${HOME}/.fzf/bin ] && pathadd "${HOME}/.fzf/bin"
+
+# Use a Github API token if one is set
+[ "${GITHUB_TOKEN}" ] || {
+  [ "${GH_API_TOKEN}" ] && export GITHUB_TOKEN="${GH_API_TOKEN}"
+  [ "${GITHUB_TOKEN}" ] || {
+    [ "${GH_TOKEN}" ] && export GITHUB_TOKEN="${GH_TOKEN}"
+  }
+}
+if [ "${GITHUB_TOKEN}" ]; then
+  AUTH_HEADER="-H \"Authorization: Bearer ${GITHUB_TOKEN}\""
+else
+  AUTH_HEADER=
+fi
+
 set_haves
 [ "${have_kitty}" ] || {
   install_kitty
@@ -3707,7 +3846,7 @@ release_version=
 kittycmd=
 setopcty=
 set_menu=
-show_neo=
+fetch=
 tabopts=
 width=
 height=
@@ -4029,7 +4168,7 @@ while [[ $1 ]]; do
       shift
       ;;
     *fetch* | --*fetch*)
-      show_neo=1
+      fetch=1
       shift
       ;;
     size* | --size*)
@@ -4080,7 +4219,7 @@ while [[ $1 ]]; do
         have_jq=$(type -p jq)
       }
       [ "${have_lolcat}" ] || install_lolcat
-      [ "${have_neo}" ] || install_neofetch
+      [ "${have_fetch}" ] || install_fastfetch
       if [ "${have_make}" ]; then
         [ "${have_figlet}" ] || {
           if [ "${have_gcc}" ]; then
@@ -4110,6 +4249,18 @@ while [[ $1 ]]; do
         fi
       else
         install_fzf
+      fi
+      if [ "${have_fastfetch}" ]; then
+        fch_release_version=$(get_fastfetch_release)
+        fch_install_version=$(fastfetch --version | awk '{ print $2 }')
+        update_fch=$(check_three_version "${fch_release_version}" "${fch_install_version}")
+        if [ "${update_fch}" ]; then
+          install_fastfetch
+        else
+          printf "\nInstalled version of Fastfetch is current ✨ 🌟 ✨\n"
+        fi
+      else
+        [ "${have_fetch}" ] || install_fastfetch
       fi
       release_version=$(curl -fsSL "${kitty_version_url}")
       install_version=$(kitty --version | awk '{ print $2 }')
@@ -4158,5 +4309,5 @@ done
     exit_warning "kitty @ ${SOCKET} ${kittycmd} ${OPTS}"
   }
 }
-[ "${show_neo}" ] && [ "${have_neo}" ] && show_neofetch proceed
+[ "${fetch}" ] && [ "${have_fetch}" ] && show_fetch proceed
 [ "${set_menu}" ] && show_menu
