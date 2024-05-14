@@ -759,21 +759,16 @@ dl_fastfetch_asset() {
       chmod 644 "${TEMP_ASS}"
       mkdir -p /tmp/fast$$
       tar -C /tmp/fast$$ -xzf "${TEMP_ASS}"
-      [ -d /tmp/fast$$/${name} ] && {
-        cd /tmp/fast$$/${name}
-        if [ "${darwin}" ]; then
-          ${SUDO} chown -R root:wheel usr
-        else
-          ${SUDO} chown -R root:root usr
-        fi
-        ${SUDO} tar cf /tmp/fastfetch$$.tar usr
-        cd /
-        ${SUDO} tar xf /tmp/fastfetch$$.tar
-        ${SUDO} rm -f /tmp/fastfetch$$.tar
+      [ -d /tmp/fast$$/${name}/usr ] && {
+        cd /tmp/fast$$/${name}/usr
+        tar cf /tmp/fastfetch$$.tar bin share
+        [ -d ${HOME}/.local ] || mkdir -p ${HOME}/.local
+        tar -C ${HOME}/.local -xf /tmp/fastfetch$$.tar
+        rm -f /tmp/fastfetch$$.tar
       }
       cd
       rm -f "${TEMP_ASS}"
-      ${SUDO} rm -rf /tmp/fast$$
+      rm -rf /tmp/fast$$
       printf " done"
     }
   }
@@ -4220,18 +4215,14 @@ while [[ $1 ]]; do
       }
       [ "${have_lolcat}" ] || install_lolcat
       [ "${have_fetch}" ] || install_fastfetch
-      if [ "${have_make}" ]; then
-        [ "${have_figlet}" ] || {
-          if [ "${have_gcc}" ]; then
-            install_figlet
-          else
-            printf "\nInstallation of figlet requires 'gcc' but 'gcc' not found."
-          fi
-        }
-        [ "${have_ranger}" ] || install_ranger
-      else
-        printf "\nInstallation of tools requires 'make' but 'make' not found."
-      fi
+      [ "${have_figlet}" ] || {
+        if [ "${have_gcc}" ]; then
+          install_figlet
+        else
+          printf "\nInstallation of figlet requires 'gcc' but 'gcc' not found."
+        fi
+      }
+      [ "${have_ranger}" ] || install_ranger
       ;;
     unicode | --unicode)
       kitty +kitten unicode_input
