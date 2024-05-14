@@ -201,7 +201,7 @@ required by `kitty-control`. However, some additional features are enabled
 if they are present.
 
 `Fzf` is installed by the `install` command, the others are not. `FIGlet`,
-`jq`, `Lolcat`, `Neofetch`, and `Ranger` can be installed with the command:
+`jq`, `Lolcat`, `Fastfetch`, and `Ranger` can be installed with the command:
 
 ```bash
 kitty-control tools
@@ -209,11 +209,7 @@ kitty-control tools
 
 Individual tools can be installed via the `kitty-control` menu interface.
 
-The installation of `ranger`, `jq`, `lolcat`, `neofetch`, and `figlet`
-require administrative privilege.
-
-While `neofetch` can be installed using `kitty-control`, to install
-`fastfetch` use `./fastfetch/install_fastfetch.sh`.
+The installation of `ranger` and `figlet` require administrative privilege.
 
 ### Aliases
 
@@ -266,7 +262,7 @@ Where:
     'diff [opts] <file1|dir1> <file2|dir2>' Displays differences using the 'diff' kitten
            Enclose [opts] and <file1/dir1> in quotes if [opts] are provided
            See https://sw.kovidgoyal.net/kitty/kittens/diff/#options
-    'fetch' Displays system information
+    'fetch' Displays system information with fastfetch/neofetch
     'font num' Sets the font pointsize to 'num'
            Can use 'font', 'fontsize', 'fontminus', or 'fontplus'
            The second argument specifies the font size, either absolute, +, or -
@@ -306,7 +302,7 @@ Where:
     'title <tab title>' Sets the Kitty tab title to "tab title"
           Quote tab titles which contain spaces, e.g. "This Is My Tab Title"
           Use '-m <match>' to specify the tab to match
-    'tools' Installs 'figlet' 'jq' 'lolcat' 'neofetch' and 'ranger' if not already present
+    'tools' Installs 'figlet' 'jq' 'lolcat' 'fastfetch' and 'ranger' if not already present
     'tran [opacity]' Sets the Kitty background opacity to 0.8
            Can use 'tran', 'opacity', 'trans' or 'transparent'
            Specify a second argument to set a custom background opacity:

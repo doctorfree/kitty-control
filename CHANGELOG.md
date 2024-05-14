@@ -6,6 +6,21 @@
 
 ### 🐞 Fixed
 
+## v1.1.3r3
+
+### ⚡️ Added
+
+- Install `fastfetch` rather than `neofetch` as part of `tools` install
+- Install `fastfetch` in user home to avoid need for `sudo`
+- Add `fastfetch` install/upgrade/version info, prefer `fastfetch` if installed
+- Add 256x256 logo images
+- Add check for logo image file same name as `ID` or `ID_LIKE`
+
+### 🐞 Fixed
+
+- Fix `mkrelease` with new location of `kitty-control`
+- Change `neo` argument to `fetch`
+
 ## v1.1.3r2
 
 ### ⚡️ Added
