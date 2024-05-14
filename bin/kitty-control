@@ -8,8 +8,8 @@
 #
 # Written February, 2024 by Ronald Joe Record <ronaldrecord@gmail.com>
 #
-VERSION=1.1.3
-RELEASE=3
+VERSION=1.1.4
+RELEASE=1
 # The Kitty configuration directory
 CONFDIR="${HOME}/.config/kitty"
 [ "${KITTY_CONFIG_DIRECTORY}" ] && {
@@ -793,14 +793,20 @@ install_fastfetch() {
   else
     dl_fastfetch_asset
   fi
-  have_fetch=$(type -p fastfetch)
-  [ "${have_fetch}" ] || have_fetch=$(type -p neofetch)
+  have_fastfetch=$(type -p fastfetch)
+  have_neofetch=$(type -p neofetch)
+  [ "${have_neofetch}" ] || {
+    install_neofetch
+    have_neofetch=$(type -p neofetch)
+  }
+  have_fetch=
+  [ "${have_neofetch}" ] && [ "${have_fastfetch}" ] && have_fetch=1
 }
 
 install_neofetch() {
   have_git=$(type -p git)
   [ "${have_git}" ] && {
-    git clone https://github.com/LorenDB/neofetch /tmp/neofetch$$
+    git clone https://github.com/LorenDB/neofetch /tmp/neofetch$$ > /dev/null 2>&1
     [ -f /tmp/neofetch$$/neofetch ] && {
       [ -d ${HOME}/.local/bin ] || {
         mkdir -p ${HOME}/.local/bin
@@ -818,8 +824,14 @@ install_neofetch() {
     }
     rm -rf /tmp/neofetch$$
   }
-  have_fetch=$(type -p fastfetch)
-  [ "${have_fetch}" ] || have_fetch=$(type -p neofetch)
+  have_fastfetch=$(type -p fastfetch)
+  have_neofetch=$(type -p neofetch)
+  [ "${have_fastfetch}" ] || {
+    install_fastfetch
+    have_fastfetch=$(type -p fastfetch)
+  }
+  have_fetch=
+  [ "${have_neofetch}" ] && [ "${have_fastfetch}" ] && have_fetch=1
 }
 
 install_package() {
@@ -903,6 +915,25 @@ install_ranger() {
     printf "\nInstall 'make' and try again. Skipping installation of ranger.\n"
     prompt_continue
   fi
+}
+
+install_tools() {
+  set_haves
+  [ "${have_jq}" ] || {
+    install_package jq
+    have_jq=$(type -p jq)
+  }
+  [ "${have_lolcat}" ] || install_lolcat
+  [ "${have_fastfetch}" ] || install_fastfetch
+  [ "${have_neofetch}" ] || install_neofetch
+  [ "${have_ranger}" ] || install_ranger
+  [ "${have_figlet}" ] || {
+    if [ "${have_gcc}" ]; then
+      install_figlet
+    else
+      printf "\nInstallation of figlet requires 'gcc' but 'gcc' not found."
+    fi
+  }
 }
 
 kitty-fontminus() {
@@ -1782,11 +1813,7 @@ set_haves() {
   have_fetch=
   have_fastfetch=$(type -p fastfetch)
   have_neofetch=$(type -p neofetch)
-  if [ "${have_fastfetch}" ]; then
-    have_fetch=1
-  else
-    [ "${have_neofetch}" ] && have_fetch=1
-  fi
+  [ "${have_neofetch}" ] && [ "${have_fastfetch}" ] && have_fetch=1
   have_figlet=$(type -p figlet)
   have_fzf=$(type -p fzf)
   have_gcc=$(type -p gcc)
@@ -3367,27 +3394,30 @@ select_with_fzf() {
         "Font"* | "font"* | "f")
           menu_font_size
           ;;
-        "Install Figlet"*)
+        *"Install Figlet"*)
           install_figlet
           ;;
-        "Install Fzf"*)
+        *"Install Fzf"*)
           install_fzf
           ;;
-        "Install jq"*)
+        *"Install jq"*)
           install_package jq
           have_jq=$(type -p jq)
           ;;
-        "Install Lolcat"*)
+        *"Install Lolcat"*)
           install_lolcat
           ;;
-        "Install Fastfetch"*)
+        *"Install Fastfetch"*)
           install_fastfetch
           ;;
-        "Install Neofetch"*)
+        *"Install Neofetch"*)
           install_neofetch
           ;;
-        "Install Ranger"*)
+        *"Install Ranger"*)
           install_ranger
+          ;;
+        "Install Tools"*)
+          install_tools
           ;;
         "List Col"* | "list col"* | "C")
           list_colors brief more
@@ -3520,19 +3550,20 @@ show_menu() {
       options+=("Open Kitty Doc   [O]")
     }
     options+=("Options          [o]" "Reset            [r]")
-    [ "${have_fetch}" ] && options+=("System Info      [n]")
+    [ "${have_fastfetch}" ] || [ "${have_neofetch}" ] && options+=("System Info      [n]")
     options+=("Terminal Info    [I]")
     options+=("Transparent      [t]" "Unicode Input    [U]" "Usage            [u]")
     options+=("View an Image    [v]" "Window Layout    [L]" "Window Size      [W]")
-    [ "${have_figlet}" ] || options+=("Install Figlet")
-    [ "${have_fzf}" ] || options+=("Install Fzf")
-    [ "${have_jq}" ] || options+=("Install jq")
-    [ "${have_lolcat}" ] || options+=("Install Lolcat")
-    [ "${have_fetch}" ] || {
-      options+=("Install Fastfetch")
-      options+=("Install Neofetch")
-    }
-    [ "${have_ranger}" ] || options+=("Install Ranger")
+    [ "${have_jq}" ] && [ "${have_lolcat}" ] && \
+      [ "${have_fastfetch}" ] && [ "${have_neofetch}" ] && \
+      [ "${have_ranger}" ] && [ "${have_figlet}" ] || options+=("Install Tools    [Y]")
+    [ "${have_figlet}" ] || options+=("  Install Figlet")
+    [ "${have_fzf}" ] || options+=("  Install Fzf")
+    [ "${have_jq}" ] || options+=("  Install jq")
+    [ "${have_lolcat}" ] || options+=("  Install Lolcat")
+    [ "${have_fastfetch}" ] || options+=("  Install Fastfetch")
+    [ "${have_neofetch}" ] || options+=("  Install Neofetch")
+    [ "${have_ranger}" ] || options+=("  Install Ranger")
     [ "${have_fastfetch}" ] && {
       fch_release_version=$(get_fastfetch_release)
       fch_install_version=$(fastfetch --version | awk '{ print $2 }')
@@ -3622,33 +3653,37 @@ show_menu() {
           [ "${have_fzf}" ] && select_with_fzf "${options[@]}"
           break
           ;;
-        "Install Figlet",* | *,"Install Figlet")
+        *"Install Figlet",* | *,*"Install Figlet")
           install_figlet
           break
           ;;
-        "Install Fzf",* | *,"Install Fzf")
+        *"Install Fzf",* | *,*"Install Fzf")
           install_fzf
           break
           ;;
-        "Install jq",* | *,"Install jq")
+        *"Install jq",* | *,*"Install jq")
           install_package jq
           have_jq=$(type -p jq)
           break
           ;;
-        "Install Lolcat",* | *,"Install Lolcat")
+        *"Install Lolcat",* | *,*"Install Lolcat")
           install_lolcat
           break
           ;;
-        "Install Fastfetch",* | *,"Install Fastfetch")
+        *"Install Fastfetch",* | *,*"Install Fastfetch")
           install_fastfetch
           break
           ;;
-        "Install Neofetch",* | *,"Install Neofetch")
+        *"Install Neofetch",* | *,*"Install Neofetch")
           install_neofetch
           break
           ;;
-        "Install Ranger",* | *,"Install Ranger")
+        *"Install Ranger",* | *,*"Install Ranger")
           install_ranger
+          break
+          ;;
+        "Install Tools"*,* | *,"Install Tools"* | "install tools"*,* | *,"install tools"* | "Y",* | *,"Y")
+          install_tools
           break
           ;;
         "List Col"*,* | *,"List Col"* | "list col"*,* | *,"list col"* | "C",* | *,"C")
@@ -4208,21 +4243,7 @@ while [[ $1 ]]; do
       shift
       ;;
     tool* | --tool*)
-      set_haves
-      [ "${have_jq}" ] || {
-        install_package jq
-        have_jq=$(type -p jq)
-      }
-      [ "${have_lolcat}" ] || install_lolcat
-      [ "${have_fetch}" ] || install_fastfetch
-      [ "${have_figlet}" ] || {
-        if [ "${have_gcc}" ]; then
-          install_figlet
-        else
-          printf "\nInstallation of figlet requires 'gcc' but 'gcc' not found."
-        fi
-      }
-      [ "${have_ranger}" ] || install_ranger
+      install_tools
       ;;
     unicode | --unicode)
       kitty +kitten unicode_input
@@ -4300,5 +4321,5 @@ done
     exit_warning "kitty @ ${SOCKET} ${kittycmd} ${OPTS}"
   }
 }
-[ "${fetch}" ] && [ "${have_fetch}" ] && show_fetch proceed
+[ "${fetch}" ] && show_fetch proceed
 [ "${set_menu}" ] && show_menu

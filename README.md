@@ -209,7 +209,7 @@ kitty-control tools
 
 Individual tools can be installed via the `kitty-control` menu interface.
 
-The installation of `ranger` and `figlet` require administrative privilege.
+The installation of `jq`, `ranger` and `figlet` require administrative privilege.
 
 ### Aliases
 

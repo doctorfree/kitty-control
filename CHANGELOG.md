@@ -6,6 +6,17 @@
 
 ### 🐞 Fixed
 
+## v1.1.4r1
+
+### ⚡️ Added
+
+- Rework installation menu entries with `Install Tools` added if any tool missing
+- Install both `fastfetch` and `neofetch`
+
+### 🐞 Fixed
+
+- Cleanup installation output
+
 ## v1.1.3r3
 
 ### ⚡️ Added
