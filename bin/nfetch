@@ -14,6 +14,8 @@
 # 	  'config' can be the full path or name of a configuration
 # 	-r indicates select configuration file randomly
 # 	-u displays this usage messge and exits
+#
+# Link nfetch to ffetch
 
 IMG="${HOME}/.local/share/icons/hicolor/__SIZE__x__SIZE__/apps/__PLATFORM__.png"
 FETCHARGS=

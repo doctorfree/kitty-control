@@ -81,13 +81,6 @@ dl_asset() {
   }
 }
 
-have_fastfetch=$(command -v fastfetch)
-[ "${have_fastfetch}" ] && {
-  printf "\nFastfetch already installed as %s" "${have_fastfetch}"
-  printf "\nRemove fastfetch and rerun this script to reinstall fastfetch"
-  printf "\nExiting without installing\n"
-  exit 0
-}
 if [ "${darwin}" ]
 then
   if [ "${have_brew}" ]
