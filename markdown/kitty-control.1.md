@@ -136,7 +136,7 @@ The **kitty-control** command can be used to:
 : Displays the Unicode input kitten
 
 **upgrade**
-: Upgrades **Kitty** and **kitty-control** to the latest version
+: Upgrades **Kitty**, **Fastfetch**, **Fzf**, and **kitty-control** to the latest version
 
 **-a**
 : Indicates modify all windows rather than just the currently active OS window
@@ -185,7 +185,7 @@ The **kitty-control** command can be used to:
 : Displays a brief usage message and exits
 
 **-v**
-: Displays the **kitty-control** and kitty versions then exits
+: Displays the **kitty-control**, **fastfetch**, **fzf**, and **kitty** versions then exits
 
 Without any arguments *kitty-control* displays an interactive menu system
 

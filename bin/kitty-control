@@ -49,15 +49,15 @@ kitty_version_url="https://sw.kovidgoyal.net/kitty/current-version.txt"
 translevels=("default" "1.0" "0.95" "0.9" "0.85" "0.8" "0.75" "0.7" "0.65" "0.6" "0.55" "0.5" "0.45" "0.4" "0.35" "0.3" "0.25" "0.2" "0.15" "0.1" "0.05" "0.0")
 # Give fzf a nice look
 export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
-  --color=fg:#d0d0d0,fg+:#d0d0d0,bg:#0b1a38,bg+:#120f3d
-  --color=hl:#5f87af,hl+:#5fd7ff,info:#afaf87,marker:#87ff00
-  --color=prompt:#cadf5d,spinner:#af5fff,pointer:#af5fff,header:#87afaf
-  --color=border:#5b5bab,label:#aeaeae,query:#d9d9d9
-  --border="rounded" --border-label=""
-  --preview-window="border-rounded"
-  --prompt="😺 Select option ("Esc" to return)  "
-  --marker=">" --pointer="◆" --separator="─" --scrollbar="│"
-  --layout="reverse"'
+--color=fg:#d0d0d0,fg+:#d0d0d0,bg:#0b1a38,bg+:#120f3d
+--color=hl:#5f87af,hl+:#5fd7ff,info:#afaf87,marker:#87ff00
+--color=prompt:#cadf5d,spinner:#af5fff,pointer:#af5fff,header:#87afaf
+--color=border:#5b5bab,label:#aeaeae,query:#d9d9d9
+--border="rounded" --border-label=""
+--preview-window="border-rounded"
+--prompt="😺 Select option ("Esc" to return)  "
+--marker=">" --pointer="◆" --separator="─" --scrollbar="│"
+--layout="reverse"'
 # Use tput to get the bold and normal text sequence
 BOLD=$(tput bold 2> /dev/null)
 NORM=$(tput sgr0 2> /dev/null)
@@ -216,7 +216,7 @@ usage() {
   printf "\n           Specify a second argument to set a custom background opacity:"
   printf "\n           e.g. 'kitty-control transparent 0.9'"
   printf "\n    '${BOLD}unicode${NORM}' Displays the Unicode input kitten"
-  printf "\n    '${BOLD}upgrade${NORM}' Upgrades Kitty, Fzf, and kitty-control to the latest version"
+  printf "\n    '${BOLD}upgrade${NORM}' Upgrades Kitty, Fastfetch, Fzf, and kitty-control if needed"
   printf "\n    '${BOLD}-a${NORM}'"
   printf " Indicates modify all windows rather than just the currently active OS window"
   printf "\n    '${BOLD}-c command${NORM}'"
@@ -241,7 +241,7 @@ usage() {
   printf "\n        If /path/to/socket is '--help' some help on configuring a Kitty socket is provided"
   printf "\n        '-s /path/...' can be used to send commands to Kitty from another terminal"
   printf "\n    '${BOLD}-u${NORM}' Displays a brief usage message and exits"
-  printf "\n    '${BOLD}-v${NORM}' Displays the kitty-control and kitty versions then exits"
+  printf "\n    '${BOLD}-v${NORM}' Displays the kitty-control, fastfetch, fzf, and kitty versions then exits"
   printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
   printf " displays an interactive menu system"
   printf "\nAdjusting the background opacity or font size requires the original kitty.conf"
@@ -755,7 +755,7 @@ dl_fastfetch_asset() {
     [ "${have_wget}" ] && {
       printf "\nDownloading fastfetch release asset ..."
       TEMP_ASS="$(mktemp --suffix=.tgz)"
-      wget --quiet -O "${TEMP_ASS}" "${DL_URL}" >/dev/null 2>&1
+      wget --quiet -O "${TEMP_ASS}" "${DL_URL}" > /dev/null 2>&1
       chmod 644 "${TEMP_ASS}"
       mkdir -p /tmp/fast$$
       tar -C /tmp/fast$$ -xzf "${TEMP_ASS}"
@@ -782,11 +782,9 @@ get_fastfetch_release() {
 }
 
 install_fastfetch() {
-  if [ "${darwin}" ]
-  then
-    if [ "${have_brew}" ]
-    then
-      brew install fastfetch >/dev/null 2>&1
+  if [ "${darwin}" ]; then
+    if [ "${have_brew}" ]; then
+      brew install fastfetch > /dev/null 2>&1
     else
       dl_fastfetch_asset
     fi
@@ -1504,7 +1502,7 @@ set-window-size() {
   [ $? -eq 0 ] || {
     exit_warning "kitty @ ${SOCKET} resize-os-window --action resize --incremental --width $1 --height $2 ${OPTS}" \
       'Verify that "allow_remote_control" is enabled in kitty.conf.
-Some systems do not support window resize.'
+    Some systems do not support window resize.'
   }
   [ "${debug}" ] && {
     printf "\nDEBUG: kitty @ ${SOCKET} resize-os-window --incremental --action resize --width $1 --height $2 ${OPTS}\n"
@@ -2110,7 +2108,7 @@ show_tab_info() {
     else
       kitty @ ls | jq -r '.[]?.tabs' \
         | jq -r --color-output --arg tabid "$tab_id" '
-                     .[] | select((.id|tostring) == $tabid)' | less
+      .[] | select((.id|tostring) == $tabid)' | less
     fi
   }
 }
@@ -2129,7 +2127,7 @@ show_window_info() {
     else
       kitty @ ls | jq -r '.[]?.tabs | .[]?.windows' \
         | jq -r --color-output --arg winid "$window_id" '
-                     .[] | select((.id|tostring) == $winid)' | less
+      .[] | select((.id|tostring) == $winid)' | less
     fi
   }
 }
@@ -3554,9 +3552,9 @@ show_menu() {
     options+=("Terminal Info    [I]")
     options+=("Transparent      [t]" "Unicode Input    [U]" "Usage            [u]")
     options+=("View an Image    [v]" "Window Layout    [L]" "Window Size      [W]")
-    [ "${have_jq}" ] && [ "${have_lolcat}" ] && \
-      [ "${have_fastfetch}" ] && [ "${have_neofetch}" ] && \
-      [ "${have_ranger}" ] && [ "${have_figlet}" ] || options+=("Install Tools    [Y]")
+    [ "${have_jq}" ] && [ "${have_lolcat}" ] \
+      && [ "${have_fastfetch}" ] && [ "${have_neofetch}" ] \
+      && [ "${have_ranger}" ] && [ "${have_figlet}" ] || options+=("Install Tools    [Y]")
     [ "${have_figlet}" ] || options+=("  Install Figlet")
     [ "${have_fzf}" ] || options+=("  Install Fzf")
     [ "${have_jq}" ] || options+=("  Install jq")
