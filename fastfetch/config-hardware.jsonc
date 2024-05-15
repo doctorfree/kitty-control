@@ -6,7 +6,7 @@
       "top": 1
     },
     "type": "__KITTY__",
-    "source": "~/.local/share/icons/hicolor/384x384/apps/apple-logo.png"
+    "source": "~/.local/share/icons/hicolor/__SIZE__x__SIZE__/apps/__PLATFORM__.png"
   },
   "modules": [
     {
