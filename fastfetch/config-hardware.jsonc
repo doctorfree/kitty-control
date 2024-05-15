@@ -5,8 +5,8 @@
       "left": 2,
       "top": 1
     },
-    "type": "__KITTY__",
-    "source": "~/.local/share/icons/hicolor/__SIZE__x__SIZE__/apps/__PLATFORM__.png"
+    "type": "kitty",
+    "source": "~/.local/share/icons/hicolor/384x384/apps/apple-logo.png"
   },
   "modules": [
     {
@@ -30,6 +30,11 @@
       "keyColor": "green"
     },
     {
+      "type": "physicaldisk",
+      "key": "├─",
+      "keyColor": "green"
+    },
+    {
       "type": "disk",
       "key": "├─",
       "keyColor": "green"
@@ -42,6 +47,33 @@
     {
       "type": "sound",
       "key": "├─",
+      "keyColor": "green"
+    },
+    {
+      "type": "chassis",
+      "key": "├─",
+      "keyColor": "green"
+    },
+    {
+      "type": "board",
+      "key": "├─",
+      "keyColor": "green",
+      "format": "{?1}{1}{?}{?2} ({2}){?}"
+    },
+    {
+      "type": "wifi",
+      "key": "├─",
+      "keyColor": "green",
+      "format": "{?1}{1}{?}{?6} - {6}{?}"
+    },
+    {
+      "type": "camera",
+      "key": "├─󰍹",
+      "keyColor": "green"
+    },
+    {
+      "type": "poweradapter",
+      "key": "├─",
       "keyColor": "green"
     },
     {
