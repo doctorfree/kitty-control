@@ -4,7 +4,13 @@
 
 ### ⚡️ Added
 
+- Add camera, physical disk, and board to ffetch hardware config
+- Add support for `neofetch/fastfetch` config name without leading `config-` prefix
+
 ### 🐞 Fixed
+
+- Rework installation menu entries
+- Install both `fastfetch` and `neofetch`
 
 ## v1.1.4r1
 

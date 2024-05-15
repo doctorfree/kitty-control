@@ -5,18 +5,13 @@
       "left": 2,
       "top": 1
     },
-    "type": "kitty",
+    "type": "__KITTY__",
     "source": "~/.local/share/icons/hicolor/384x384/apps/apple-logo.png"
   },
   "modules": [
     {
       "type": "host",
       "key": "╭─󰌢",
-      "keyColor": "green"
-    },
-    {
-      "type": "display",
-      "key": "├─󰍹",
       "keyColor": "green"
     },
     {
@@ -51,12 +46,12 @@
     },
     {
       "type": "chassis",
-      "key": "├─",
+      "key": "├─󰌢",
       "keyColor": "green"
     },
     {
       "type": "board",
-      "key": "├─",
+      "key": "├─󰌢",
       "keyColor": "green",
       "format": "{?1}{1}{?}{?2} ({2}){?}"
     },
@@ -78,7 +73,12 @@
     },
     {
       "type": "battery",
-      "key": "╰─",
+      "key": "├─",
+      "keyColor": "green"
+    },
+    {
+      "type": "display",
+      "key": "╰─󰍹",
       "keyColor": "green"
     }
   ]
