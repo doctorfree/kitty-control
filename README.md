@@ -169,9 +169,14 @@ Where:
 	-a indicates use ascii logo with neofetch
 	-c 'config' specifies a configuration file to use
 	   'config' can be the full path or name of a configuration
+	   the configuration name can omit the prefacing 'config-'
 	-i '/path/to/logo' specifies an image for neofetch to use
 	-r indicates select configuration file randomly
 	-u displays this usage messge and exits
+Example:
+	Use the configuration file ~/.config/neofetch/config-boxes.conf
+		nfetch -c boxes
+
 ```
 
 When invoked as `ffetch` it serves as a front-end to `fastfetch` with usage:
@@ -179,10 +184,17 @@ When invoked as `ffetch` it serves as a front-end to `fastfetch` with usage:
 ```
 Usage: ffetch [-c config] [-r] [-u]
 Where:
+	-a indicates use ascii logo with neofetch
 	-c 'config' specifies a configuration file to use
 	   'config' can be the full path or name of a configuration
+	   the configuration name can omit the prefacing 'config-'
+	-i '/path/to/logo' specifies an image for neofetch to use
 	-r indicates select configuration file randomly
 	-u displays this usage messge and exits
+Example:
+	Use the configuration file ~/.config/fastfetch/config-hardware.jsonc
+		ffetch -c hardware
+
 ```
 
 ### Tools

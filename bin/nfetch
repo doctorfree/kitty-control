@@ -2,7 +2,7 @@
 #
 # ffetch/nfetch - Display system info using fastfetch or neofetch
 #        Random configuration selection assumes configs are named:
-#          'config-*` in ~/.config/fastfetch/ or ~/.config/neofetch/
+#          'config*` in ~/.config/fastfetch/ or ~/.config/neofetch/
 #        Use fastfetch if found, otherwise use neofetch
 #
 # Author: Ronald Joe Record <ronaldrecord@gmail.com>
@@ -25,14 +25,27 @@ have_fastfetch=$(type -p fastfetch)
 have_neofetch=$(type -p neofetch)
 
 usage() {
-  printf "\nUsage: ${prog_name} [-a] [-c config] [-i /path/to/logo] [-r] [-u]"
+  if [ "${prog_name}" == "nfetch" ]; then
+    printf "\nUsage: ${prog_name} [-a] [-c config] [-i /path/to/logo] [-r] [-u]"
+  else
+    printf "\nUsage: ${prog_name} [-c config] [-r] [-u]"
+  fi
   printf "\nWhere:"
   printf "\n\t-a indicates use ascii logo with neofetch"
   printf "\n\t-c 'config' specifies a configuration file to use"
   printf "\n\t   'config' can be the full path or name of a configuration"
+  printf "\n\t   the configuration name can omit the prefacing 'config-'"
   printf "\n\t-i '/path/to/logo' specifies an image for neofetch to use"
   printf "\n\t-r indicates select configuration file randomly"
-  printf "\n\t-u displays this usage messge and exits\n\n"
+  printf "\n\t-u displays this usage messge and exits"
+  printf "\nExample:"
+  if [ "${prog_name}" == "nfetch" ]; then
+    printf "\n\tUse the configuration file ~/.config/neofetch/config-boxes.conf"
+    printf "\n\t\tnfetch -c boxes\n\n"
+  else
+    printf "\n\tUse the configuration file ~/.config/fastfetch/config-hardware.jsonc"
+    printf "\n\t\tffetch -c hardware\n\n"
+  fi
   exit 1
 }
 
@@ -70,9 +83,9 @@ set_fetch() {
 get_rand() {
   # We use Bash for the array manipulation
   configs=()
-  for conf in ${CONFDIR}/config-*
+  for conf in ${CONFDIR}/config*
   do
-    [ "${conf}" == "${CONFDIR}/config-*" ] && continue
+    [ "${conf}" == "${CONFDIR}/config*" ] && continue
     configs+=("${conf}")
   done
 
@@ -124,19 +137,23 @@ export TERM=xterm-kitty
 # Locate the config if specified or randomly selected
 [ "${USE_CONFIG}" ] && {
   [ -f "${USE_CONFIG}" ] || {
-    if [ -f "${CONFDIR}/${USE_CONFIG}" ]; then
-      USE_CONFIG="${CONFDIR}/${USE_CONFIG}"
-    else
-      if [ -f "${CONFDIR}/${USE_CONFIG}.jsonc" ]; then
-        USE_CONFIG="${CONFDIR}/${USE_CONFIG}.jsonc"
+    for cfg in "${CONFDIR}/${USE_CONFIG}" "${CONFDIR}/config-${USE_CONFIG}"
+    do
+      if [ -f "${cfg}" ]; then
+        USE_CONFIG="${cfg}"
+        break
       else
-        if [ -f "${CONFDIR}/${USE_CONFIG}.conf" ]; then
-          USE_CONFIG="${CONFDIR}/${USE_CONFIG}.conf"
+        if [ -f "${cfg}.jsonc" ]; then
+          USE_CONFIG="${cfg}.jsonc"
+          break
         else
-          USE_CONFIG=
+          [ -f "${cfg}.conf" ] && {
+            USE_CONFIG="${cfg}.conf"
+            break
+          }
         fi
       fi
-    fi
+    done
   }
 }
 

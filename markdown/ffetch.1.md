@@ -27,7 +27,7 @@ The **ffetch** command can be used to:
 # COMMAND LINE OPTIONS
 
 **-c config**
-: specifies a configuration file to use, **config** can be the full path or name of a configuration
+: specifies a configuration file to use, **config** can be the full path or name of a configuration (the configuration name prefix *config-* can be omitted)
 
 **-r**
 : indicates select configuration file randomly
@@ -42,8 +42,8 @@ The **ffetch** command can be used to:
 ***ffetch -r***
 : Execute **fastfetch** using a randomly selected configuration from those named `~/.config/fastfetch/config*`
 
-***ffetch -c config-03***
-: Execute **fastfetch** using the configuration `~/.config/fastfetch/config-03.conf`
+***ffetch -c hardware***
+: Execute **fastfetch** using the configuration `~/.config/fastfetch/config-hardware.conf`
 
 # AUTHORS
 Written by Ronald Record github@ronrecord.com

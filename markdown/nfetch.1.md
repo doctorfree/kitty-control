@@ -31,7 +31,7 @@ The **nfetch** command can be used to:
 : indicates use ascii logo with neofetch
 
 **-c config**
-: specifies a configuration file to use, **config** can be the full path or name of a configuration
+: specifies a configuration file to use, **config** can be the full path or name of a configuration (the configuration name prefix *config-* can be omitted)
 
 **-i /path/to/logo**
 : specifies an image for neofetch to use
@@ -49,8 +49,8 @@ The **nfetch** command can be used to:
 ***nfetch -r***
 : Execute **neofetch** using a randomly selected configuration from those named `~/.config/neofetch/config*`
 
-***nfetch -c config-03***
-: Execute **neofetch** using the configuration `~/.config/neofetch/config-03.conf`
+***nfetch -c boxes***
+: Execute **neofetch** using the configuration `~/.config/neofetch/config-boxes.conf`
 
 ***nfetch -i ~/.local/share/icons/hicolor/256x256/apps/arch.png***
 : Execute **neofetch** using the default configuration and the *Arch Linux* logo
