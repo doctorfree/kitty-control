@@ -6,6 +6,19 @@
 
 ### 🐞 Fixed
 
+## v1.1.4r3
+
+### ⚡️ Added
+
+- Check if only `-k` given as argument and show menu
+- Add `-k` option to skip version checks and speed startup
+- Add auto upgrade of dependencies to readme features
+
+### 🐞 Fixed
+
+- Correct source entry in `fastfetch` hardware config
+- Correct upgrade and `-v` usage messages
+
 ## v1.1.4r2
 
 ### ⚡️ Added
