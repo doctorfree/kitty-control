@@ -71,14 +71,14 @@ colors+=("lightcoral" "lightcyan" "lightgray" "lightgreen" "lightgrey" "lightpin
 brief_usage() {
   printf "${BOLD}Usage: kitty-control [-adefhuv] [back <color>] [-c command] [dark]"
   printf "\n                     [diff [opts] <path1> <path2>] [font [num]] [fore <color>]"
-  printf "\n                     [-i /path/to/image] [icat [opts] <image>] [layout <name>]"
+  printf "\n                     [-i /path/to/image] [icat [opts] <image>] [-k] [layout <name>]"
   printf "\n                     [load [subdir|file]] [ls|list [self|colors|tabs|windows]] [-m|t <match>]"
   if [ "${have_fetch}" ]; then
     printf "\n                     [man] [menu] [fetch] [-o doc] [-s /path/to/socket] [term] [theme] [tools]"
   else
     printf "\n                     [man] [menu] [-o doc] [-s /path/to/socket] [size w h] [term] [theme] [tools]"
   fi
-  printf "\n                     [title <title>] [transparent [opacity]] [unicode] [upgrade]${NORM}"
+  printf "\n                     [title <title>] [transparent [opacity]] [unicode] [upgrade] [-v]${NORM}"
   [ "$1" == "noexit" ] || {
     printf "\n\nWithout any arguments '${BOLD}kitty-control${NORM}'"
     printf " displays an interactive menu system"
@@ -229,6 +229,7 @@ usage() {
   printf "\n    '${BOLD}-i /path/to/image${NORM}'"
   printf " sets the background image for the specified Kitty windows"
   printf "\n        If /path/to/image is 'none' then any existing image will be removed"
+  printf "\n    '${BOLD}-k${NORM}' Indicates skip version checks and upgrade menu options"
   printf "\n    '${BOLD}-m <match>${NORM}' Specifies the window to match"
   printf "\n    '${BOLD}-t <match>${NORM}' Specifies the tab to match"
   printf "\n        Window/Tab matching can be used in conjunction with most kitty-control commands"
@@ -3562,33 +3563,35 @@ show_menu() {
     [ "${have_fastfetch}" ] || options+=("  Install Fastfetch")
     [ "${have_neofetch}" ] || options+=("  Install Neofetch")
     [ "${have_ranger}" ] || options+=("  Install Ranger")
-    [ "${have_fastfetch}" ] && {
-      fch_release_version=$(get_fastfetch_release)
-      fch_install_version=$(fastfetch --version | awk '{ print $2 }')
-      update_fastfetch=$(check_three_version "${fch_release_version}" "${fch_install_version}")
-      [ "${update_fastfetch}" ] && {
-        options+=("Upgrade Fastfetch (${fch_install_version} -> ${fch_release_version})")
+    [ "${version_checks}" ] && {
+      [ "${have_fastfetch}" ] && {
+        fch_release_version=$(get_fastfetch_release)
+        fch_install_version=$(fastfetch --version | awk '{ print $2 }')
+        update_fastfetch=$(check_three_version "${fch_release_version}" "${fch_install_version}")
+        [ "${update_fastfetch}" ] && {
+          options+=("Upgrade Fastfetch (${fch_install_version} -> ${fch_release_version})")
+        }
       }
-    }
-    [ "${have_fzf}" ] && {
-      fzf_release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
-      fzf_install_version=$(fzf --version | awk '{ print $1 }')
-      update_fzf=$(check_three_version "${fzf_release_version}" "${fzf_install_version}")
-      [ "${update_fzf}" ] && {
-        options+=("Upgrade Fzf (${fzf_install_version} -> ${fzf_release_version})")
+      [ "${have_fzf}" ] && {
+        fzf_release_version=$(curl -fsSL "${fzf_url}" | grep ^version= | awk -F '=' '{ print $2 }')
+        fzf_install_version=$(fzf --version | awk '{ print $1 }')
+        update_fzf=$(check_three_version "${fzf_release_version}" "${fzf_install_version}")
+        [ "${update_fzf}" ] && {
+          options+=("Upgrade Fzf (${fzf_install_version} -> ${fzf_release_version})")
+        }
       }
-    }
-    release_version=$(curl -fsSL "${kitty_version_url}")
-    install_version=$(kitty --version | awk '{ print $2 }')
-    update_kitty=$(check_three_version "${release_version}" "${install_version}")
-    [ "${update_kitty}" ] && {
-      options+=("Upgrade Kitty (${install_version} -> ${release_version})")
-    }
-    control_version=$(get_control_version)
-    install_version=$(get_install_version)
-    update_control=$(check_control_version "${control_version}" "${install_version}")
-    [ "${update_control}" ] && {
-      options+=("Upgrade kitty-control (${install_version} -> ${control_version})")
+      release_version=$(curl -fsSL "${kitty_version_url}")
+      install_version=$(kitty --version | awk '{ print $2 }')
+      update_kitty=$(check_three_version "${release_version}" "${install_version}")
+      [ "${update_kitty}" ] && {
+        options+=("Upgrade Kitty (${install_version} -> ${release_version})")
+      }
+      control_version=$(get_control_version)
+      install_version=$(get_install_version)
+      update_control=$(check_control_version "${control_version}" "${install_version}")
+      [ "${update_control}" ] && {
+        options+=("Upgrade kitty-control (${install_version} -> ${control_version})")
+      }
     }
     options+=("Fuzzy Select     [z]" "About            [a]" "Quit             [q]")
     set_show_shortcuts
@@ -3869,6 +3872,7 @@ fontplus=
 fontdown=
 fontsize=
 fullscrn=
+version_checks=1
 install_version=
 release_version=
 kittycmd=
@@ -3897,6 +3901,10 @@ while [[ $1 ]]; do
       ;;
     -f | --fullscreen)
       fullscrn=1
+      shift
+      ;;
+    -k | --skip)
+      version_checks=
       shift
       ;;
     -m | --match)

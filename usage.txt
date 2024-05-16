@@ -1,9 +1,9 @@
 Usage: kitty-control [-adefhuv] [back <color>] [-c command] [dark]
                      [diff [opts] <path1> <path2>] [font [num]] [fore <color>]
-                     [-i /path/to/image] [icat [opts] <image>] [layout <name>]
+                     [-i /path/to/image] [icat [opts] <image>] [-k] [layout <name>]
                      [load [subdir|file]] [ls|list [self|colors|tabs|windows]] [-m|t <match>]
                      [man] [menu] [fetch] [-o doc] [-s /path/to/socket] [term] [theme] [tools]
-                     [title <title>] [transparent [opacity]] [unicode] [upgrade]
+                     [title <title>] [transparent [opacity]] [unicode] [upgrade] [-v]
 Where:
     'back color' Sets the background color to 'color'
            If 'color' is 'reset' restores foreground and background to startup value
@@ -68,6 +68,7 @@ Where:
     '-h' Displays a full usage message and exits
     '-i /path/to/image' sets the background image for the specified Kitty windows
         If /path/to/image is 'none' then any existing image will be removed
+    '-k' Indicates skip version checks and upgrade menu options
     '-m <match>' Specifies the window to match
     '-t <match>' Specifies the tab to match
         Window/Tab matching can be used in conjunction with most kitty-control commands
