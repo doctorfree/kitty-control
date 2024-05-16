@@ -3860,7 +3860,13 @@ use_ranger=1
 [ "${have_figlet}" ] || use_figlet=
 [ "${have_fzf}" ] || use_fzf=
 [ "${have_ranger}" ] || use_ranger=
-[ "$1" ] || show_menu
+if [ "$1" ]; then
+  [ $# -eq 1 ] && {
+    [ "$1" == "-k" ] || [ "$1" == "--skip" ] && show_menu
+  }
+else
+  show_menu
+fi
 
 # Some actions need to be delayed until after any configuration load
 allopt=
