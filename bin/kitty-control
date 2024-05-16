@@ -3569,7 +3569,7 @@ show_menu() {
         fch_install_version=$(fastfetch --version | awk '{ print $2 }')
         update_fastfetch=$(check_three_version "${fch_release_version}" "${fch_install_version}")
         [ "${update_fastfetch}" ] && {
-          options+=("Upgrade Fastfetch (${fch_install_version} -> ${fch_release_version})")
+          options+=("Upgrade Fastfetch -> ${fch_release_version}")
         }
       }
       [ "${have_fzf}" ] && {
@@ -3577,20 +3577,20 @@ show_menu() {
         fzf_install_version=$(fzf --version | awk '{ print $1 }')
         update_fzf=$(check_three_version "${fzf_release_version}" "${fzf_install_version}")
         [ "${update_fzf}" ] && {
-          options+=("Upgrade Fzf (${fzf_install_version} -> ${fzf_release_version})")
+          options+=("Upgrade Fzf -> ${fzf_release_version}")
         }
       }
       release_version=$(curl -fsSL "${kitty_version_url}")
       install_version=$(kitty --version | awk '{ print $2 }')
       update_kitty=$(check_three_version "${release_version}" "${install_version}")
       [ "${update_kitty}" ] && {
-        options+=("Upgrade Kitty (${install_version} -> ${release_version})")
+        options+=("Upgrade Kitty -> ${release_version}")
       }
       control_version=$(get_control_version)
       install_version=$(get_install_version)
       update_control=$(check_control_version "${control_version}" "${install_version}")
       [ "${update_control}" ] && {
-        options+=("Upgrade kitty-control (${install_version} -> ${control_version})")
+        options+=("Upgrade kitty-control -> ${control_version}")
       }
     }
     options+=("Fuzzy Select     [z]" "About            [a]" "Quit             [q]")
@@ -3860,9 +3860,13 @@ use_ranger=1
 [ "${have_figlet}" ] || use_figlet=
 [ "${have_fzf}" ] || use_fzf=
 [ "${have_ranger}" ] || use_ranger=
+version_checks=1
 if [ "$1" ]; then
   [ $# -eq 1 ] && {
-    [ "$1" == "-k" ] || [ "$1" == "--skip" ] && show_menu
+    [ "$1" == "-k" ] || [ "$1" == "--skip" ] && {
+      version_checks=
+      show_menu
+    }
   }
 else
   show_menu
@@ -3878,7 +3882,6 @@ fontplus=
 fontdown=
 fontsize=
 fullscrn=
-version_checks=1
 install_version=
 release_version=
 kittycmd=
