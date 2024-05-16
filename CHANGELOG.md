@@ -6,6 +6,14 @@
 
 ### 🐞 Fixed
 
+## v1.1.4r4
+
+### ⚡️ Added
+
+### 🐞 Fixed
+
+- Fix version check if no arguments or just `-k`
+
 ## v1.1.4r3
 
 ### ⚡️ Added
