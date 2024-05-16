@@ -156,10 +156,11 @@ The `kitty-control` command can be used to:
 - Select and set a background image using `ranger` and `fzf`
 - Set the `kitty` window layout using the `kitty` **goto-layout** `kitten`
 - Browse the `kitty` documentation using the `kitty` **action** `kitten`
+- Automates installation, version checks, and upgrades of `fastfetch`, `fzf`, `kitty`, and itself
 
-The `kitty-control` installation also installs the `nfetch` command. This is a
-wrapper script for `neofetch` and `fastfetch` to invoke `neofetch` or `fastfetch`
-with the `kitty` image display protocol and one of several configurations.
+The `kitty-control` installation also installs the `nfetch` and `ffetch` commands. This is
+a wrapper script for `neofetch` and `fastfetch` to invoke `neofetch` or `fastfetch`
+with the `kitty` image display protocol and one of several preinstalled configurations.
 
 Usage message for `nfetch`:
 
