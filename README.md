@@ -585,7 +585,7 @@ helpful in tailoring your own configuration.
 ## Update
 
 To update `kitty-control` execute the command `kitty-control upgrade`. This will
-also upgrade `kitty` and `fzf` if updates are available.
+also upgrade `kitty`, `fastfetch`, and `fzf` if updates are available.
 
 Alternately, an update can be performed with `curl`:
 
