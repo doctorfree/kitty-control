@@ -6,6 +6,15 @@
 
 ### 🐞 Fixed
 
+## v1.1.4r5
+
+### ⚡️ Added
+
+- Add `pathadd` to `nfetch/ffetch`
+- Add `fastfetch` to utilities upgraded
+
+### 🐞 Fixed
+
 ## v1.1.4r4
 
 ### ⚡️ Added
