@@ -20,6 +20,17 @@
 IMG="${HOME}/.local/share/icons/hicolor/__SIZE__x__SIZE__/apps/__PLATFORM__.png"
 FETCHARGS=
 
+pathadd() {
+  if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+    PATH="$1${PATH:+":$PATH"}"
+    export PATH
+  fi
+}
+
+pathadd "${HOME}/.local/bin"
+pathadd "/opt/homebrew/bin"
+pathadd "/usr/local/bin"
+
 prog_name=$(basename "$0")
 have_fastfetch=$(type -p fastfetch)
 have_neofetch=$(type -p neofetch)

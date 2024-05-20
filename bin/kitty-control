@@ -704,7 +704,7 @@ install_fzf() {
     ${HOME}/.fzf > /dev/null 2>&1
   [ -f ${HOME}/.fzf/install ] && chmod 755 ${HOME}/.fzf/install
   [ -x ${HOME}/.fzf/install ] && ${HOME}/.fzf/install --all > /dev/null 2>&1
-  [ -d ${HOME}/.fzf/bin ] && pathadd "${HOME}/.fzf/bin"
+  pathadd "${HOME}/.fzf/bin"
   if [ -f ${HOME}/.fzf/bin/fzf ]; then
     ln -s ${HOME}/.fzf/bin/fzf ${HOME}/.local/bin/fzf
     rm -f ${HOME}/.local/bin/fzf-bak$$
@@ -1662,7 +1662,7 @@ upgrade_fzf() {
     [ "${have_brew}" ] && brew uninstall fzf > /dev/null 2>&1
     install_fzf
   fi
-  [ -d ${HOME}/.fzf/bin ] && pathadd "${HOME}/.fzf/bin"
+  pathadd "${HOME}/.fzf/bin"
 }
 
 upgrade_kitty_control() {
@@ -3818,8 +3818,8 @@ platform=$(uname -s)
 [ "${platform}" == "Darwin" ] && darwin=1
 [ "${mach}" == "arm64" ] && arm=1
 
-[ -d ${HOME}/.local/bin ] && pathadd "${HOME}/.local/bin"
-[ -d ${HOME}/.fzf/bin ] && pathadd "${HOME}/.fzf/bin"
+pathadd "${HOME}/.local/bin"
+pathadd "${HOME}/.fzf/bin"
 
 # Use a Github API token if one is set
 [ "${GITHUB_TOKEN}" ] || {
