@@ -4,6 +4,9 @@
 
 ### ⚡️ Added
 
+- Link to the `kitty-control` repo in `About`
+- Use the `rich-cli` link markup in the `About` screen
+
 ### 🐞 Fixed
 
 ## v1.1.4r5

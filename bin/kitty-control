@@ -98,19 +98,19 @@ show_about() {
     rich "[red]Kitty Control[/] enables automation of [green]Kitty[/] customization and provides an" -p
     rich "additional layer of convenience. Scripted [green]Kitty[/] actions enable quick and easy" -p
     rich "switching between preconfigured [green]Kitty[/] configurations without losing state or" -p
-    rich "or having to quit [green]Kitty[/] and restart with another configuration. This is done" -p
-    rich "through the use of the [red]read_config.py[/] custom [green]kitten[/] included with [red]kitty-control[/]." -p
+    rich "or having to quit [green]Kitty[/] and restart with another configuration." -p
     printf "\n"
     rich "[red]kitty-control[/] is written in [yellow]Bash[/] and [yellow]Python[/] by Ronald Record." -p
+    rich "Visit the [red]Kitty Control[/] repo at [link=https://github.com/doctorfree/kitty-control#readme][yellow]https://github.com/doctorfree/kitty-control[/yellow][/link]" -p
   else
     printf "'Kitty Control' is an open source command line utility to control some aspects of"
     printf "\nthe 'Kitty' terminal emulator using the 'Kitty' remote control facility and kittens.\n"
     printf "\n'Kitty Control' enables automation of 'Kitty' customization and provides an"
     printf "\nadditional layer of convenience. Scripted 'Kitty' actions enable quick and easy"
     printf "\nswitching between preconfigured 'Kitty' configurations without losing state or"
-    printf "\nor having to quit 'Kitty' and restart with another configuration. This is done"
-    printf "\nthrough the use of the 'read_config.py' custom 'kitten' included with 'kitty-control'."
+    printf "\nor having to quit 'Kitty' and restart with another configuration."
     printf "\n\n'kitty-control' is written in 'Bash' and 'Python' by Ronald Record."
+    printf "\nVisit the 'Kitty Control' repository at https://github.com/doctorfree/kitty-control\n"
   fi
   show_versions
 }
