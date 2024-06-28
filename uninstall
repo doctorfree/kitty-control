@@ -9,10 +9,6 @@ DIFFCONF="${KITTCONF}/diff.conf"
 DIRDCONF="${KITTY_CONFIG_DIRECTORY}/diff.conf"
 KCKITTEN="kc_read_config.py"
 
-rloc=$(readlink ${HOME}/.local/bin/rich)
-[ "${rloc}" == "${KCDIR}/.venv/bin/rich" ] && {
-  rm -f ${HOME}/.local/bin/rich
-}
 rm -f ${HOME}/.local/bin/kitty-control
 rm -f ${HOME}/.local/bin/ffetch
 rm -f ${HOME}/.local/bin/nfetch

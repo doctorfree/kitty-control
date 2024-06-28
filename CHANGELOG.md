@@ -4,10 +4,19 @@
 
 ### ⚡️ Added
 
+### 🐞 Fixed
+
+## v1.1.5r1
+
+### ⚡️ Added
+
 - Link to the `kitty-control` repo in `About`
 - Use the `rich-cli` link markup in the `About` screen
 
 ### 🐞 Fixed
+
+- Use `~/.venv/` for Python virtual environment
+- Activate Python virtual environment
 
 ## v1.1.4r5
 
