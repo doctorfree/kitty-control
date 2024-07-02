@@ -561,9 +561,9 @@ kitty-control load default  # Or just 'kitty-control load'
 Included in this repository is a reference Kitty configuration
 [./config/kitty.conf](config/README.md)
 
-This includes two configuration subdirectories, `laptop` and `tv` with a
-`kitty.conf` in each.  Also included are Python scripts, example `kitty`
-sessions, and some advanced `kitty` configuration.
+This includes alternate configuration subdirectories, `laptop`, `ttys3`,
+and `tv` with a `kitty.conf` in each.  Also included are Python scripts,
+example `kitty` sessions, and some advanced `kitty` configuration.
 
 The reference configuration is installed in `~/.config/kitty/kitty-control`
 and a Kitty session using this configuration can be started with:

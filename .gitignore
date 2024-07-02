@@ -1,5 +1,7 @@
 # Working dirs and test files
 tmp/*
+config/ttys3/session.conf
+config/ttys3/kitty.conf.bak
 
 # Neovide leaves a backtrace when it crashes
 neovide_backtraces*
