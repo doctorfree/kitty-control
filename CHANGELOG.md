@@ -6,6 +6,14 @@
 
 ### 🐞 Fixed
 
+## v1.1.5r2
+
+### ⚡️ Added
+
+- Add modified `ttys3` config from https://github.com/ttys3/my-kitty-config
+
+### 🐞 Fixed
+
 ## v1.1.5r1
 
 ### ⚡️ Added
