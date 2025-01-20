@@ -6,6 +6,12 @@
 
 ### 🐞 Fixed
 
+## v1.1.5r3
+
+### 🐞 Fixed
+
+- Follow redirect for `fastfetch` release download url
+
 ## v1.1.5r2
 
 ### ⚡️ Added

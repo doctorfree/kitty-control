@@ -733,7 +733,7 @@ set_fastfetch_url() {
   PROJECT=fastfetch
   API_URL="https://api.github.com/repos/${OWNER}/${PROJECT}/releases/latest"
   [ "${have_curl}" ] && [ "${have_jq}" ] && {
-    DL_URL=$(curl --silent ${AUTH_HEADER} "${API_URL}" \
+    DL_URL=$(curl --silent --location-trusted -L ${AUTH_HEADER} "${API_URL}" \
       | jq --raw-output '.assets | .[]?.browser_download_url' \
       | grep "${name}\.tar\.gz$")
   }
